@@ -6,7 +6,8 @@ var hspCompiler = require("gulp-hsp-compiler");
 var hspTranspiler = require("gulp-hsp-transpiler");
 var runSequence = require("run-sequence");
 
-var staticsDevDir = "build/client/statics-dev"
+var clientDir = "build/client";
+var staticsDevDir = clientDir + "/statics-dev"
 
 gulp.task("dev", function () {
     gulp.src("lib/bootstrap/**").pipe(newer(staticsDevDir + "/bootstrap"))
@@ -19,14 +20,19 @@ gulp.task("dev", function () {
         gulp.dest(staticsDevDir + "/hsp"));
     gulp.src("node_modules/noder-js/dist/browser/**/*.js").pipe(newer(staticsDevDir + "/noder-js")).pipe(
         gulp.dest(staticsDevDir + "/noder-js"));
-    gulp.src("src/client/**/*.hsp").pipe(newer({
+    gulp.src("src/client/statics/**/*.hsp").pipe(newer({
         dest : staticsDevDir,
         ext : ".js"
     })).pipe(hspCompiler()).pipe(hspTranspiler()).pipe(gulp.dest(staticsDevDir));
-    gulp.src([ "src/client/**/*.js", "src/common/**/*.js" ]).pipe(newer({
+    gulp.src([ "src/client/statics/**/*.js", "src/common/**/*.js" ]).pipe(newer({
         dest : staticsDevDir
     })).pipe(hspTranspiler()).pipe(gulp.dest(staticsDevDir));
-    gulp.src([ "src/client/**", "!**/*.js", "!**/*.hsp" ]).pipe(gulp.dest(staticsDevDir));
+    gulp.src([ "src/client/statics/**", "!**/*.js", "!**/*.hsp" ]).pipe(newer({
+        dest : staticsDevDir
+    })).pipe(gulp.dest(staticsDevDir));
+    gulp.src([ "src/client/**", "!src/client/statics", "!src/client/statics/**" ]).pipe(newer({
+        dest : clientDir
+    })).pipe(gulp.dest(clientDir));
 });
 
 gulp.task("watch", function () {
