@@ -1,4 +1,7 @@
+var navbar = require("./components/navbar.hsp.js");
+
 # template main(routeData)
+    <#navbar />
     {if routeData.component}
         <#routeData.component params="{routeData.params}" query="{routeData.query}" hash="{routeData.hash}" />
     {else}

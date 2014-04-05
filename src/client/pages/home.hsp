@@ -1,5 +1,7 @@
-# template tpl(params)
-HOME
+# template tpl(params, query)
+    <div class="container-fluid">
+        {if query.search}Votre recherche: {query.search}{/if}
+    </div>
 # /template
 
 module.exports = tpl;
