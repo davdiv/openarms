@@ -26,6 +26,7 @@
     "hashspace": "0.0.1",
     "noder-js": "1.2.1",
     "page": "1.3.7",
+    "qs": "0.6.6",
     "run-sequence": "0.3.6"
   },
   "dependencies": {

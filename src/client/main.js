@@ -1,15 +1,17 @@
 var page = require("page");
 var routes = require("./routes");
 var asyncRequire = require("noder-js/asyncRequire").create(module);
+var qs = require("qs");
 var routeData = {};
 
 var processRoute = function (route) {
     return function (ctxt) {
         routeData.component = null;
-        routeData.data = null;
+        routeData.params = ctxt.params;
+        routeData.query = qs.parse(ctxt.querystring);
+        routeData.hash = ctxt.hash;
         asyncRequire(route.component).thenSync(function (componentModule) {
             routeData.component = componentModule;
-            routeData.params = ctxt.params;
         });
     };
 };

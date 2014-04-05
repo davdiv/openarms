@@ -1,6 +1,6 @@
 # template main(routeData)
     {if routeData.component}
-        <#routeData.component params="{routeData.params}" />
+        <#routeData.component params="{routeData.params}" query="{routeData.query}" hash="{routeData.hash}" />
     {else}
         <div class="spinner modal-backdrop"></div>
     {/if}
