@@ -1,0 +1,21 @@
+.spinner, .img-male, .img-female {
+	display: inline-block;
+	vertical-align: middle;
+	min-width: 16px;
+	min-height: 16px;
+	background-position:center;
+	background-repeat:no-repeat;
+}
+
+.spinner {
+	background-color: white;
+	background-image: url(../images/spinner.gif);
+}
+
+.img-male {
+	background-image: url(../images/male.png)
+}
+
+.img-female {
+	background-image: url(../images/female.png)
+}

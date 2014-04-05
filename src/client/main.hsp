@@ -1,0 +1,9 @@
+# template main(routeData)
+    {if routeData.component}
+        <#routeData.component params="{routeData.params}" />
+    {else}
+        <div class="spinner modal-backdrop"></div>
+    {/if}
+# /template
+
+module.exports = main;
