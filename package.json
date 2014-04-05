@@ -7,7 +7,15 @@
     "type": "git",
     "url": "https://github.com/davdiv/openarms.git"
   },
-  "author": "",
+  "author": {
+    "name": "DivDE",
+    "email": "divde@free.fr"
+  },
+  "bin": "./openarms",
+  "scripts": {
+    "prepublish": "./gulp prepublish",
+    "start": "./openarms --dev"
+  },
   "license": {
     "type": "AGPLv3",
     "url": "http://www.gnu.org/licenses/agpl-3.0"
@@ -16,7 +24,8 @@
     "url": "https://github.com/davdiv/openarms/issues"
   },
   "homepage": "https://github.com/davdiv/openarms",
-  "devDependencies": {
+  "dependencies": {
+    "express": "3.5.1",
     "gulp": "3.5.6",
     "gulp-clean": "0.2.4",
     "gulp-hsp-compiler": "0.0.2",
@@ -24,14 +33,11 @@
     "gulp-newer": "0.3.0",
     "gulp-rename": "1.2.0",
     "hashspace": "0.0.1",
+    "minimist": "0.0.8",
     "noder-js": "1.2.1",
     "page": "1.3.7",
+    "q": "1.0.1",
     "qs": "0.6.6",
     "run-sequence": "0.3.6"
-  },
-  "dependencies": {
-    "express": "3.5.1",
-    "minimist": "0.0.8",
-    "q": "1.0.1"
   }
 }

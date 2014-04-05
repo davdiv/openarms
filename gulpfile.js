@@ -46,5 +46,9 @@ gulp.task("clean", function () {
 });
 
 gulp.task("default", function (callback) {
-    runSequence("clean", "dev", "watch", callback);
+    runSequence("prepublish", "watch", callback);
+});
+
+gulp.task("prepublish", function (callback) {
+    runSequence("clean", "dev", callback);
 });

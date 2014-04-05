@@ -1,2 +1,2 @@
-#!/bin/bash
-exec node ./src/server/main.js "$@"
+#!/usr/bin/env node
+require("./src/server/main.js");

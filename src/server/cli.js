@@ -10,7 +10,7 @@ var parse = function (argv) {
             "version" : "v"
         },
         "default" : {
-            port: 8080
+            port: parseInt(process.env.PORT, 10) || 8080
         }
     });
 };
