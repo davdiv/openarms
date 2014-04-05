@@ -7,8 +7,11 @@
 	background-repeat:no-repeat;
 }
 
-.spinner {
+.spinner.modal-backdrop {
 	background-color: white;
+}
+
+.spinner {
 	background-image: url(../images/spinner.gif);
 }
 
