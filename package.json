@@ -11,10 +11,10 @@
     "name": "DivDE",
     "email": "divde@free.fr"
   },
-  "bin": "./openarms",
+  "bin": "openarms",
   "scripts": {
-    "prepublish": "./gulp prepublish",
-    "start": "./openarms --dev"
+    "prepublish": "gulp prepublish",
+    "start": "node openarms --dev"
   },
   "license": {
     "type": "AGPLv3",
