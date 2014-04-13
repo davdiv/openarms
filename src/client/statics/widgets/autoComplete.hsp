@@ -67,12 +67,12 @@ var AutoCompleteController = klass({
 			this.changeSelectedSuggestion(event.keyCode - 39);
 		} else if (event.keyCode == 13) {
 			if (this.open && this.selectedSuggestion != -1) {
-				event.preventDefault();
-				this.chooseSuggestion(this.selectedSuggestion, this.suggestions[this.selectedSuggestion]); 
+				this.chooseSuggestion(this.selectedSuggestion, this.suggestions[this.selectedSuggestion], event);
 			}
 		}
 	},
-	chooseSuggestion: function (index, suggestion) {
+	chooseSuggestion: function (index, suggestion, domEvent) {
+	    domEvent.preventDefault();
 		this.open = false;
 		var event = {
 			index: index,
@@ -140,8 +140,6 @@ var AutoCompleteController = klass({
 	}
 });
 
-var c; // because hashspace should not try and read the c variable...
-
 # template autoComplete using c:AutoCompleteController
 	<div class="{'dropdown','open':c.open}">
 		<input 	type="text" 
@@ -155,7 +153,7 @@ var c; // because hashspace should not try and read the c variable...
 			<ul class="dropdown-menu" onmousedown="{c.onDropDownMouseDown(event)}">
 				{foreach index,suggestion in c.suggestions}
 					<li class="{'active':index == c.selectedSuggestion}">
-						<a href="#" onmouseover="{c.onSuggestionMouseOver(index)}" onclick="{c.chooseSuggestion(index, suggestion)}"><#c.displaySuggestion data="{suggestion}"/></a>
+						<a href="#" onmouseover="{c.onSuggestionMouseOver(index)}" onclick="{c.chooseSuggestion(index, suggestion, event)}"><#c.displaySuggestion data="{suggestion}"/></a>
 					</li>
 				{/foreach}
 				{if c.waitingSuggestions}
