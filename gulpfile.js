@@ -1,6 +1,7 @@
 var gulp = require("gulp");
 var clean = require("gulp-clean");
 var newer = require("gulp-newer");
+var gutil = require('gulp-util');
 var rename = require("gulp-rename");
 var hspCompiler = require("gulp-hsp-compiler");
 var hspTranspiler = require("gulp-hsp-transpiler");
@@ -23,10 +24,10 @@ gulp.task("dev", function () {
     gulp.src("src/client/statics/**/*.hsp").pipe(newer({
         dest : staticsDevDir,
         ext : ".js"
-    })).pipe(hspCompiler()).pipe(hspTranspiler()).pipe(gulp.dest(staticsDevDir));
+    })).pipe(hspCompiler().on('error', gutil.log)).pipe(hspTranspiler()).pipe(gulp.dest(staticsDevDir));
     gulp.src([ "src/client/statics/**/*.js", "src/common/**/*.js" ]).pipe(newer({
         dest : staticsDevDir
-    })).pipe(hspTranspiler()).pipe(gulp.dest(staticsDevDir));
+    })).pipe(hspTranspiler().on('error', gutil.log)).pipe(gulp.dest(staticsDevDir));
     gulp.src([ "src/client/statics/**", "!**/*.js", "!**/*.hsp" ]).pipe(newer({
         dest : staticsDevDir
     })).pipe(gulp.dest(staticsDevDir));

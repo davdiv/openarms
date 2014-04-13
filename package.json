@@ -32,6 +32,7 @@
     "gulp-hsp-transpiler": "0.0.1",
     "gulp-newer": "0.3.0",
     "gulp-rename": "1.2.0",
+    "gulp-util": "2.2.14",
     "hashspace": "0.0.1",
     "minimist": "0.0.8",
     "noder-js": "1.2.1",
