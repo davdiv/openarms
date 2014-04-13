@@ -1,11 +1,10 @@
-var navbar = require("./components/navbar.hsp.js");
+var navBar = require("./components/navBar.hsp.js");
 
-# template main(routeData)
-    <#navbar />
-    {if routeData.component}
-        <#routeData.component params="{routeData.params}" query="{routeData.query}" hash="{routeData.hash}" />
-    {else}
-        <div class="spinner modal-backdrop"></div>
+# template main(tabMgr)
+    {let activeTab = tabMgr.activeTab}
+    <#navBar tabMgr="{tabMgr}"/>
+    {if activeTab && !activeTab.processing}
+        <#activeTab.template tab="{activeTab}" />
     {/if}
 # /template
 

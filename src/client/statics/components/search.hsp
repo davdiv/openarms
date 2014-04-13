@@ -8,7 +8,7 @@ var computeSuggestions = function (event) {
             url: "/"
         }, {
             label : "Plus d'infos sur " + event.text,
-            url: "/?search=" + encodeURIComponent(event.text)
+            url: "/search?q=" + encodeURIComponent(event.text)
         } ]
     };
 };

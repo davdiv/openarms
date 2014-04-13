@@ -1,4 +1,9 @@
 module.exports = [ {
     "path" : "/",
-    "component" : "pages/home.hsp.js"
+    "module" : "pages/home.hsp.js",
+    "title" : "Accueil"
+}, {
+    "path" : "/search",
+    "module" : "pages/search.hsp.js",
+    "title" : "Recherche"
 } ];

@@ -1,0 +1,17 @@
+# template template(tab)
+    <div class="container-fluid">
+        Votre recherche: {tab.title}
+    </div>
+# /template
+
+# template tabTemplate(tab)
+    <span class="glyphicon glyphicon-search"></span> {tab.title}
+# /template
+
+module.exports = {
+    template : template,
+    tabTemplate : tabTemplate,
+    init : function (tab) {
+        tab.title = tab.query.q;
+    }
+};

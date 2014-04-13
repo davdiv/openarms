@@ -1,0 +1,38 @@
+var klass = require("hsp/klass");
+var search = require("./search.hsp.js");
+var tabs = require("./tabs.hsp.js");
+
+var NavBarCtrl = klass({
+    $constructor : function () {
+        this.expanded = false;
+    },
+    attributes : {
+        tabMgr : {
+            type : "object"
+        }
+    },
+    toggleExpanded : function () {
+        this.expanded = !this.expanded;
+    }
+});
+
+# template navBar using c:NavBarCtrl
+<div class="navbar navbar-default navbar-static-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" onclick="{c.toggleExpanded()}">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="/" class="navbar-brand">Openarms</a>
+        </div>
+        <div class="{c.expanded ? '' : 'collapse'} navbar-collapse">
+            <#search />
+            <#tabs tabMgr="{c.tabMgr}"/>
+        </div>
+    </div>
+</div>
+# /template
+
+module.exports = navBar;

@@ -1,7 +1,14 @@
-# template tpl(params, query)
+# template template(tab)
     <div class="container-fluid">
-        {if query.search}Votre recherche: {query.search}{/if}
+        Bienvenue dans Openarms!
     </div>
 # /template
 
-module.exports = tpl;
+# template tabTemplate(tab)
+    <span class="glyphicon glyphicon-home"></span>
+# /template
+
+module.exports = {
+    template : template,
+    tabTemplate : tabTemplate
+};
