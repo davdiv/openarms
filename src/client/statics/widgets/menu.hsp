@@ -1,0 +1,32 @@
+var klass = require("hsp/klass");
+
+var MenuController = klass({
+	attributes: {
+		title: {
+			type: "template"
+		},
+		content: {
+		    defaultContent: true,
+			type: "template"
+		}
+	},
+	$init: function() {
+		this.open = false;
+	},
+	toggle: function() {
+		this.open = !this.open;
+	}
+});
+
+# template menu using c:MenuController
+	<li class="{'dropdown','open':c.open}">
+		<a href="#" class="dropdown-toggle" onclick="{c.toggle()}">
+			<#c.title /> <b class="caret"></b>
+		</a>
+		<ul class="dropdown-menu">
+			<#c.content />
+		</ul>
+	</li>
+# /template
+
+module.exports = menu;

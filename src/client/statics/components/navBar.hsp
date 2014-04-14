@@ -1,6 +1,7 @@
 var klass = require("hsp/klass");
 var search = require("./search.hsp.js");
 var tabs = require("./tabs.hsp.js");
+var loginInfo = require("./loginInfo.hsp.js");
 
 var NavBarCtrl = klass({
     $constructor : function () {
@@ -30,6 +31,7 @@ var NavBarCtrl = klass({
         <div class="{c.expanded ? '' : 'collapse'} navbar-collapse">
             <#search />
             <#tabs tabMgr="{c.tabMgr}"/>
+            <#loginInfo />
         </div>
     </div>
 </div>

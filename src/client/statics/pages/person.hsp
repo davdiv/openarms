@@ -1,0 +1,35 @@
+var klass = require("hsp/klass");
+var titleImage = require("../widgets/titleImage.hsp.js");
+
+# template tabTemplate(tab)
+    <span class="glyphicon glyphicon-user"></span> {tab.title}
+# /template
+
+# template template(tab)
+    <#titleImage title="Fiche de {tab.title}" image="icon-person"/>
+    <div class="container">
+        <div class="row">
+            <div class="">
+                <table class="table table-striped">
+                    <tbody>
+                    <tr><th>Nom</th><th></th></tr>
+                    <tr><th>Prénom</th><th></th></tr>
+                    <tr><th>Téléphone</th><th></th></tr>
+                    <tr><th>Date de naissance</th><th></th></tr>
+                    <tr><th>Lieu de naissance</th><th></th></tr>
+                    </tbody>
+                </table>
+                <br>
+                <a href="/people/0123456789abcdef/visits/2014-04-01">Visite du 01/04/2014</a>
+            </div>
+        </div>
+    </div>
+# /template
+
+module.exports = {
+    template : template,
+    tabTemplate : tabTemplate,
+    init: function (tab) {
+        tab.title = "Personne";
+    }
+};

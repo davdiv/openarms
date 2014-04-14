@@ -1,6 +1,7 @@
 # template template(tab)
     <div class="container-fluid">
-        Votre recherche: {tab.title}
+        Votre recherche: {tab.title}<br>
+        <a href="/people/0123456789abcdef">Ouvrir la fiche utilisateur</a>
     </div>
 # /template
 

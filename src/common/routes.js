@@ -3,7 +3,19 @@ module.exports = [ {
     "module" : "pages/home.hsp.js",
     "title" : "Accueil"
 }, {
+    "path" : "/login",
+    "module" : "pages/login.hsp.js",
+    "title" : "Authentification"
+}, {
     "path" : "/search",
     "module" : "pages/search.hsp.js",
     "title" : "Recherche"
+}, {
+    "path" : "/people/:person",
+    "module" : "pages/person.hsp.js",
+    "title" : "Personne"
+}, {
+    "path" : "/people/:person/visits/:visit",
+    "module" : "pages/visit.hsp.js",
+    "title" : "Visite"
 } ];

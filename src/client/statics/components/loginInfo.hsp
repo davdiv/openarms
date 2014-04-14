@@ -1,0 +1,25 @@
+var menu = require("../widgets/menu.hsp.js");
+var login = require("../login");
+
+var logout = function (event) {
+    login.logout();
+};
+
+# template loginInfo
+    {let loginModule = login}
+    {let loginData = loginModule.data}
+    <ul class="nav navbar-nav navbar-right">
+        {if loginData.connected}
+            <#menu>
+                <@title><span class="glyphicon glyphicon-user"></span> {loginData.userDisplayName}</@title>
+                <@content>
+                    <li><a href="/login" onclick="{logout(event)}">Se déconnecter</a></li>
+                </@content>
+            </#menu>
+        {else}
+            <li><a href="/login"><span class="glyphicon glyphicon-user"></span> Se connecter</a></li>
+        {/if}
+    </ul>
+# /template
+
+module.exports = loginInfo;

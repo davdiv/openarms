@@ -1,11 +1,11 @@
 # template template(tab)
     <div class="container-fluid">
-        Bienvenue dans Openarms!
+        Visite
     </div>
 # /template
 
 # template tabTemplate(tab)
-    <span class="glyphicon glyphicon-home"></span> {tab.title}
+    <span class="glyphicon glyphicon-calendar"></span> {tab.title}
 # /template
 
 module.exports = {

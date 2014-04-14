@@ -1,0 +1,62 @@
+var klass = require("hsp/klass");
+var titleImage = require("../widgets/titleImage.hsp.js");
+var login = require("../login");
+
+var LoginCtrl = klass({
+    attributes : {
+        tab : {
+            type : "object"
+        }
+    },
+    $init : function () {
+        this.data = this.tab.data;
+    },
+    login : function () {
+        this.tab.processing = true;
+        this.data.password = "";
+        login.login({
+            login : this.data.login,
+            password : this.data.password
+        }).thenSync(this.tab.remove.bind(this.tab));
+    }
+});
+
+# template tabTemplate(tab)
+    <span class="glyphicon glyphicon-lock"></span> {tab.title}
+# /template
+
+# template template using c:LoginCtrl
+    {let loginModule = login}
+    <#titleImage image="icon-lock" title="Authentification"/>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-3 col-xs-10 col-xs-offset-1">
+                {if loginModule.data.connected}
+                    <p>Vous êtes connecté en tant qu'utilisateur <b>{loginModule.data.userDisplayName}</b>.</p>
+                    <button type="submit" class="btn btn-default" onclick="{login.logout()}">Se déconnecter</button>
+                {else}
+                    <div class="form-group">
+                        <label for="username">Nom d'utilisateur</label>
+                        <input type="text" class="form-control" id="username" placeholder="Nom d'utilisateur" value="{c.data.login}">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Mot de passe</label>
+                        <input type="password" class="form-control" id="password" placeholder="Mot de passe" value="{c.data.password}">
+                    </div>
+                    <button type="submit" class="btn btn-default" onclick="{c.login()}">Connexion</button>
+                {/if}
+            </div>
+        </div>
+    </div>
+# /template
+
+module.exports = {
+    template : template,
+    tabTemplate : tabTemplate,
+    init : function (tab) {
+        tab.data = {
+            login : login.data.userLogin,
+            password : ""
+        };
+    }
+};
