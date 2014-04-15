@@ -2,6 +2,7 @@ var menu = require("../widgets/menu.hsp.js");
 var login = require("../login");
 
 var logout = function (event) {
+    event.preventDefault();
     login.logout();
 };
 
@@ -13,7 +14,7 @@ var logout = function (event) {
             <#menu>
                 <@title><span class="glyphicon glyphicon-user"></span> {loginData.userDisplayName}</@title>
                 <@content>
-                    <li><a href="/login" onclick="{logout(event)}">Se déconnecter</a></li>
+                    <li><a href="#" onclick="{logout(event)}">Se déconnecter</a></li>
                 </@content>
             </#menu>
         {else}
