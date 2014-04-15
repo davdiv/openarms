@@ -1,14 +1,15 @@
 var autoComplete = require("../widgets/autoComplete.hsp.js");
 var page = require("page");
+var searchUrl = "/search?q=";
 
 var computeSuggestions = function (event) {
     event.response = {
         suggestions : [ {
             label : "Page d'accueil",
-            url: "/"
+            url : "/"
         }, {
             label : "Plus d'infos sur " + event.text,
-            url: "/search?q=" + encodeURIComponent(event.text)
+            url : searchUrl + encodeURIComponent(event.text)
         } ]
     };
 };
@@ -19,16 +20,22 @@ var chooseSuggestion = function (event) {
     event.text = "";
 };
 
+var enter = function (event) {
+    page(searchUrl + encodeURIComponent(event.text));
+    event.text = "";
+};
+
 # template displayLine(data)
     {data.label}
 # /template
 
 # template search
-<div class="navbar-form navbar-left">
-    <div class="form-group">
-        <#autoComplete onComputeSuggestions="{computeSuggestions(event)}" onChooseSuggestion="{chooseSuggestion(event)}" displaySuggestion="{displayLine}" />
+    <div class="navbar-form navbar-left">
+        <div class="form-group">
+            <#autoComplete onComputeSuggestions="{computeSuggestions(event)}" onChooseSuggestion="{chooseSuggestion(event)}" onEnter="{enter(event)}" displaySuggestion="{displayLine}"/>
+        </div>
     </div>
-</div>
 # /template
+
 
 module.exports = search;
