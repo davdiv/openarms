@@ -6,7 +6,7 @@ var routes = require("./routes");
 var initTab = function (module) {
     this.module = module;
     this.template = module.template;
-    // this.tabTemplate = module.tabTemplate; // temporarily disabled because of a bug in hashspace
+    this.tabTemplate = module.tabTemplate;
     if (module.init) {
         return module.init(this);
     }
