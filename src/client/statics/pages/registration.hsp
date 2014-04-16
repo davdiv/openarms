@@ -1,0 +1,47 @@
+var promise = require("noder-js/promise");
+var editable = require("../components/editable.hsp.js");
+
+var delay = function (returnValue, delay) {
+    var defer = promise();
+    setTimeout(function() {
+        defer.resolve(returnValue);
+    },delay);
+    return defer.promise();
+};
+
+var refresh = function(event) {
+    event.returnValue = delay({
+        myValue:"",
+        myTime: new Date().getTime()
+    }, 2000);
+};
+
+var save = function (event, value) {
+    event.returnValue = delay(value, 1000);
+};
+
+# template viewer(data)
+    {data.myValue}<br>{data.myTime}
+# /template
+
+# template editor(data)
+    <input type="text" value="{data.myValue}"><br>{data.myTime}
+# /template
+
+# template template(tab)
+    <div class="container-fluid">
+        <#editable savedData="{tab.savedData}" editedData="{tab.editedData}" onRefresh="{refresh(event)}" onSave="{save(event, tab.editedData)}" viewer="{viewer}" editor="{editor}"/>
+    </div>
+# /template
+
+# template tabTemplate(tab)
+    <span class="glyphicon glyphicon-file"></span> {tab.title}
+# /template
+
+module.exports = {
+    template : template,
+    tabTemplate : tabTemplate,
+    init: function (tab) {
+        tab.savedData = delay({myTime:"initial time", myValue:"initial value"},2000);
+    }
+};

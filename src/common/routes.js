@@ -18,4 +18,8 @@ module.exports = [ {
     "path" : "/people/:person/visits/:visit",
     "module" : "pages/visit.hsp.js",
     "title" : "Visite"
+}, {
+    "path" : "/registrations/:registration",
+    "module" : "pages/registration.hsp.js",
+    "title" : "Inscription"
 } ];

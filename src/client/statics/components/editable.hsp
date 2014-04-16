@@ -1,0 +1,168 @@
+var klass = require("hsp/klass");
+
+var isPromise = function (value) {
+    return value && value.then;
+};
+
+var replacer = function (key, value) {
+    if (/^\+/.test(key)) {
+        return undefined;
+    }
+    return value;
+};
+
+var copy = function (original) {
+    if (isPromise(original)) {
+        return original.then(copy);
+    }
+    if (original != null) {
+        return JSON.parse(JSON.stringify(original,replacer));
+    }
+};
+
+var EditableCtrl = klass({
+    attributes: {
+        savedData: {
+            type: "object",
+            binding: "2-way"
+        },
+        editedData: {
+            type: "object",
+            binding: "2-way"
+        },
+        currentView: {
+            type: "string",
+            binding: "2-way"
+        },
+        onEdit: {
+            type: "callback"
+        },
+        onRefresh: {
+            type: "callback"
+        },
+        onSave: {
+            type: "callback"
+        },
+        onCancel: {
+            type: "callback"
+        },
+        viewer: {
+            type: "object" // in fact, this is a template
+        },
+        editor: {
+            type: "object" // in fact, this is a template
+        }
+    },
+    refresh: function() {
+        this.callEvent("onRefresh", this.savedData, function(res) {
+            this.savedData = res;
+        });
+    },
+    edit: function () {
+        if (this.editedData) {
+            // already started editing before, come back to the edition tab
+            this.currentView = "edit";
+            return;
+        }
+        this.callEvent("onEdit", null, function(res) {
+            this.editedData = res || copy(this.savedData);
+            this.currentView = "edit";
+        });
+    },
+    save: function () {
+        this.callEvent("onSave", this.editedData, function (res) {
+            this.savedData = res || this.editedData;
+            this.editedData = null;
+        });
+    },
+    cancel: function () {
+        this.callEvent("onCancel", null, function () {
+            this.editedData = null;
+        });
+    },
+    callEvent : function (eventName, returnValue, defaultAction) {
+        var event = {
+            preventDefault: false,
+            returnValue: returnValue
+        };
+        this[eventName](event);
+        if (!event.preventDefault) {
+            defaultAction.call(this, event.returnValue);
+        }
+    },
+    setCurrentView: function (currentView, event) {
+        event.preventDefault();
+        this.currentView = currentView;
+    },
+    $init: function () {
+        this.onSavedDataChange();
+        this.onEditedDataChange();
+    },
+    onSavedDataChange: function () {
+        this.resolvePromise("savedData");
+    },
+    onEditedDataChange: function () {
+        this.resolvePromise("editedData");
+    },
+    resolvePromise: function (propertyName) {
+        var self = this;
+        var value = self[propertyName];
+        if (isPromise(value)) {
+            value.then(function (resolvedValue) {
+                var newValue = self[propertyName];
+                if (newValue == value) {
+                    self[propertyName] = resolvedValue;
+                }
+            });
+        }
+    }
+});
+
+# template tab(c, view, title)
+    <li class="{'active':c.currentView == view}"><a href="#" onclick="{c.setCurrentView(view,event)}">{title}</a></li>
+# /template
+
+# template editable using c:EditableCtrl
+    <div class="btn-group contextual">
+        {if !c.editedData || c.currentView == "saved"}
+            <button type="button" class="btn btn-default" title="Modifier" onclick="{c.edit()}"><span class="glyphicon glyphicon-edit"></span></button>
+            <button type="button" class="btn btn-default" title="Actualiser" onclick="{c.refresh()}"><span class="glyphicon glyphicon-refresh"></span></button>
+        {else}
+            {if !isPromise(c.editedData)}
+                <button type="button" class="btn btn-default" title="Enregistrer les modifications" onclick="{c.save()}"><span class="glyphicon glyphicon-save"></span></button>
+            {/if}
+            <button type="button" class="btn btn-default" title="Annuler les modifications" onclick="{c.cancel()}"><span class="glyphicon glyphicon-remove"></span></button>
+        {/if}
+    </div>
+    {if c.editedData}
+        <ul class="nav nav-tabs">
+            <#tab c="{c}" view="saved" title="Version enregistrée"/>
+            <#tab c="{c}" view="edit" title="Modifications"/>
+            <#tab c="{c}" view="preview" title="Aperçu"/>
+        </ul><br>
+        {if c.currentView != "saved" && isPromise(c.editedData)}
+            <span class="spinner"></span> Chargement...
+        {else if c.currentView == "edit"}
+            <#c.editor data="{c.editedData}" />
+        {else if c.currentView == "preview"}
+            <#c.viewer data="{c.editedData}" />
+        {/if}
+    {/if}
+    {if !c.editedData || c.currentView == "saved"}
+        {if isPromise(c.savedData)}
+            <span class="spinner"></span> Chargement...
+        {else}
+            <#c.viewer data="{c.savedData}" />
+        {/if}
+    {else}
+        <br><br>
+        {if !isPromise(c.editedData)}
+            <button type="button" class="btn btn-primary" onclick="{c.save()}"><span class="glyphicon glyphicon-save"></span> Enregistrer</button>
+        &nbsp;
+        {/if}
+        <button type="button" class="btn btn-default" onclick="{c.cancel()}"><span class="glyphicon glyphicon-remove"></span> Annuler</button>
+    {/if}
+# /template
+
+module.exports = editable;
+

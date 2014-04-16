@@ -20,6 +20,7 @@ var titleImage = require("../widgets/titleImage.hsp.js");
                     </tbody>
                 </table>
                 <br>
+                <a href="/registrations/0123456789cccdef">Inscription</a><br>
                 <a href="/people/0123456789abcdef/visits/2014-04-01">Visite du 01/04/2014</a>
             </div>
         </div>

@@ -39,3 +39,7 @@
 .nav li a a.close {
 	margin-right: -5px;
 }
+
+.contextual {
+	float: right;
+}
