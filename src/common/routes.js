@@ -15,7 +15,7 @@ module.exports = [ {
     "module" : "pages/person.hsp.js",
     "title" : "Personne"
 }, {
-    "path" : "/people/:person/visits/:visit",
+    "path" : "/visits/:visit",
     "module" : "pages/visit.hsp.js",
     "title" : "Visite"
 }, {
