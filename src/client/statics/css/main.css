@@ -1,15 +1,19 @@
-.spinner, .icon-male, .icon-female, .icon-lock, .icon-person {
+.spinner, [class^=img-lg-], [class^=img-sm-] {
 	display: inline-block;
 	vertical-align: middle;
 	background-position:center;
 	background-repeat:no-repeat;
+}
+
+.spinner, [class^=img-sm-] {
 	min-width: 16px;
 	min-height: 16px;
 }
 
-.icon-lock, .icon-person {
+[class^=img-lg-] {
 	min-width: 128px;
 	min-height: 128px;
+	margin: 16px;
 }
 
 .spinner.modal-backdrop {
@@ -20,20 +24,28 @@
 	background-image: url(../images/spinner.gif);
 }
 
-.icon-male {
-	background-image: url(../images/male.png);
+.img-lg-portrait-male {
+	background-image: url(../images/portrait-male.png);
 }
 
-.icon-female {
-	background-image: url(../images/female.png);
+.img-lg-portrait-female {
+	background-image: url(../images/portrait-female.png);
 }
 
-.icon-lock {
+.img-sm-symbol-male {
+	background-image: url(../images/symbol-male.png);
+}
+
+.img-sm-symbol-female {
+	background-image: url(../images/symbol-female.png);
+}
+
+.img-lg-lock {
 	background-image: url(../images/lock.png);
 }
 
-.icon-person {
-	background-image: url(../images/person.png);
+.img-lg-portrait {
+	background-image: url(../images/portrait.png);
 }
 
 .nav li a a.close {
@@ -42,4 +54,14 @@
 
 .contextual {
 	float: right;
+}
+
+.block-container.right {
+	text-align: right;
+}
+
+.block {
+	text-align: left;
+	display: inline-block;
+	vertical-align: middle;
 }

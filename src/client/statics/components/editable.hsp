@@ -1,14 +1,8 @@
 var klass = require("hsp/klass");
+var clone = require("../serialization").clone;
 
 var isPromise = function (value) {
     return value && value.then;
-};
-
-var replacer = function (key, value) {
-    if (/^\+/.test(key)) {
-        return undefined;
-    }
-    return value;
 };
 
 var copy = function (original) {
@@ -16,7 +10,7 @@ var copy = function (original) {
         return original.then(copy);
     }
     if (original != null) {
-        return JSON.parse(JSON.stringify(original,replacer));
+        return clone(original);
     }
 };
 
@@ -124,20 +118,24 @@ var EditableCtrl = klass({
 
 # template editable using c:EditableCtrl
     <div class="btn-group contextual">
-        {if !c.editedData || c.currentView == "saved"}
+        {if (!c.editedData || c.currentView == "saved") && c.savedData}
             <button type="button" class="btn btn-default" title="Modifier" onclick="{c.edit()}"><span class="glyphicon glyphicon-edit"></span></button>
             <button type="button" class="btn btn-default" title="Actualiser" onclick="{c.refresh()}"><span class="glyphicon glyphicon-refresh"></span></button>
-        {else}
+        {else if c.editedData}
             {if !isPromise(c.editedData)}
-                <button type="button" class="btn btn-default" title="Enregistrer les modifications" onclick="{c.save()}"><span class="glyphicon glyphicon-save"></span></button>
+                <button type="button" class="btn btn-default" title="Enregistrer" onclick="{c.save()}"><span class="glyphicon glyphicon-save"></span></button>
             {/if}
-            <button type="button" class="btn btn-default" title="Annuler les modifications" onclick="{c.cancel()}"><span class="glyphicon glyphicon-remove"></span></button>
+            {if c.savedData}
+                <button type="button" class="btn btn-default" title="Annuler les modifications" onclick="{c.cancel()}"><span class="glyphicon glyphicon-remove"></span></button>
+            {/if}
         {/if}
     </div>
     {if c.editedData}
         <ul class="nav nav-tabs">
+            {if c.savedData}
             <#tab c="{c}" view="saved" title="Version enregistrée"/>
-            <#tab c="{c}" view="edit" title="Modifications"/>
+            {/if}
+            <#tab c="{c}" view="edit" title="Edition"/>
             <#tab c="{c}" view="preview" title="Aperçu"/>
         </ul><br>
         {if c.currentView != "saved" && isPromise(c.editedData)}
@@ -151,16 +149,21 @@ var EditableCtrl = klass({
     {if !c.editedData || c.currentView == "saved"}
         {if isPromise(c.savedData)}
             <span class="spinner"></span> Chargement...
-        {else}
+        {else if c.savedData}
             <#c.viewer data="{c.savedData}" />
         {/if}
     {else}
-        <br><br>
+        <div class="block-container right">
+        <div class="block">
         {if !isPromise(c.editedData)}
             <button type="button" class="btn btn-primary" onclick="{c.save()}"><span class="glyphicon glyphicon-save"></span> Enregistrer</button>
-        &nbsp;
         {/if}
-        <button type="button" class="btn btn-default" onclick="{c.cancel()}"><span class="glyphicon glyphicon-remove"></span> Annuler</button>
+        &nbsp;
+        {if c.savedData}
+            <button type="button" class="btn btn-default" onclick="{c.cancel()}"><span class="glyphicon glyphicon-remove"></span> Annuler</button>
+        {/if}
+        </div>
+        </div>
     {/if}
 # /template
 

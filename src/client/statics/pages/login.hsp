@@ -27,7 +27,7 @@ var LoginCtrl = klass({
 
 # template template using c:LoginCtrl
     {let loginModule = login}
-    <#titleImage image="icon-lock" title="Authentification"/>
+    <#titleImage image="img-lg-lock" title="Authentification"/>
     <div class="container">
         <div class="row">
             <div class="col-sm-6 col-sm-offset-3 col-xs-10 col-xs-offset-1">

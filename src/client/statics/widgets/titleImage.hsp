@@ -2,11 +2,8 @@
 <div class="container">
     <div class="row">
         <div class="col-sm-6 col-sm-offset-3 col-xs-10 col-xs-offset-1">
-            <div class="{image} img-responsive visible-xs"></div>
-            <div class="{image} img-responsive hidden-xs" style="position:absolute;right:0px;top:0px;"></div>
-            <div class="hidden-xs" style="padding-top:30px;"></div>
+            <div class="{image} img-responsive contextual"></div>
             <h3>{title}</h3>
-            <div class="hidden-xs" style="padding-right:128px;padding-bottom:50px;"></div>
         </div>        
     </div>
 </div>

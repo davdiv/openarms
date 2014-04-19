@@ -1,0 +1,19 @@
+var computeAge = require("../../dates/age");
+
+# template name(data)
+{if data && data.sex}
+<span class="img-sm-symbol-{data.sex}"></span>
+{else}
+<span class="glyphicon glyphicon-user"></span>
+{/if}
+{if data && (data.firstName || data.familyName || data.birthFamilyName)}
+&nbsp;{data.firstName} {data.familyName || data.birthFamilyName}
+{else}
+&nbsp;Personne
+{/if}
+{if data && data.birthDate}
+({computeAge(data.birthDate)})
+{/if}
+# /template
+
+module.exports = name;

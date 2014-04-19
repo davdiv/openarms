@@ -1,0 +1,41 @@
+var klass = require("hsp/klass");
+var parseDate = require("../dates/parse");
+var formatDate = require("../dates/format").date;
+
+var DateFieldController = klass({
+	attributes: {
+		value: {
+			binding: "2-way",
+			type: "object"
+		},
+		error: {
+			binding: "2-way",
+			type: "boolean"
+		}
+	},
+	$init: function() {
+	  this.onValueChange();
+	},
+	onValueChange : function () {
+		this.internalValue = formatDate(this.value);
+		this.updateError();
+	},
+	onInternalValueChange : function() {
+		this.value = parseDate(this.internalValue);
+		this.updateError();
+	},
+	updateError : function () {
+		this.error = this.internalValue && !this.value;
+	},
+	blur: function () {
+		if (!this.error) {
+			this.internalValue = formatDate(this.value);
+		}
+	}
+});
+
+# template dateField using c:DateFieldController
+<input type="text" value="{c.internalValue}" onblur="{c.blur()}" class="form-control input-sm"/>
+# /template
+
+module.exports = dateField;

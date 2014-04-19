@@ -1,29 +1,38 @@
 var klass = require("hsp/klass");
-var titleImage = require("../widgets/titleImage.hsp.js");
+var formatDate = require("../dates/format").date;
+var editable = require("../components/editable.hsp.js");
+var computeAge = require("../dates/age");
+var identityCard = require("../components/person/identityCard.hsp.js");
+var editIdentityCard = require("../components/person/editIdentityCard.hsp.js");
+var personName = require("../components/person/name.hsp.js");
 
 # template tabTemplate(tab)
-    <span class="glyphicon glyphicon-user"></span> {tab.title}
+    <span>// this span is needed because of a bug in hashspace
+    <#personName data="{tab.savedIdentity}" />
+    </span>
+# /template
+
+# template viewer(data)
+    <div>
+    <#identityCard data="{data}" />
+    </div>
 # /template
 
 # template template(tab)
-    <#titleImage title="Fiche de {tab.title}" image="icon-person"/>
-    <div class="container">
-        <div class="row">
-            <div class="">
-                <table class="table table-striped">
-                    <tbody>
-                    <tr><th>Nom</th><th></th></tr>
-                    <tr><th>Prénom</th><th></th></tr>
-                    <tr><th>Téléphone</th><th></th></tr>
-                    <tr><th>Date de naissance</th><th></th></tr>
-                    <tr><th>Lieu de naissance</th><th></th></tr>
-                    </tbody>
-                </table>
-                <br>
-                <a href="/registrations/0123456789cccdef">Inscription</a><br>
-                <a href="/visits/0123456789abcdef">Visite du 01/04/2014</a>
-            </div>
-        </div>
+    <div class="container-fluid">
+        {let identity = tab.savedIdentity}
+        <h2><span class="glyphicon glyphicon-chevron-right"></span> Identité</h2>
+        <#editable savedData="{tab.savedIdentity}" editedData="{tab.editedIdentity}" viewer="{viewer}" editor="{editIdentityCard}" currentView="{tab.identityView}"/>
+        <hr>
+        {if tab.savedIdentity}
+        <h2><span class="glyphicon glyphicon-chevron-right"></span> Inscription</h2>
+            <p>{identity.firstName||"Cette personne"} n'appartient à aucune famille inscrite.</p>
+            <p><a href="/registrations/new" class="btn btn-primary">Nouvelle inscription</a></p>
+        <hr>
+        <h2><span class="glyphicon glyphicon-chevron-right"></span> Dernières visites</h2>
+        <a href="/registrations/0123456789cccdef">Inscription</a><br>
+        <a href="/visits/0123456789abcdef">Visite du 01/04/2014</a>
+        {/if}
     </div>
 # /template
 
@@ -31,6 +40,8 @@ module.exports = {
     template : template,
     tabTemplate : tabTemplate,
     init: function (tab) {
-        tab.title = "Personne";
+        tab.savedIdentity = null;
+        tab.editedIdentity = {};
+        tab.identityView = "edit";
     }
 };

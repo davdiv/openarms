@@ -1,0 +1,134 @@
+var klass = require("hsp/klass");
+var formatDate = require("../../dates/format").date;
+var computeAge = require("../../dates/age");
+var sexField = require("../../widgets/sexField.hsp.js");
+var birthDateField = require("../../widgets/birthDateField.hsp.js");
+var contactDetailTypes = {
+    phone : "Téléphone",
+    email: "Adresse électronique"
+};
+
+var Ctrl = klass({
+   attributes: {
+       data: {
+           type: "object",
+           binding: "1-way"
+       }
+   },
+   addContactDetail: function (type) {
+       var data = this.data;
+       if (!data.contactDetails) {
+           data.contactDetails = [];
+       }
+       data.contactDetails.push({type: type});
+   },
+   removeContactDetail: function (index, contactDetail) {
+       var data = this.data;
+       if (!data.contactDetails[index] == contactDetail) {
+           // safety check
+           return;
+       }
+       data.contactDetails.splice(index, 1);
+       if (data.contactDetails.length == 0) {
+           data.contactDetails = null;
+       }
+   }
+});
+
+# template editIdentityCard using c:Ctrl
+{let data = c.data}
+<div class="form-horizontal">
+
+<div class="form-group">
+<label class="col-sm-3 control-label">Prénom</label>
+<div class="col-sm-9">
+<input class="form-control input-sm" type="text" value="{data.firstName}">
+</div>
+</div>
+
+<div class="form-group">
+<label class="col-sm-3 control-label">Nom de famille <small>(de naissance)</small></label>
+<div class="col-sm-9">
+<input class="form-control input-sm" type="text" value="{data.birthFamilyName}">
+</div>
+</div>
+
+<div class="form-group">
+<label class="col-sm-3 control-label">Nom d'usage <small>(si différent)</small></label>
+<div class="col-sm-9">
+<input class="form-control input-sm" type="text" value="{data.familyName}" placeholder="{data.birthFamilyName||''}">
+</div>
+</div>
+
+<div class="form-group">
+<label class="col-sm-3 control-label">Sexe</label>
+<div class="col-sm-9">
+<#sexField value="{data.sex}"/>
+</div>
+</div>
+
+<div class="form-group">
+<label class="col-sm-3 control-label">Date de naissance</label>
+<div class="col-sm-9">
+<#birthDateField value="{data.birthDate}"/>
+</div>
+</div>
+
+<div class="form-group">
+<label class="col-sm-3 control-label">Ville de naissance</label>
+<div class="col-sm-9">
+<input class="form-control input-sm" type="text" value="{data.birthCity}">
+</div>
+</div>
+
+<div class="form-group">
+<label class="col-sm-3 control-label">Pays de naissance</label>
+<div class="col-sm-9">
+<input class="form-control input-sm" type="text" value="{data.birthCountry}">
+</div>
+</div>
+
+<div class="form-group">
+<label class="col-sm-3 control-label">Nationalité(s)</label>
+<div class="col-sm-9">
+<input class="form-control input-sm" type="text" value="{data.nationalities}">
+</div>
+</div>
+
+{if data.contactDetails}
+{foreach contactDetailIndex,contactDetail in data.contactDetails}
+<div class="form-group">
+<label class="col-sm-3 control-label">{contactDetailTypes[contactDetail.type]}</label>
+<div class="col-sm-9">
+<div class="form-inline input-group input-group-sm">
+<span class="input-group-addon">
+{if contactDetail.type == "email"}
+    @
+{else if contactDetail.type == "phone"}
+    <span class="glyphicon glyphicon-phone-alt"></span>
+{/if}
+</span>
+<input class="form-control input-sm" type="text" value="{contactDetail.value}">
+<span class="input-group-btn">
+<button type="button" class="btn btn-default" onclick="{c.removeContactDetail(contactDetailIndex, contactDetail)}"><span class="glyphicon glyphicon-remove"></span></button>
+</span>
+</div>
+</div>
+</div>
+{/foreach}
+{/if}
+
+<div class="form-group">
+<label class="col-sm-3 control-label">Ajouter des coordonnées</label>
+<div class="col-sm-9">
+<div class="btn-group">
+<button type="button" class="btn btn-default" onclick="{c.addContactDetail('email')}">@</button>
+<button type="button" class="btn btn-default" onclick="{c.addContactDetail('phone')}"><span class="glyphicon glyphicon-phone-alt"></span></button>
+</div>
+</div>
+</div>
+
+</div>
+# /template
+
+module.exports = editIdentityCard;

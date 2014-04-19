@@ -1,0 +1,39 @@
+var formatDate = require("../../dates/format").date;
+var computeAge = require("../../dates/age");
+
+var contactDetailProtocol = {
+    "phone": "tel:",
+    "email":"mailto:"
+}
+
+# template identityCard(data)
+<div class="img-lg-portrait{data.sex ? '-' + data.sex : ''} img-responsive block"></div>
+<div class="block">
+<h3>{data.firstName} {data.familyName} {data.birthFamilyName}</h3>
+{if data.birthDate}
+    <h4>{computeAge(data.birthDate)} ans <small>{formatDate(data.birthDate)}</small></h4>
+{/if}
+<p>
+{if data.birthCity}
+    Ville de naissance: {data.birthCity} {if data.birthCountry}({data.birthCountry}){/if}<br>
+{else if data.birthCountry}
+    Pays de naissance: {data.birthCountry}<br>
+{/if}
+{if data.nationalities}
+    Nationalité(s): {data.nationalities}<br>
+{/if}
+
+{if data.contactDetails && data.contactDetails.length > 0}
+Coordonnées:
+{foreach contactDetail in data.contactDetails}
+{if contactDetail.type == "email"}@{else if contactDetail.type == "phone"}
+<span class="glyphicon glyphicon-phone-alt"></span>
+{/if}&nbsp;<a target="_blank" href="{contactDetailProtocol[contactDetail.type]}{contactDetail.value}">{contactDetail.value}</a>{if !contactDetail_islast}, {/if}
+{/foreach}<br>
+{/if}
+
+</p>
+</div>
+# /template
+
+module.exports = identityCard;
