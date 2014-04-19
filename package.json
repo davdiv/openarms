@@ -13,6 +13,7 @@
   },
   "bin": "openarms",
   "scripts": {
+  	"preinstall": "bash preinstall.sh",
     "prepublish": "gulp prepublish",
     "start": "node openarms --dev"
   },
@@ -33,9 +34,9 @@
     "gulp-newer": "0.3.0",
     "gulp-rename": "1.2.0",
     "gulp-util": "2.2.14",
-    "hashspace": "0.0.1",
+    "hashspace": "",
     "minimist": "0.0.8",
-    "noder-js": "1.2.1",
+    "noder-js": "",
     "page": "1.3.7",
     "q": "1.0.1",
     "qs": "0.6.6",
