@@ -6,8 +6,8 @@ var computeAge = require("../../dates/age");
 {else}
 <span class="glyphicon glyphicon-user"></span>
 {/if}
-{if data && (data.firstName || data.familyName || data.birthFamilyName)}
-&nbsp;{data.firstName} {data.familyName || data.birthFamilyName}
+{if data && (data.firstName || data.lastName)}
+&nbsp;{data.firstName} {data.lastName}
 {else}
 &nbsp;Personne
 {/if}

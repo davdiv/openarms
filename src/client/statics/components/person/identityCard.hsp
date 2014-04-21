@@ -6,10 +6,11 @@ var contactDetailProtocol = {
     "email":"mailto:"
 }
 
+
 # template identityCard(data)
 <div class="img-lg-portrait{data.sex ? '-' + data.sex : ''} img-responsive block"></div>
 <div class="block">
-<h3>{data.firstName} {data.familyName} {data.birthFamilyName}</h3>
+<h3>{data.firstName} {data.lastName} <small>{data.familyName}</small></h3>
 {if data.birthDate}
     <h4>{computeAge(data.birthDate)} ans <small>{formatDate(data.birthDate)}</small></h4>
 {/if}

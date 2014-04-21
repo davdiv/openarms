@@ -65,16 +65,16 @@ var Ctrl = klass({
 </div>
 
 <div class="form-group">
-<label class="col-sm-3 control-label">Nom de famille <small>(de naissance)</small></label>
+<label class="col-sm-3 control-label">Nom</label>
 <div class="col-sm-9">
-<input class="form-control input-sm" type="text" value="{data.birthFamilyName}">
+<input class="form-control input-sm" type="text" value="{data.lastName}">
 </div>
 </div>
 
 <div class="form-group">
-<label class="col-sm-3 control-label">Nom d'usage <small>(si différent)</small></label>
+<label class="col-sm-3 control-label">Nom de naissance</label>
 <div class="col-sm-9">
-<input class="form-control input-sm" type="text" value="{data.familyName}" placeholder="{data.birthFamilyName||''}">
+<input class="form-control input-sm" type="text" value="{data.familyName}" placeholder="{data.lastName||''}">
 </div>
 </div>
 
