@@ -16,6 +16,15 @@ var stopProcessing = function () {
     this.processing = false;
 };
 
+var replaceUrl = function (oldUrl, newUrl) {
+    setTimeout(function () {
+        var url = location.pathname + location.search + location.hash;
+        if (url == oldUrl) {
+            page.replace(newUrl);
+        }
+    }, 1);
+};
+
 var Tab = function (route, ctxt) {
     this.url = ctxt.canonicalPath;
     this.params = ctxt.params;
@@ -60,6 +69,19 @@ Tab.prototype.remove = function () {
         }
         page(index < 0 ? "/" : tabs[index].url);
     }
+};
+
+Tab.prototype.setQuery = function (newQuery) {
+    var oldUrl = this.url;
+    var newQueryString = qs.stringify(newQuery);
+    if (newQueryString) {
+        newQueryString = "?" + newQueryString;
+    }
+    var newUrl = oldUrl.replace(/(?:\?[^#]*)?(?=#|$)/, newQueryString);
+    this.query = newQuery;
+    this.url = newUrl;
+
+    replaceUrl(oldUrl, newUrl);
 };
 
 var findTabWithUrl = function (url) {

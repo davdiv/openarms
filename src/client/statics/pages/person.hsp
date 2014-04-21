@@ -36,12 +36,26 @@ var personName = require("../components/person/name.hsp.js");
     </div>
 # /template
 
+var createIdentity = function (query) {
+    var res = {};
+    res.firstName = query.firstName;
+    res.lastName = query.lastName;
+    return res;
+};
+
 module.exports = {
     template : template,
     tabTemplate : tabTemplate,
     init: function (tab) {
-        tab.savedIdentity = null;
-        tab.editedIdentity = {};
-        tab.identityView = "edit";
+        if (tab.params.person == "new") {
+            tab.savedIdentity = null;
+            tab.editedIdentity = createIdentity(tab.query);
+            tab.identityView = "edit";
+
+            tab.setQuery({id: new Date().getTime()});
+        } else {
+            // need to load it from somewhere
+            tab.savedIdentity = {};
+        }
     }
 };
