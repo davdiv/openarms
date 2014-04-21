@@ -20,7 +20,7 @@ var contactDetailProtocol = {
     Pays de naissance: {data.birthCountry}<br>
 {/if}
 {if data.nationalities}
-    Nationalité(s): {data.nationalities}<br>
+    Nationalité(s): {foreach nationality in data.nationalities}{nationality.value}{if !nationality_islast}, {/if}{/foreach}<br>
 {/if}
 
 {if data.contactDetails && data.contactDetails.length > 0}
