@@ -1,0 +1,28 @@
+var klass = require("hsp/klass");
+
+var closePage = function (event, page) {
+    event.preventDefault();
+    page.close();
+};
+
+# template pages(pageMgr)
+    <ul class="nav navbar-nav">
+    {foreach page in pageMgr.pages}
+        <li class="{'active': page === pageMgr.activePage}">
+            <a href="{page.url}">
+            {if page.iconTemplate}
+                <#page.iconTemplate page="{page}" />
+            {else if page.processing}
+                <span class="spinner"></span> {page.title}
+            {else}
+                {page.title}
+            {/if}
+            &nbsp;<a class="close" onclick="{closePage(event, page)}">&times;</a>
+            </a>
+        </li>
+    {/foreach}
+    </ul>
+# /template
+
+
+module.exports = pages;

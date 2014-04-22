@@ -1,12 +1,12 @@
-var page = require("page");
+var pagejs = require("page");
 var qs = require("qs");
 var asyncRequire = require("noder-js/asyncRequire").create(module);
 var routes = require("./routes");
 
-var initTab = function (module) {
+var initPage = function (module) {
     this.module = module;
     this.template = module.template;
-    this.tabTemplate = module.tabTemplate;
+    this.iconTemplate = module.iconTemplate;
     if (module.init) {
         return module.init(this);
     }
@@ -20,20 +20,20 @@ var replaceUrl = function (oldUrl, newUrl) {
     setTimeout(function () {
         var url = location.pathname + location.search + location.hash;
         if (url == oldUrl) {
-            page.replace(newUrl);
+            pagejs.replace(newUrl);
         }
     }, 1);
 };
 
-var Tab = function (route, ctxt) {
+var Page = function (route, ctxt) {
     this.url = ctxt.canonicalPath;
     this.params = ctxt.params;
     this.query = qs.parse(ctxt.querystring);
     this.title = route.title;
     this.template = null;
-    this.tabTemplate = null;
+    this.iconTemplate = null;
     this.processing = true;
-    asyncRequire(route.module).thenSync(initTab.bind(this)).thenSync(stopProcessing.bind(this)).end();
+    asyncRequire(route.module).thenSync(initPage.bind(this)).thenSync(stopProcessing.bind(this)).end();
 };
 
 var continueClosing = function (reallyClose) {
@@ -42,7 +42,7 @@ var continueClosing = function (reallyClose) {
     }
 };
 
-Tab.prototype.close = function () {
+Page.prototype.close = function () {
     if (module.close) {
         module.close(this).thenSync(continueClosing.bind(this)).end();
     } else {
@@ -50,28 +50,27 @@ Tab.prototype.close = function () {
     }
 };
 
-var tabs = [];
+var pages = [];
 var data = module.exports = {
-    tabs : tabs,
-    activeTab : null
+    pages : pages,
+    activePage : null
 };
 
-Tab.prototype.remove = function () {
-    var isActiveTab;
-    var index = tabs.indexOf(this);
+Page.prototype.remove = function () {
+    var index = pages.indexOf(this);
     if (index > -1) {
-        tabs.splice(index, 1);
+        pages.splice(index, 1);
     }
-    if (data.activeTab == this) {
-        data.activeTab = null;
-        if (index >= tabs.length) {
+    if (data.activePage == this) {
+        data.activePage = null;
+        if (index >= pages.length) {
             index -= 1;
         }
-        page(index < 0 ? "/" : tabs[index].url);
+        pagejs(index < 0 ? "/" : pages[index].url);
     }
 };
 
-Tab.prototype.setQuery = function (newQuery) {
+Page.prototype.setQuery = function (newQuery) {
     var oldUrl = this.url;
     var newQueryString = qs.stringify(newQuery);
     if (newQueryString) {
@@ -84,33 +83,33 @@ Tab.prototype.setQuery = function (newQuery) {
     replaceUrl(oldUrl, newUrl);
 };
 
-var findTabWithUrl = function (url) {
-    for (var i = 0, l = tabs.length; i < l; i++) {
-        var curTab = tabs[i];
-        if (curTab.url === url) {
-            return curTab;
+var findPageWithUrl = function (url) {
+    for (var i = 0, l = pages.length; i < l; i++) {
+        var curPage = pages[i];
+        if (curPage.url === url) {
+            return curPage;
         }
     }
 };
 
-var insertTab = function (tabToInsert) {
-    tabs.push(tabToInsert);
+var insertPage = function (pageToInsert) {
+    pages.push(pageToInsert);
 };
 
 var processRoute = function (route) {
     return function (ctxt) {
         var url = ctxt.canonicalPath;
-        var tab = findTabWithUrl(url);
-        if (!tab) {
-            tab = new Tab(route, ctxt);
-            insertTab(tab);
+        var page = findPageWithUrl(url);
+        if (!page) {
+            page = new Page(route, ctxt);
+            insertPage(page);
         }
-        data.activeTab = tab;
+        data.activePage = page;
     };
 };
 
 routes.forEach(function (curRoute) {
-    page(curRoute.path, processRoute(curRoute));
+    pagejs(curRoute.path, processRoute(curRoute));
 });
 
-page();
+pagejs();

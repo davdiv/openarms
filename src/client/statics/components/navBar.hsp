@@ -1,6 +1,6 @@
 var klass = require("hsp/klass");
 var search = require("./search.hsp.js");
-var tabs = require("./tabs.hsp.js");
+var pages = require("./pages.hsp.js");
 var loginInfo = require("./loginInfo.hsp.js");
 
 var NavBarCtrl = klass({
@@ -8,7 +8,7 @@ var NavBarCtrl = klass({
         this.expanded = false;
     },
     attributes : {
-        tabMgr : {
+        pageMgr : {
             type : "object"
         }
     },
@@ -30,7 +30,7 @@ var NavBarCtrl = klass({
         </div>
         <div class="{c.expanded ? '' : 'collapse'} navbar-collapse">
             <#search />
-            <#tabs tabMgr="{c.tabMgr}"/>
+            <#pages pageMgr="{c.pageMgr}"/>
             <#loginInfo />
         </div>
     </div>

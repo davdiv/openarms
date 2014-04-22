@@ -4,25 +4,25 @@ var login = require("../login");
 
 var LoginCtrl = klass({
     attributes : {
-        tab : {
+        page : {
             type : "object"
         }
     },
     $init : function () {
-        this.data = this.tab.data;
+        this.data = this.page.data;
     },
     login : function () {
-        this.tab.processing = true;
+        this.page.processing = true;
         this.data.password = "";
         login.login({
             login : this.data.login,
             password : this.data.password
-        }).thenSync(this.tab.remove.bind(this.tab));
+        }).thenSync(this.page.remove.bind(this.page));
     }
 });
 
-# template tabTemplate(tab)
-    <span class="glyphicon glyphicon-lock"></span> {tab.title}
+# template iconTemplate(page)
+    <span class="glyphicon glyphicon-lock"></span> {page.title}
 # /template
 
 # template template using c:LoginCtrl
@@ -52,9 +52,9 @@ var LoginCtrl = klass({
 
 module.exports = {
     template : template,
-    tabTemplate : tabTemplate,
-    init : function (tab) {
-        tab.data = {
+    iconTemplate : iconTemplate,
+    init : function (page) {
+        page.data = {
             login : login.data.userLogin,
             password : ""
         };

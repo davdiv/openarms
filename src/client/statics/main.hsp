@@ -1,10 +1,10 @@
 var navBar = require("./components/navBar.hsp.js");
 
-# template main(tabMgr)
-    {let activeTab = tabMgr.activeTab}
-    <#navBar tabMgr="{tabMgr}"/>
-    {if activeTab && !activeTab.processing}
-        <#activeTab.template tab="{activeTab}" />
+# template main(pageMgr)
+    {let activePage = pageMgr.activePage}
+    <#navBar pageMgr="{pageMgr}"/>
+    {if activePage && !activePage.processing}
+        <#activePage.template page="{activePage}" />
     {/if}
 # /template
 

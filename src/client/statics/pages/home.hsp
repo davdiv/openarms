@@ -1,14 +1,14 @@
-# template template(tab)
+# template template(page)
     <div class="container-fluid">
         Bienvenue dans Openarms!
     </div>
 # /template
 
-# template tabTemplate(tab)
-    <span class="glyphicon glyphicon-home"></span> {tab.title}
+# template iconTemplate(page)
+    <span class="glyphicon glyphicon-home"></span> {page.title}
 # /template
 
 module.exports = {
     template : template,
-    tabTemplate : tabTemplate
+    iconTemplate : iconTemplate
 };

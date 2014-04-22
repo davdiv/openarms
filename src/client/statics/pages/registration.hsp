@@ -28,20 +28,20 @@ var save = function (event, value) {
     <input type="text" value="{data.myValue}"><br>{data.myTime}
 # /template
 
-# template template(tab)
+# template template(page)
     <div class="container-fluid">
-        <#editable savedData="{tab.savedData}" editedData="{tab.editedData}" onRefresh="{refresh(event)}" onSave="{save(event, tab.editedData)}" viewer="{viewer}" editor="{editor}"/>
+        <#editable savedData="{page.savedData}" editedData="{page.editedData}" onRefresh="{refresh(event)}" onSave="{save(event, page.editedData)}" viewer="{viewer}" editor="{editor}"/>
     </div>
 # /template
 
-# template tabTemplate(tab)
-    <span class="glyphicon glyphicon-file"></span> {tab.title}
+# template iconTemplate(page)
+    <span class="glyphicon glyphicon-file"></span> {page.title}
 # /template
 
 module.exports = {
     template : template,
-    tabTemplate : tabTemplate,
-    init: function (tab) {
-        tab.savedData = delay({myTime:"initial time", myValue:"initial value"},2000);
+    iconTemplate : iconTemplate,
+    init: function (page) {
+        page.savedData = delay({myTime:"initial time", myValue:"initial value"},2000);
     }
 };

@@ -1,19 +1,19 @@
-# template template(tab)
+# template template(page)
     <div class="container-fluid">
-        Votre recherche: {tab.title}<br>
-        <a href="/people/new?lastName={tab.encodedQuery}">Nouvelle fiche pour {tab.title}</a>
+        Votre recherche: {page.title}<br>
+        <a href="/people/new?lastName={page.encodedQuery}">Nouvelle fiche pour {page.title}</a>
     </div>
 # /template
 
-# template tabTemplate(tab)
-    <span class="glyphicon glyphicon-search"></span> {tab.title}
+# template iconTemplate(page)
+    <span class="glyphicon glyphicon-search"></span> {page.title}
 # /template
 
 module.exports = {
     template : template,
-    tabTemplate : tabTemplate,
-    init : function (tab) {
-        tab.title = tab.query.q;
-        tab.encodedQuery = encodeURIComponent(tab.query.q);
+    iconTemplate : iconTemplate,
+    init : function (page) {
+        page.title = page.query.q;
+        page.encodedQuery = encodeURIComponent(page.query.q);
     }
 };
