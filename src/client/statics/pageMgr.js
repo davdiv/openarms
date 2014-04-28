@@ -16,15 +16,6 @@ var stopProcessing = function () {
     this.processing = false;
 };
 
-var replaceUrl = function (oldUrl, newUrl) {
-    setTimeout(function () {
-        var url = location.pathname + location.search + location.hash;
-        if (url == oldUrl) {
-            pagejs.replace(newUrl);
-        }
-    }, 1);
-};
-
 var Page = function (route, ctxt) {
     this.url = ctxt.canonicalPath;
     this.params = ctxt.params;
@@ -70,17 +61,25 @@ Page.prototype.remove = function () {
     }
 };
 
-Page.prototype.setQuery = function (newQuery) {
+Page.prototype.setUrl = function (newUrl) {
     var oldUrl = this.url;
+    this.url = newUrl;
+    setTimeout(function () {
+        var url = location.pathname + location.search + location.hash;
+        if (url == oldUrl) {
+            pagejs.replace(newUrl);
+        }
+    }, 1);
+};
+
+Page.prototype.setQuery = function (newQuery) {
     var newQueryString = qs.stringify(newQuery);
     if (newQueryString) {
         newQueryString = "?" + newQueryString;
     }
-    var newUrl = oldUrl.replace(/(?:\?[^#]*)?(?=#|$)/, newQueryString);
+    var newUrl = this.url.replace(/(?:\?[^#]*)?(?=#|$)/, newQueryString);
     this.query = newQuery;
-    this.url = newUrl;
-
-    replaceUrl(oldUrl, newUrl);
+    this.setUrl(newUrl);
 };
 
 var findPageWithUrl = function (url) {
