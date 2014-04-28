@@ -1,9 +1,7 @@
 var klass = require("hsp/klass");
 var clone = require("../serialization").clone;
-
-var isPromise = function (value) {
-    return value && value.then;
-};
+var promiseUtils = require("../promiseUtils");
+var isPromise = promiseUtils.isPromise;
 
 var copy = function (original) {
     if (isPromise(original)) {
@@ -93,22 +91,10 @@ var EditableCtrl = klass({
         this.onEditedDataChange();
     },
     onSavedDataChange: function () {
-        this.resolvePromise("savedData");
+        promiseUtils.resolvePromise(this, "savedData", "savedDataError");
     },
     onEditedDataChange: function () {
-        this.resolvePromise("editedData");
-    },
-    resolvePromise: function (propertyName) {
-        var self = this;
-        var value = self[propertyName];
-        if (isPromise(value)) {
-            value.then(function (resolvedValue) {
-                var newValue = self[propertyName];
-                if (newValue == value) {
-                    self[propertyName] = resolvedValue;
-                }
-            });
-        }
+        promiseUtils.resolvePromise(this, "editedData", "editedDataError");
     }
 });
 
@@ -117,9 +103,11 @@ var EditableCtrl = klass({
 # /template
 
 # template editable using c:EditableCtrl
-    <div class="btn-group contextual">
+    <div class="btn-group pull-right">
         {if (!c.editedData || c.currentView == "saved") && c.savedData}
-            <button type="button" class="btn btn-default" title="Modifier" onclick="{c.edit()}"><span class="glyphicon glyphicon-edit"></span></button>
+            {if !isPromise(c.savedData)}
+                <button type="button" class="btn btn-default" title="Modifier" onclick="{c.edit()}"><span class="glyphicon glyphicon-edit"></span></button>
+            {/if}
             <button type="button" class="btn btn-default" title="Actualiser" onclick="{c.refresh()}"><span class="glyphicon glyphicon-refresh"></span></button>
         {else if c.editedData}
             {if !isPromise(c.editedData)}
@@ -139,7 +127,11 @@ var EditableCtrl = klass({
             <#tab c="{c}" view="preview" title="Aperçu"/>
         </ul><br>
         {if c.currentView != "saved" && isPromise(c.editedData)}
-            <span class="spinner"></span> Chargement...
+            {if c.editedDataError}
+                <div class="alert alert-danger">{c.editedDataError}</div>
+            {else}
+                <span class="spinner"></span> Chargement...
+            {/if}
         {else if c.currentView == "edit"}
             <#c.editor data="{c.editedData}" />
         {else if c.currentView == "preview"}
@@ -148,7 +140,11 @@ var EditableCtrl = klass({
     {/if}
     {if !c.editedData || c.currentView == "saved"}
         {if isPromise(c.savedData)}
-            <span class="spinner"></span> Chargement...
+            {if c.savedDataError}
+                <div class="alert alert-danger {c.editedData ?'':'space-right'}">{c.savedDataError}</div>
+            {else}
+                <span class="spinner"></span> Chargement...
+            {/if}
         {else if c.savedData}
             <#c.viewer data="{c.savedData}" />
         {/if}

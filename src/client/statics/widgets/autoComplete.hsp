@@ -1,5 +1,7 @@
 var klass = require("hsp/klass");
 var hsp = require("hsp/rt");
+var promiseUtils = require("../promiseUtils");
+var isPromise = promiseUtils.isPromise;
 
 # template defaultDisplaySuggestion(data)
     {data.label}
@@ -32,9 +34,11 @@ var AutoCompleteController = klass({
     $init : function () {
         this.focused = false;
         this.open = false;
-        this.waitingSuggestions = null;
-        this.suggestions = [];
+        this.suggestions = null;
         this.selectedSuggestion = -1;
+    },
+    onSuggestionsChange : function() {
+        promiseUtils.resolvePromise(this,"suggestions","suggestionsError");
     },
     changeSelectedSuggestion : function (diff) {
         if (!this.open || !this.suggestions || !this.suggestions.length) {
@@ -64,8 +68,7 @@ var AutoCompleteController = klass({
             }
         }
     },
-    chooseSuggestion : function (index, suggestion, domEvent) {
-        domEvent.preventDefault();
+    chooseSuggestion : function (index, suggestion) {
         this.open = false;
         var event = {
             index : index,
@@ -84,29 +87,6 @@ var AutoCompleteController = klass({
         this.onEnter(event);
         this.value = event.text;
     },
-    processResponse : function (response) {
-        response = response || {};
-        this.waitingSuggestions = null;
-        this.suggestions = response.suggestions || [];
-        this.selectedSuggestion = -1;
-    },
-    processPromisedResponse : function (promise) {
-        var self = this;
-        self.waitingSuggestions = promise;
-        self.suggestions = [];
-        self.selectedSuggestion = -1;
-        var checkAndProcessResponse = function (response) {
-            if (promise == self.waitingSuggestions) {
-                self.processResponse(response);
-            }
-            checkAndProcessResponse = null;
-            self = null;
-            promise = null;
-        };
-        promise.then(checkAndProcessResponse, function () {
-            checkAndProcessResponse(null);
-        });
-    },
     onType : function (event) {
         var value = event.target.value;
         if (value == "") {
@@ -117,12 +97,8 @@ var AutoCompleteController = klass({
                 response : null
             };
             this.onComputeSuggestions(event);
-            var response = event.response;
-            if (response && response.then) {
-                this.processPromisedResponse(response);
-            } else {
-                this.processResponse(response);
-            }
+            this.selectedSuggestion = -1;
+            this.suggestions = event.returnValue;
             this.open = true;
         }
     },
@@ -133,9 +109,8 @@ var AutoCompleteController = klass({
         this.focused = false;
         this.open = false;
     },
-    onDropDownMouseDown : function (event) {
-        event.preventDefault(); // prevent drop down items to be focused by
-        // click
+    preventDefault : function (event) {
+        event.preventDefault();
     },
     onSuggestionMouseOver : function (index) {
         this.selectedSuggestion = index;
@@ -153,16 +128,21 @@ var AutoCompleteController = klass({
                 onfocus="{c.onFocus()}"
                 onblur="{c.onBlur()}"/>
     {if c.open}
-        <ul class="dropdown-menu" onmousedown="{c.onDropDownMouseDown(event)}">
-            {foreach index,suggestion in c.suggestions}
-                <li class="{'active':index == c.selectedSuggestion}">
-                    <a href="#" onmouseover="{c.onSuggestionMouseOver(index)}" onclick="{c.chooseSuggestion(index, suggestion, event)}"><#c.displaySuggestion data="{suggestion}"/></a>
-                </li>
-            {/foreach}
-            {if c.waitingSuggestions}
-                <li><a href="#">Recherche en cours... <span class="spinner"/></a></li>
+        <ul class="dropdown-menu" onmousedown="{c.preventDefault(event)}" onclick="{c.preventDefault(event)}">
+            {if isPromise(c.suggestions)}
+                {if c.suggestionsError}
+                    <li class="disabled"><a href="#">{c.suggestionsError}</a></li>
+                {else}
+                    <li><a href="#">Recherche en cours... <span class="spinner"/></a></li>
+                {/if}
             {else if c.suggestions.length == 0}
                 <li class="disabled"><a href="#">Pas de suggestion</a></li>
+            {else}
+                {foreach index,suggestion in c.suggestions}
+                    <li class="{'active':index == c.selectedSuggestion}">
+                        <a href="#" onmouseover="{c.onSuggestionMouseOver(index)}" onclick="{c.chooseSuggestion(index, suggestion, event)}"><#c.displaySuggestion data="{suggestion}"/></a>
+                    </li>
+                {/foreach}
             {/if}
         </ul>
     {/if}

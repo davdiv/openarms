@@ -1,17 +1,28 @@
 var autoComplete = require("../widgets/autoComplete.hsp.js");
 var page = require("page");
 var searchUrl = "/search?q=";
+var promise = require("noder-js/promise");
+
+var delay = function (returnValue, delay) {
+    var defer = promise.defer();
+    setTimeout(function() {
+        if (Math.floor(Math.random() *2) == 0 ) {
+            defer.resolve(returnValue);
+        } else {
+            defer.reject(new Error("Random error. Please retry!"));
+        }
+    },delay);
+    return defer.promise;
+};
 
 var computeSuggestions = function (event) {
-    event.response = {
-        suggestions : [ {
+    event.returnValue = delay([ {
             label : "Page d'accueil",
             url : "/"
         }, {
             label : "Plus d'infos sur " + event.text,
             url : searchUrl + encodeURIComponent(event.text)
-        } ]
-    };
+        } ],200);
 };
 
 var chooseSuggestion = function (event) {

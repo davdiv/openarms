@@ -2,11 +2,15 @@ var promise = require("noder-js/promise");
 var editable = require("../components/editable.hsp.js");
 
 var delay = function (returnValue, delay) {
-    var defer = promise();
+    var defer = promise.defer();
     setTimeout(function() {
-        defer.resolve(returnValue);
+        if (Math.floor(Math.random() *2) == 0 ) {
+            defer.resolve(returnValue);
+        } else {
+            defer.reject(new Error("Random error. Please retry!"));
+        }
     },delay);
-    return defer.promise();
+    return defer.promise;
 };
 
 var refresh = function(event) {
@@ -30,7 +34,7 @@ var save = function (event, value) {
 
 # template template(page)
     <div class="container-fluid">
-        <#editable savedData="{page.savedData}" editedData="{page.editedData}" onRefresh="{refresh(event)}" onSave="{save(event, page.editedData)}" viewer="{viewer}" editor="{editor}"/>
+        <#editable savedData="{page.savedData}" editedData="{page.editedData}" onEdit="{refresh(event)}" onRefresh="{refresh(event)}" onSave="{save(event, page.editedData)}" viewer="{viewer}" editor="{editor}"/>
     </div>
 # /template
 

@@ -52,8 +52,8 @@
 	margin-right: -5px;
 }
 
-.contextual {
-	float: right;
+.space-right {
+	margin-right: 55px;
 }
 
 .block-container.right {
