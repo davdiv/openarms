@@ -36,7 +36,7 @@
     "gulp-util": "2.2.14",
     "hashspace": "",
     "minimist": "0.0.8",
-    "noder-js": "",
+    "noder-js": "1.3.0",
     "page": "1.3.7",
     "q": "1.0.1",
     "qs": "0.6.6",
