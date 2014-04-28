@@ -1,7 +1,6 @@
 var klass = require("hsp/klass");
 var formatDate = require("../dates/format").date;
 var editable = require("../components/editable.hsp.js");
-var computeAge = require("../dates/age");
 var identityCard = require("../components/person/identityCard.hsp.js");
 var editIdentityCard = require("../components/person/editIdentityCard.hsp.js");
 var personName = require("../components/person/name.hsp.js");
@@ -26,12 +25,25 @@ var personName = require("../components/person/name.hsp.js");
         <hr>
         {if page.savedIdentity}
         <h2><span class="glyphicon glyphicon-chevron-right"></span> Inscription</h2>
+        {if !page.registration}
             <p>{identity.firstName||"Cette personne"} n'appartient à aucune famille inscrite.</p>
-            <p><a href="/registrations/new" class="btn btn-primary">Nouvelle inscription</a></p>
+            <p><a href="/registrations/new?person={encodeURIComponent(page.params.person)}" class="btn btn-primary">Nouvelle inscription</a></p>
+        {/if}
         <hr>
         <h2><span class="glyphicon glyphicon-chevron-right"></span> Dernières visites</h2>
-        <a href="/registrations/0123456789cccdef">Inscription</a><br>
-        <a href="/visits/0123456789abcdef">Visite du 01/04/2014</a>
+        <p><a href="/visits/new?person={encodeURIComponent(page.params.person)}" class="btn btn-primary">Nouvelle visite</a></p>
+        {if !page.visits || page.visits.length == 0}
+            <p>{identity.firstName||"Cette personne"} n'a aucune visite enregistrée.</p>
+        {else}
+            <table class="table table-striped table-hover">
+            <thead><tr><th>Date</th><th>Inscriptions concernées</th><th>Montant dû</th><th>Montant réglé</th></tr></thead>
+            <tbody>
+                {foreach visit in page.visits}
+                    <tr><td>{formatDate(visit.date)}</td><td></td><td></td><td></td></tr>
+                {/foreach}
+            </tbody>
+            </table>
+        {/if}
         {/if}
     </div>
 # /template
@@ -56,6 +68,7 @@ module.exports = {
         } else {
             // need to load it from somewhere
             page.savedIdentity = {};
+            page.registration = {};
         }
     }
 };
