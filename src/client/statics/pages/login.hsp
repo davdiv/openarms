@@ -50,8 +50,13 @@ var LoginCtrl = klass({
     </div>
 # /template
 
+// this wrapper template is needed because of a bug in hashspace
+# template wrapperTemplate(page)
+   <#template page="{page}" />
+# /template
+
 module.exports = {
-    template : template,
+    template : wrapperTemplate,
     iconTemplate : iconTemplate,
     init : function (page) {
         page.data = {

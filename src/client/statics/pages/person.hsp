@@ -83,6 +83,11 @@ var Ctrl = klass({
     </div>
 # /template
 
+// this wrapper template is needed because of a bug in hashspace
+# template wrapperTemplate(page)
+   <#template page="{page}" />
+# /template
+
 var createIdentity = function (query) {
     var res = {};
     res.firstName = query.firstName;
@@ -91,7 +96,7 @@ var createIdentity = function (query) {
 };
 
 module.exports = {
-    template : template,
+    template : wrapperTemplate,
     iconTemplate : iconTemplate,
     init: function (page) {
         if (page.params.person == "new") {
