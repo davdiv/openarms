@@ -22,6 +22,10 @@ var EditableCtrl = klass({
             type: "object",
             binding: "2-way"
         },
+        savingData: {
+            type: "object",
+            binding: "2-way"
+        },
         currentView: {
             type: "string",
             binding: "2-way"
@@ -63,13 +67,13 @@ var EditableCtrl = klass({
     },
     save: function () {
         this.callEvent("onSave", this.editedData, function (res) {
-            this.savedData = res || this.editedData;
-            this.editedData = null;
+            this.savingData = res || this.editedData;
         });
     },
     cancel: function () {
         this.callEvent("onCancel", null, function () {
             this.editedData = null;
+            this.savingData = null;
         });
     },
     callEvent : function (eventName, returnValue, defaultAction) {
@@ -87,79 +91,146 @@ var EditableCtrl = klass({
         this.currentView = currentView;
     },
     $init: function () {
-        this.onSavedDataChange();
-        this.onEditedDataChange();
+        promiseUtils.resolvePromise(this, "savedData", "savedDataError");
+        promiseUtils.resolvePromise(this, "editedData", "editedDataError");
+        promiseUtils.resolvePromise(this, "savingData", "savingDataError");
+        this.updateState();
     },
     onSavedDataChange: function () {
         promiseUtils.resolvePromise(this, "savedData", "savedDataError");
+        this.updateState();
     },
     onEditedDataChange: function () {
         promiseUtils.resolvePromise(this, "editedData", "editedDataError");
+        this.updateState();
+    },
+    onSavingDataChange: function () {
+        promiseUtils.resolvePromise(this, "savingData", "savingDataError");
+        this.updateState();
+    },
+    onSavingDataErrorChange: function () {
+        this.updateState();
+    },
+    onCurrentViewChange: function () {
+        this.updateState();
+    },
+    updateState : function () {
+        var savingData = this.savingData;
+        if (savingData && !isPromise(savingData)) {
+            this.savedData = savingData;
+            this.editedData = null;
+            savingData = this.savingData = null;
+        }
+        var editedData = this.editedData;
+        var currentView = this.currentView;
+        if (!editedData) {
+            currentView = "saved";
+        }
+        this.currentView = currentView;
+        this.displayRefresh = (currentView == "saved");
+        this.displayEdit = this.displayRefresh && !isPromise(this.savedData);
+        this.displayCancel = currentView != "saved" && editedData && (this.savingDataError || !savingData);
+        this.displaySave = this.displayCancel && !isPromise(editedData);
     }
 });
+
+var isValidData = function (data) {
+    return data && !isPromise(data);
+};
 
 # template tab(c, view, title)
     <li class="{'active':c.currentView == view}"><a href="#" onclick="{c.setCurrentView(view,event)}">{title}</a></li>
 # /template
 
-# template editable using c:EditableCtrl
+# template showTabs(c)
+    <ul class="nav nav-tabs">
+        {if c.savedData}
+            <#tab c="{c}" view="saved" title="Version enregistrée"/>
+        {/if}
+        <#tab c="{c}" view="edit" title="Edition"/>
+        <#tab c="{c}" view="preview" title="Aperçu"/>
+    </ul>
+    <br>
+# /template
+
+# template showIcons(c)
     <div class="btn-group pull-right">
-        {if (!c.editedData || c.currentView == "saved") && c.savedData}
-            {if !isPromise(c.savedData)}
-                <button type="button" class="btn btn-default" title="Modifier" onclick="{c.edit()}"><span class="glyphicon glyphicon-edit"></span></button>
-            {/if}
+        {if c.displayEdit}
+            <button type="button" class="btn btn-default" title="Modifier" onclick="{c.edit()}"><span class="glyphicon glyphicon-edit"></span></button>
+        {/if}
+        {if c.displayRefresh}
             <button type="button" class="btn btn-default" title="Actualiser" onclick="{c.refresh()}"><span class="glyphicon glyphicon-refresh"></span></button>
-        {else if c.editedData}
-            {if !isPromise(c.editedData)}
-                <button type="button" class="btn btn-default" title="Enregistrer" onclick="{c.save()}"><span class="glyphicon glyphicon-save"></span></button>
-            {/if}
-            {if c.savedData}
-                <button type="button" class="btn btn-default" title="Annuler les modifications" onclick="{c.cancel()}"><span class="glyphicon glyphicon-remove"></span></button>
-            {/if}
+        {/if}
+        {if c.displaySave}
+            <button type="button" class="btn btn-default" title="Enregistrer" onclick="{c.save()}"><span class="glyphicon glyphicon-save"></span></button>
+        {/if}
+        {if c.displayCancel}
+            <button type="button" class="btn btn-default" title="Annuler les modifications" onclick="{c.cancel()}"><span class="glyphicon glyphicon-remove"></span></button>
         {/if}
     </div>
-    {if c.editedData}
-        <ul class="nav nav-tabs">
-            {if c.savedData}
-            <#tab c="{c}" view="saved" title="Version enregistrée"/>
-            {/if}
-            <#tab c="{c}" view="edit" title="Edition"/>
-            <#tab c="{c}" view="preview" title="Aperçu"/>
-        </ul><br>
-        {if c.currentView != "saved" && isPromise(c.editedData)}
-            {if c.editedDataError}
-                <div class="alert alert-danger">{c.editedDataError}</div>
-            {else}
-                <span class="spinner"></span> Chargement...
-            {/if}
-        {else if c.currentView == "edit"}
-            <#c.editor data="{c.editedData}" />
-        {else if c.currentView == "preview"}
-            <#c.viewer data="{c.editedData}" />
+# /template
+
+# template showSavingStatus(c)
+    {if isPromise(c.savingData)}
+        {if c.savingDataError}
+            <div class="alert alert-danger">Les données n'ont pas pu être enregistrées correctement.<br>{c.savingDataError}</div>
+        {else}
+            <div><span class="spinner"></span> Enregistrement...<br><br></div>
         {/if}
     {/if}
-    {if !c.editedData || c.currentView == "saved"}
-        {if isPromise(c.savedData)}
-            {if c.savedDataError}
-                <div class="alert alert-danger {c.editedData ?'':'space-right'}">{c.savedDataError}</div>
-            {else}
-                <span class="spinner"></span> Chargement...
-            {/if}
-        {else if c.savedData}
-            <#c.viewer data="{c.savedData}" />
-        {/if}
+# /template
+
+# template showPromise(error)
+    {if error}
+        <div class="alert alert-danger">{error}</div>
     {else}
-        <div class="block-container right">
+        <span class="spinner"></span> Chargement...<br>
+    {/if}
+# /template
+
+# template showContent(c)
+    {if c.currentView == "saved"}
+        {if isValidData(c.savedData)}
+            <#c.viewer data="{c.savedData}" />
+        {else if c.savedData}
+            <#showPromise error="{c.savedDataError}"/>
+        {/if}
+    {else if c.currentView == "preview" || c.currentView == "edit"}
+        <#showSavingStatus c="{c}"/>
+        {if isValidData(c.editedData)}
+            {if c.currentView == "preview" || (c.savingData && !c.savingDataError)}
+                <#c.viewer data="{c.editedData}" />
+            {else}
+                <#c.editor data="{c.editedData}" />
+            {/if}
+        {else if c.editedData}
+            <#showPromise error="{c.editedDataError}"/>
+        {/if}
+    {/if}
+# /template
+
+# template showButtons(c)
+    <div class="block-container right">
         <div class="block">
-        {if !isPromise(c.editedData)}
+        {if c.displaySave}
             <button type="button" class="btn btn-primary" onclick="{c.save()}"><span class="glyphicon glyphicon-save"></span> Enregistrer</button>
         {/if}
         &nbsp;
-        {if c.savedData}
+        {if c.displayCancel}
             <button type="button" class="btn btn-default" onclick="{c.cancel()}"><span class="glyphicon glyphicon-remove"></span> Annuler</button>
         {/if}
         </div>
-        </div>
+    </div>
+# /template
+
+# template editable using c:EditableCtrl
+    <#showIcons c="{c}"/>
+    {if c.editedData}
+        <#showTabs c="{c}" />
+    {/if}
+    <#showContent c="{c}"/>
+    {if c.currentView != "saved"}
+        <#showButtons c="{c}"/>
     {/if}
 # /template
 

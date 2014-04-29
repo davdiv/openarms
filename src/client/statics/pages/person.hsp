@@ -21,7 +21,7 @@ var personName = require("../components/person/name.hsp.js");
     <div class="container-fluid">
         {let identity = page.savedIdentity}
         <h2><span class="glyphicon glyphicon-chevron-right"></span> Identité</h2>
-        <#editable savedData="{page.savedIdentity}" editedData="{page.editedIdentity}" viewer="{viewer}" editor="{editIdentityCard}" currentView="{page.identityView}"/>
+        <#editable savedData="{page.savedIdentity}" onSave="{onSave(page, event)}" onRefresh="{onRefresh(page, event)}" editedData="{page.editedIdentity}" savingData="{page.savingData}" viewer="{viewer}" editor="{editIdentityCard}" currentView="{page.identityView}"/>
         <hr>
         {if page.savedIdentity}
         <h2><span class="glyphicon glyphicon-chevron-right"></span> Inscription</h2>

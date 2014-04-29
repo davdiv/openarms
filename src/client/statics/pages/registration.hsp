@@ -21,7 +21,7 @@ var refresh = function(event) {
 };
 
 var save = function (event, value) {
-    event.returnValue = delay(value, 1000);
+    event.returnValue = delay(value, 5000);
 };
 
 # template viewer(data)
@@ -34,7 +34,7 @@ var save = function (event, value) {
 
 # template template(page)
     <div class="container-fluid">
-        <#editable savedData="{page.savedData}" editedData="{page.editedData}" onEdit="{refresh(event)}" onRefresh="{refresh(event)}" onSave="{save(event, page.editedData)}" viewer="{viewer}" editor="{editor}"/>
+        <#editable savedData="{page.savedData}" editedData="{page.editedData}" savingData="{page.savingData}" onEdit="{refresh(event)}" onRefresh="{refresh(event)}" onSave="{save(event, page.editedData)}" viewer="{viewer}" editor="{editor}"/>
     </div>
 # /template
 
