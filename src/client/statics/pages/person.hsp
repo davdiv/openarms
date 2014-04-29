@@ -1,14 +1,39 @@
 var klass = require("hsp/klass");
+var promise = require("noder-js/promise");
 var formatDate = require("../dates/format").date;
 var editable = require("../components/editable.hsp.js");
 var identityCard = require("../components/person/identityCard.hsp.js");
 var editIdentityCard = require("../components/person/editIdentityCard.hsp.js");
 var personName = require("../components/person/name.hsp.js");
+var peopleMgr = require("../peopleMgr");
+
+var Ctrl = klass({
+    attributes: {
+        page: {
+            type: "object",
+            binding: "1-way"
+        }
+    },
+    onSave: function (event) {
+        var page = this.page;
+        var res = event.returnValue = promise.done.thenSync(peopleMgr.saveIdentity.bind(peopleMgr, page.editedIdentity));
+        res.thenSync(function (res) {
+            page.params.person = res.id;
+            page.setUrl("/people/" + res.id);
+        });
+    },
+    onRefresh : function(event) {
+        event.returnValue = peopleMgr.refreshIdentity(this.page.params.person);
+    },
+    onCancel : function(page, event) {
+        if (!this.page.savedIdentity) {
+            this.page.remove();
+        }
+    }
+});
 
 # template iconTemplate(page)
-    <span>// this span is needed because of a bug in hashspace
     <#personName data="{page.savedIdentity}" />
-    </span>
 # /template
 
 # template viewer(data)
@@ -17,11 +42,21 @@ var personName = require("../components/person/name.hsp.js");
     </div>
 # /template
 
-# template template(page)
+# template template using c:Ctrl
+    {let page = c.page}
     <div class="container-fluid">
         {let identity = page.savedIdentity}
         <h2><span class="glyphicon glyphicon-chevron-right"></span> Identité</h2>
-        <#editable savedData="{page.savedIdentity}" onSave="{onSave(page, event)}" onRefresh="{onRefresh(page, event)}" editedData="{page.editedIdentity}" savingData="{page.savingData}" viewer="{viewer}" editor="{editIdentityCard}" currentView="{page.identityView}"/>
+        <#editable
+            onSave="{c.onSave(event)}"
+            onRefresh="{c.onRefresh(event)}"
+            onCancel="{c.onCancel(event)}"
+            savedData="{page.savedIdentity}"
+            editedData="{page.editedIdentity}"
+            savingData="{page.savingIdentity}"
+            viewer="{viewer}"
+            editor="{editIdentityCard}"
+            currentView="{page.identityView}"/>
         <hr>
         {if page.savedIdentity}
         <h2><span class="glyphicon glyphicon-chevron-right"></span> Inscription</h2>
@@ -66,9 +101,7 @@ module.exports = {
 
             page.setQuery({id: new Date().getTime()});
         } else {
-            // need to load it from somewhere
-            page.savedIdentity = {};
-            page.registration = {};
+            page.savedIdentity = peopleMgr.getIdentity(page.params.person);
         }
     }
 };
