@@ -72,6 +72,9 @@ var refreshItem = function(cache, curItem) {
 };
 
 Cache.prototype.getItem = function(id) {
+    if (!id) {
+        throw new Error("Trying to get an item without id.");
+    }
     var curItem = this.items[id];
     if (!curItem) {
         curItem = this.items[id] = new Item(id);

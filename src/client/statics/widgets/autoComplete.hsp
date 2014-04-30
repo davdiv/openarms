@@ -26,9 +26,25 @@ var AutoCompleteController = klass({
         onEnter : {
             type : "callback"
         },
+        onfocus : {
+            type : "callback"
+        },
+        onblur : {
+            type : "callback"
+        },
         displaySuggestion : {
             type : "object", // in fact, we expect a template
             defaultValue : defaultDisplaySuggestion
+        },
+        beforeInput: {
+            type:"template"
+        },
+        afterInput: {
+            type:"template"
+        },
+        content: {
+            type:"template",
+            defaultContent: true
         }
     },
     $init : function () {
@@ -94,7 +110,7 @@ var AutoCompleteController = klass({
         } else {
             var event = {
                 text : value,
-                response : null
+                returnValue : null
             };
             this.onComputeSuggestions(event);
             this.selectedSuggestion = -1;
@@ -102,12 +118,14 @@ var AutoCompleteController = klass({
             this.open = true;
         }
     },
-    onFocus : function () {
+    onFocus : function (event) {
         this.focused = true;
+        this.onfocus(event);
     },
-    onBlur : function () {
+    onBlur : function (event) {
         this.focused = false;
         this.open = false;
+        this.onblur(event);
     },
     preventDefault : function (event) {
         event.preventDefault();
@@ -120,13 +138,18 @@ var AutoCompleteController = klass({
 
 # template autoComplete using c:AutoCompleteController
     <div class="{'dropdown','open':c.open}">
-        <input  type="text" 
-                class="form-control {c.class}"
+        <div class="{c.class}">
+            {if c.beforeInput}<#c.beforeInput />{/if}
+            <input
+                type="text"
+                class="form-control"
                 value="{c.value}"
                 oninput="{c.onType(event)}"
                 onkeydown="{c.onKeyDown(event)}"
-                onfocus="{c.onFocus()}"
-                onblur="{c.onBlur()}"/>
+                onfocus="{c.onFocus(event)}"
+                onblur="{c.onBlur(event)}"/>
+            {if c.afterInput}<#c.afterInput />{/if}
+        </div>
     {if c.open}
         <ul class="dropdown-menu" onmousedown="{c.preventDefault(event)}" onclick="{c.preventDefault(event)}">
             {if isPromise(c.suggestions)}
@@ -135,7 +158,7 @@ var AutoCompleteController = klass({
                 {else}
                     <li><a href="#">Recherche en cours... <span class="spinner"/></a></li>
                 {/if}
-            {else if c.suggestions.length == 0}
+            {else if !c.suggestions || !c.suggestions.length}
                 <li class="disabled"><a href="#">Pas de suggestion</a></li>
             {else}
                 {foreach index,suggestion in c.suggestions}
@@ -144,6 +167,7 @@ var AutoCompleteController = klass({
                     </li>
                 {/foreach}
             {/if}
+            {if c.content}<#c.content/>{/if}
         </ul>
     {/if}
     </div>

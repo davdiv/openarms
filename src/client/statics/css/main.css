@@ -65,3 +65,7 @@
 	display: inline-block;
 	vertical-align: middle;
 }
+
+.dragging {
+	background-color: #d9edf7;
+}

@@ -1,0 +1,99 @@
+var hsp = require("hsp/rt");
+var klass = require("hsp/klass");
+var personLink = require("./personLink.hsp.js");
+var autoComplete = require("../../widgets/autoComplete.hsp.js");
+var personName = require("./name.hsp.js");
+var dragUtils = require("../../dragUtils");
+var getParentByTagName = require("../../domUtils").getParentByTagName;
+var peopleMgr = require("../../peopleMgr");
+
+var extractPersonId = function (dataTransfer) {
+    var url = dragUtils.extractURL(dataTransfer);
+    if (url === true) {
+        return true;
+    } else if (url && /\/people\/(\w+)($|\?|#)/.test(url)) {
+        return RegExp.$1;
+    }
+    return null;
+};
+
+var Ctrl = klass({
+    attributes: {
+        value: {
+            type:"string",
+            binding: "2-way"
+        }
+    },
+    $refresh: function () {
+        this.rootElt = this.$getElement(0);
+    },
+    onComputeSuggestions: function(event) {
+        event.returnValue = peopleMgr.search(event.text);
+    },
+    onChooseSuggestion: function (event) {
+        this.value = event.suggestion.id;
+    },
+    onDragOver: function(event) {
+        var dataTransfer = event.dataTransfer;
+        var dragging = extractPersonId(dataTransfer);
+        if (dragging) {
+            this.dragging = dragging;
+            dataTransfer.dropEffect = "copy";
+            event.preventDefault();
+        }
+    },
+    onDragLeave: function (event) {
+        this.dragging = null;
+    },
+    onDrop: function (event) {
+        var dragging = extractPersonId(event.dataTransfer);
+        if (dragging && dragging !== true) {
+            this.value = dragging;
+        }
+        this.dragging = null;
+        event.preventDefault();
+    },
+    clear: function (event) {
+        this.value = "";
+        event.preventDefault();
+    },
+    preventDefault: function(event) {
+        event.preventDefault();
+    }
+});
+
+# template personField using c:Ctrl
+    <span ondragover="{c.onDragOver(event)}" ondragleave="{c.onDragLeave(event)}" ondrop="{c.onDrop(event)}">
+        {if c.dragging}
+            <div class="input-group input-group-sm">
+                <span class="input-group-addon">
+                    {if c.dragging !== true}
+                        <#personLink value="{c.dragging}" />&nbsp;<a href="#" onclick="{c.preventDefault(event)}"><span class="glyphicon glyphicon-remove"></span></a>
+                    {else}
+                        <span class="glyphicon glyphicon-user"></span>
+                    {/if}
+                </span>
+                <span class="form-control dragging"></span>
+            </div>
+        {else}
+            <#autoComplete
+                class="input-group input-group-sm {c.dragging ? 'dragging' : ''}"
+                onComputeSuggestions="{c.onComputeSuggestions(event)}"
+                onChooseSuggestion="{c.onChooseSuggestion(event)}"
+                displaySuggestion="{personName}"
+            >
+                <@beforeInput>
+                    <span class="input-group-addon">
+                        {if c.value}
+                            <#personLink value="{c.value}" />&nbsp;<a href="#" onclick="{c.clear(event)}"><span class="glyphicon glyphicon-remove"></span></a>
+                        {else}
+                            <span class="glyphicon glyphicon-user"></span>
+                        {/if}
+                    </span>
+                </@beforeInput>
+            </#autoComplete>
+        {/if}
+    </span>
+# /template
+
+module.exports = personField;

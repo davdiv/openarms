@@ -1,0 +1,41 @@
+var klass = require("hsp/klass");
+var peopleMgr = require("../../peopleMgr");
+var name = require("./name.hsp.js");
+var promiseUtils = require("../../promiseUtils");
+var isPromise = promiseUtils.isPromise;
+
+var Ctrl = klass({
+    attributes: {
+        value: {
+            type: "string",
+            binding: "1-way"
+        }
+    },
+    $init: function () {
+       this.onValueChange();
+    },
+    onValueChange: function () {
+        if (this.value) {
+            this.data = peopleMgr.getIdentity(this.value);
+            promiseUtils.resolvePromise(this,"data","dataError");
+        }
+    }
+});
+
+# template personLink using c:Ctrl
+    {if c.value}
+        <a href="/people/{c.value}">
+            {if isPromise(c.data)}
+                {if c.dataError}
+                    <span class="glyphicon glyphicon-exclamation-sign" title="{c.dataError}"></span> <span class="glyphicon glyphicon-user"></span> {c.value}
+                {else}
+                    <span class="spinner"></span> <span class="glyphicon glyphicon-user"></span> {c.value}
+                {/if}
+            {else}
+                <#name data="{c.data}"/>
+            {/if}
+        </a>
+    {/if}
+# /template
+
+module.exports = personLink;

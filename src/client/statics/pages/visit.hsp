@@ -1,6 +1,9 @@
+var personField = require("../components/person/personField.hsp.js");
+
 # template template(page)
     <div class="container-fluid">
-        Visite
+        Visite<br>
+        <#personField value="{page.personId}" />
     </div>
 # /template
 
@@ -10,5 +13,8 @@
 
 module.exports = {
     template : template,
-    iconTemplate : iconTemplate
+    iconTemplate : iconTemplate,
+    init: function(page){
+        page.personId = page.query.person;
+    }
 };
