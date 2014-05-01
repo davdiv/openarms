@@ -180,9 +180,9 @@ var isValidData = function (data) {
     {/if}
 # /template
 
-# template showPromise(error)
+# template showPromise(c, error)
     {if error}
-        <div class="alert alert-danger">{error}</div>
+        <div class="alert alert-danger {c.editedData?'':'space-right'}">{error}</div>
     {else}
         <span class="spinner"></span> Chargement...<br>
     {/if}
@@ -193,7 +193,7 @@ var isValidData = function (data) {
         {if isValidData(c.savedData)}
             <#c.viewer data="{c.savedData}" />
         {else if c.savedData}
-            <#showPromise error="{c.savedDataError}"/>
+            <#showPromise c="{c}" error="{c.savedDataError}"/>
         {/if}
     {else if c.currentView == "preview" || c.currentView == "edit"}
         <#showSavingStatus c="{c}"/>
@@ -204,7 +204,7 @@ var isValidData = function (data) {
                 <#c.editor data="{c.editedData}" />
             {/if}
         {else if c.editedData}
-            <#showPromise error="{c.editedDataError}"/>
+            <#showPromise c="{c}" error="{c.editedDataError}"/>
         {/if}
     {/if}
 # /template
