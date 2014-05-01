@@ -1,29 +1,24 @@
 var klass = require("hsp/klass");
+var optionButton = require("./optionButton.hsp.js");
 
 var SexFieldController = klass({
-	attributes: {
-		value: {
-			binding: "2-way",
-			type: "string"
-		}
-	},
-	male: function() {
-		this.value = "male";
-	},
-	female: function() {
-		this.value = "female";
-	}
+    attributes: {
+        value: {
+            binding: "2-way",
+            type: "object"
+        }
+    }
 });
 
 # template sexField using c:SexFieldController
-	<div class="btn-group">
-	<button title="Homme" onclick="{c.male()}" type="button" class="{'btn','btn-default','btn-sm','active':c.value=='male'}">
-		<span class="img-sm-symbol-male"></span>
-	</button>
-	<button title="Femme" onclick="{c.female()}" type="button" class="{'btn','btn-default','btn-sm','active':c.value=='female'}">
-		<span class="img-sm-symbol-female"></span>
-	</button>
-	</div>
+    <div class="btn-group btn-group-sm">
+        <#optionButton title="Homme" key="male" value="{c.value}">
+            <span class="img-sm-symbol-male"></span>
+        </#optionButton>
+        <#optionButton title="Femme" key="female" value="{c.value}">
+            <span class="img-sm-symbol-female"></span>
+        </#optionButton>
+    </div>
 # /template
 
 module.exports = sexField;

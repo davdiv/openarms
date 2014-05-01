@@ -1,0 +1,41 @@
+var klass = require("hsp/klass");
+
+var Ctrl = klass({
+    attributes: {
+        value: {
+            binding: "2-way",
+            type: "object"
+        },
+        key: {
+            binding: "1-way",
+            type: "object"
+        },
+        title: {
+            binding: "1-way",
+            type: "string"
+        },
+        content: {
+            type: "template",
+            defaultContent: true
+        }
+    },
+    onClick: function() {
+        if (this.value === this.key) {
+            this.value = null;
+        } else {
+            this.value = this.key;
+        }
+    }
+});
+
+# template optionButton using c:Ctrl
+    <button title="{c.content ? c.title : ''}" onclick="{c.onClick()}" type="button" class="btn btn-default { c.value === c.key ? 'active' : ''}">
+        {if c.content}
+            <#c.content />
+        {else}
+            {c.title}
+        {/if}
+    </button>
+# /template
+
+module.exports = optionButton;
