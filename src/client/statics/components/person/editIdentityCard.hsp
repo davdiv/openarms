@@ -2,6 +2,7 @@ var klass = require("hsp/klass");
 var formatDate = require("../../dates/format").date;
 var computeAge = require("../../dates/age");
 var sexField = require("../../widgets/sexField.hsp.js");
+var maritalStatusField = require("../../widgets/maritalStatusField.hsp.js");
 var birthDateField = require("../../widgets/birthDateField.hsp.js");
 var contactDetailTypes = {
     phone : "Téléphone",
@@ -86,6 +87,13 @@ var Ctrl = klass({
 </div>
 
 <div class="form-group">
+<label class="col-sm-3 control-label">Situation maritale</label>
+<div class="col-sm-9">
+<#maritalStatusField value="{data.maritalStatus}"/>
+</div>
+</div>
+
+<div class="form-group">
 <label class="col-sm-3 control-label">Date de naissance</label>
 <div class="col-sm-9">
 <#birthDateField value="{data.birthDate}"/>
@@ -120,7 +128,7 @@ var Ctrl = klass({
 <br>
 {/foreach}
 {/if}
-<button type="button" class="btn btn-default" onclick="{c.addNationality()}"><span class="glyphicon glyphicon-plus"></span></button>
+<button type="button" class="btn btn-default btn-sm" onclick="{c.addNationality()}"><span class="glyphicon glyphicon-plus"></span></button>
 </div>
 </div>
 
@@ -150,7 +158,7 @@ var Ctrl = klass({
 <div class="form-group">
 <label class="col-sm-3 control-label">Ajouter des coordonnées</label>
 <div class="col-sm-9">
-<div class="btn-group">
+<div class="btn-group btn-group-sm">
 <button type="button" class="btn btn-default" onclick="{c.addContactDetail('email')}">@</button>
 <button type="button" class="btn btn-default" onclick="{c.addContactDetail('phone')}"><span class="glyphicon glyphicon-phone-alt"></span></button>
 </div>

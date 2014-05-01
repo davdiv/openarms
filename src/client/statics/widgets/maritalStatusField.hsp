@@ -1,0 +1,25 @@
+var klass = require("hsp/klass");
+var optionButton = require("./optionButton.hsp.js");
+var maritalStatuses = require("../maritalStatuses");
+var maritalStatusKeys = Object.keys(maritalStatuses);
+
+var Ctrl = klass({
+    attributes: {
+        value: {
+            binding: "2-way",
+            type: "object"
+        }
+    }
+});
+
+# template maritalStatusField using c:Ctrl
+    <div class="btn-group btn-group-sm">
+        {foreach key in maritalStatusKeys}
+            <#optionButton key="{key}" value="{c.value}">
+                {maritalStatuses[key]}
+            </#optionButton>
+        {/foreach}
+    </div>
+# /template
+
+module.exports = maritalStatusField;
