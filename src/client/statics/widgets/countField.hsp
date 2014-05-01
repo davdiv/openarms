@@ -1,0 +1,70 @@
+var klass = require("hsp/klass");
+var hsp = require("hsp/rt");
+
+var CountFieldController = klass({
+    attributes : {
+        value : {
+            binding : "2-way",
+            type : "int"
+        },
+        onchange : {
+            type : "callback"
+        }
+    },
+    $init : function () {
+        this.onValueChange();
+    },
+    onValueChange : function () {
+        // change from the data model
+        this.stringValue = this.value + "";
+    },
+    onStringValueChange : function () {
+        // change from the user when typing
+        this.value = parseInt(this.stringValue, 10) || 0;
+        this.onchange();
+    },
+    blur : function () {
+        this.stringValue = this.value + "";
+    },
+    add : function (value) {
+        var res = this.value + value;
+        if (res >= 0) {
+            this.value = res
+        }
+        this.onchange();
+    },
+    clickSign : function (evt, amount) {
+        this.add(amount);
+        hsp.refresh();
+        var field = evt.currentTarget.parentNode.parentNode.getElementsByTagName("input")[0];
+        field.select();
+        evt.preventDefault();
+    },
+    preventDefault : function (evt) {
+        evt.preventDefault();
+    },
+    fieldKeyDown : function (evt) {
+        var keyCode = evt.keyCode;
+        if (keyCode == 38 || keyCode == 40) { // up or down
+            this.add(39 - keyCode); // +1 or -1
+            hsp.refresh();
+            var field = evt.target;
+            field.select();
+            evt.preventDefault();
+        }
+    }
+
+});
+
+# template countField using c:CountFieldController
+<div class="input-group input-group-sm">
+<input type="text" value="{c.stringValue}" onblur="{c.blur()}" onkeydown="{c.fieldKeyDown(event)}" class="form-control" style="text-align:right;"/>
+<div class="input-group-btn" onmousedown="{c.preventDefault(event)}">
+<button type="button" class="btn btn-default" onclick="{c.clickSign(event,-1)}" tabindex="-1"><span class="glyphicon glyphicon-minus"></span></button>
+<button type="button" class="btn btn-default" onclick="{c.clickSign(event,1)}" tabindex="-1"><span class="glyphicon glyphicon-plus"></span></button>
+</div>
+</div>
+# /template
+
+
+module.exports = countField;

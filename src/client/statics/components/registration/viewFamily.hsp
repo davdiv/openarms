@@ -1,0 +1,11 @@
+var personLink = require("../person/personLink.hsp.js");
+
+# template viewFamily(data)
+    {if data.people}
+        {foreach person in data.people}
+            <#personLink value="{person.id}"/>{if !person_islast}, {/if}
+        {/foreach}
+    {/if}
+# /template
+
+module.exports = viewFamily;

@@ -1,9 +1,18 @@
-var personField = require("../components/person/personField.hsp.js");
+var editable = require("../components/editable.hsp.js");
+var viewVisit = require("../components/visit/viewVisit.hsp.js");
+var editVisit = require("../components/visit/editVisit.hsp.js");
 
 # template template(page)
     <div class="container-fluid">
-        Visite<br>
-        <#personField value="{page.personId}" />
+        <h2><span class="glyphicon glyphicon-chevron-right"></span> Visite</h2>
+        <#editable
+            savedData="{page.savedData}"
+            editedData="{page.editedData}"
+            savingData="{page.savingData}"
+            currentView="{page.currentView}"
+            viewer="{viewVisit}"
+            editor="{editVisit}"
+        />
     </div>
 # /template
 
@@ -15,6 +24,11 @@ module.exports = {
     template : template,
     iconTemplate : iconTemplate,
     init: function(page){
-        page.personId = page.query.person;
+        page.currentView="edit";
+        page.savedData = null;
+        page.editedData = {
+            person: page.query.person,
+            date: new Date()
+        };
     }
 };

@@ -1,5 +1,7 @@
 var promise = require("noder-js/promise");
 var editable = require("../components/editable.hsp.js");
+var viewFamily = require("../components/registration/viewFamily.hsp.js");
+var editFamily = require("../components/registration/editFamily.hsp.js");
 
 var delay = function (returnValue, delay) {
     var defer = promise.defer();
@@ -34,6 +36,10 @@ var save = function (event, value) {
 
 # template template(page)
     <div class="container-fluid">
+        <h2><span class="glyphicon glyphicon-chevron-right"></span> Famille</h2>
+        <#editable savedData="{page.savedFamilyData}" editedData="{page.editedFamilyData}" savingData="{page.savingFamilyData}" currentView="{page.familyCurrentView}" viewer="{viewFamily}" editor="{editFamily}"/>
+        <h2><span class="glyphicon glyphicon-chevron-right"></span> Visites</h2>
+        <h2><span class="glyphicon glyphicon-chevron-right"></span> Autre</h2>
         <#editable savedData="{page.savedData}" editedData="{page.editedData}" savingData="{page.savingData}" onEdit="{refresh(event)}" onRefresh="{refresh(event)}" onSave="{save(event, page.editedData)}" viewer="{viewer}" editor="{editor}"/>
     </div>
 # /template
@@ -47,5 +53,7 @@ module.exports = {
     iconTemplate : iconTemplate,
     init: function (page) {
         page.savedData = delay({myTime:"initial time", myValue:"initial value"},2000);
+        page.editedFamilyData = {};
+        page.familyCurrentView = "edit";
     }
 };

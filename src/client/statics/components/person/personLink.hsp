@@ -7,7 +7,7 @@ var isPromise = promiseUtils.isPromise;
 var Ctrl = klass({
     attributes: {
         value: {
-            type: "string",
+            type: "object",
             binding: "1-way"
         }
     },

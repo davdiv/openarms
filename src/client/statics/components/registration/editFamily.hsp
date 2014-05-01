@@ -1,0 +1,58 @@
+var klass = require("hsp/klass");
+var personField = require("../person/personField.hsp.js");
+var personLink = require("../person/personLink.hsp.js");
+
+var Ctrl = klass({
+    attributes: {
+        data:{
+            type:"object",
+            binding: "1-way"
+        }
+    },
+    addPersonId: function (event) {
+        var newId = event.value;
+        if (!newId) {
+            return;
+        }
+        var data = this.data;
+        if (!data.people) {
+            data.people = [];
+        }
+        data.people.push({
+            id: newId
+        });
+        event.value = null;
+    },
+    removePerson: function (index, person) {
+        var people = this.data.people;
+        if (people[index] !== person) {
+            // safety check
+            return;
+        }
+        people.splice(index,1);
+    }
+});
+
+# template editFamily using c:Ctrl
+    {let data = c.data}
+    <table class="table">
+    {if data.people}
+        <tbody>
+            {foreach personIndex,person in data.people}
+                <tr>
+                    <td><#personLink value="{person.id}"/></td>
+                    <td><button class="btn btn-default btn-sm" onclick="{c.removePerson(personIndex, person)}"><span class="glyphicon glyphicon-remove"></span></button></td>
+                </tr>
+            {/foreach}
+        </tbody>
+    {/if}
+        <tfoot>
+            <tr>
+                <td><#personField onchange="{c.addPersonId(event)}"/></td>
+                <td><a class="btn btn-default btn-sm" href="/people/new"><span class="glyphicon glyphicon-plus"></span> Nouvelle personne</a></td>
+            </tr>
+        </tfoot>
+    </table>
+# /template
+
+module.exports = editFamily;

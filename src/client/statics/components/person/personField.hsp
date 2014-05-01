@@ -20,8 +20,11 @@ var extractPersonId = function (dataTransfer) {
 var Ctrl = klass({
     attributes: {
         value: {
-            type:"string",
+            type:"object",
             binding: "2-way"
+        },
+        onchange: {
+            type:"callback"
         }
     },
     $refresh: function () {
@@ -32,6 +35,14 @@ var Ctrl = klass({
     },
     onChooseSuggestion: function (event) {
         this.value = event.suggestion.id;
+        this.callOnChange();
+    },
+    callOnChange: function () {
+        var sendEvent = {
+            value: this.value
+        };
+        this.onchange(sendEvent);
+        this.value = sendEvent.value;
     },
     onDragOver: function(event) {
         var dataTransfer = event.dataTransfer;
@@ -46,16 +57,18 @@ var Ctrl = klass({
         this.dragging = null;
     },
     onDrop: function (event) {
+        event.preventDefault();
+        this.dragging = null;
         var dragging = extractPersonId(event.dataTransfer);
         if (dragging && dragging !== true) {
             this.value = dragging;
+            this.callOnChange();
         }
-        this.dragging = null;
-        event.preventDefault();
     },
     clear: function (event) {
-        this.value = "";
         event.preventDefault();
+        this.value = null;
+        this.callOnChange();
     },
     preventDefault: function(event) {
         event.preventDefault();
