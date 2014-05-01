@@ -13,7 +13,7 @@
   },
   "bin": "openarms",
   "scripts": {
-  	"preinstall": "bash preinstall.sh",
+    "preinstall": "bash preinstall.sh",
     "prepublish": "gulp prepublish",
     "start": "node openarms --dev"
   },
@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/davdiv/openarms",
   "dependencies": {
+    "diacritics": "1.1.0",
     "express": "3.5.1",
     "gulp": "3.5.6",
     "gulp-clean": "0.2.4",

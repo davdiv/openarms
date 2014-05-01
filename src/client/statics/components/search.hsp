@@ -26,6 +26,7 @@ var computeSuggestions = function (event) {
 };
 
 var chooseSuggestion = function (event) {
+    event.preventDefault = true;
     var url = event.suggestion.url || "";
     page(url + "");
     event.text = "";
@@ -43,7 +44,7 @@ var enter = function (event) {
 # template search
     <div class="navbar-form navbar-left">
         <div class="form-group">
-            <#autoComplete onComputeSuggestions="{computeSuggestions(event)}" onChooseSuggestion="{chooseSuggestion(event)}" onEnter="{enter(event)}" displaySuggestion="{displayLine}"/>
+            <#autoComplete class="form-control" onComputeSuggestions="{computeSuggestions(event)}" onChooseSuggestion="{chooseSuggestion(event)}" onEnter="{enter(event)}" displaySuggestion="{displayLine}"/>
         </div>
     </div>
 # /template

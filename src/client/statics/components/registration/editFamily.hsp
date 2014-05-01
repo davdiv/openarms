@@ -1,6 +1,7 @@
 var klass = require("hsp/klass");
-var personField = require("../person/personField.hsp.js");
-var personLink = require("../person/personLink.hsp.js");
+var personField = require("../personId/personField.hsp.js");
+var personInfo = require("../personId/personInfo.hsp.js");
+var detailedLine = require("../person/detailedLine.hsp.js");
 
 var Ctrl = klass({
     attributes: {
@@ -36,22 +37,22 @@ var Ctrl = klass({
 # template editFamily using c:Ctrl
     {let data = c.data}
     <table class="table">
+        <tbody>
+            <tr>
+                <td colspan="{detailedLine.columnsNumber}"><#personField onchange="{c.addPersonId(event)}"/></td>
+                <td><a class="btn btn-default btn-sm" href="/people/new"><span class="glyphicon glyphicon-plus"></span> Nouvelle personne</a></td>
+            </tr>
+        </tbody>
     {if data.people}
         <tbody>
             {foreach personIndex,person in data.people}
                 <tr>
-                    <td><#personLink value="{person.id}"/></td>
-                    <td><button class="btn btn-default btn-sm" onclick="{c.removePerson(personIndex, person)}"><span class="glyphicon glyphicon-remove"></span></button></td>
+                    <#personInfo value="{person.id}"/>
+                    <td><button class="btn btn-default btn-xs" onclick="{c.removePerson(personIndex, person)}"><span class="glyphicon glyphicon-remove"></span></button></td>
                 </tr>
             {/foreach}
         </tbody>
     {/if}
-        <tfoot>
-            <tr>
-                <td><#personField onchange="{c.addPersonId(event)}"/></td>
-                <td><a class="btn btn-default btn-sm" href="/people/new"><span class="glyphicon glyphicon-plus"></span> Nouvelle personne</a></td>
-            </tr>
-        </tfoot>
     </table>
 # /template
 

@@ -1,6 +1,6 @@
 var klass = require("hsp/klass");
 var peopleMgr = require("../../peopleMgr");
-var name = require("./name.hsp.js");
+var detailedLine = require("../person/detailedLine.hsp.js");
 var promiseUtils = require("../../promiseUtils");
 var isPromise = promiseUtils.isPromise;
 
@@ -22,20 +22,20 @@ var Ctrl = klass({
     }
 });
 
-# template personLink using c:Ctrl
+# template personInfo using c:Ctrl
     {if c.value}
-        <a href="/people/{c.value}">
-            {if isPromise(c.data)}
+        {if isPromise(c.data)}
+            <td colspan="{detailedLine.columnsNumber}">
                 {if c.dataError}
                     <span class="glyphicon glyphicon-exclamation-sign" title="{c.dataError}"></span> <span class="glyphicon glyphicon-user"></span> {c.value}
                 {else}
                     <span class="spinner"></span> <span class="glyphicon glyphicon-user"></span> {c.value}
                 {/if}
-            {else}
-                <#name data="{c.data}"/>
-            {/if}
-        </a>
+            </td>
+        {else}
+            <#detailedLine data="{c.data}"/>
+        {/if}
     {/if}
 # /template
 
-module.exports = personLink;
+module.exports = personInfo;

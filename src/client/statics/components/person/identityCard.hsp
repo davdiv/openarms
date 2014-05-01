@@ -1,6 +1,7 @@
 var formatDate = require("../../dates/format").date;
 var computeAge = require("../../dates/age");
 var maritalStatuses = require("../../maritalStatuses");
+var displayCountry = require("../../countries/displayCountry.hsp.js");
 
 var contactDetailProtocol = {
     "phone": "tel:",
@@ -18,12 +19,12 @@ var contactDetailProtocol = {
 {/if}
 <p>
 {if data.birthCity}
-    Ville de naissance: {data.birthCity} {if data.birthCountry}({data.birthCountry}){/if}<br>
+    Ville de naissance: {data.birthCity} {if data.birthCountry}(<#displayCountry data="{data.birthCountry}"/>){/if}<br>
 {else if data.birthCountry}
-    Pays de naissance: {data.birthCountry}<br>
+    Pays de naissance: <#displayCountry data="{data.birthCountry}"/><br>
 {/if}
-{if data.nationalities}
-    Nationalité(s): {foreach nationality in data.nationalities}{nationality.value}{if !nationality_islast}, {/if}{/foreach}<br>
+{if data.nationalities && data.nationalities.length}
+    Nationalité(s): {foreach nationality in data.nationalities}<#displayCountry data="{nationality}"/>{if !nationality_islast}, {/if}{/foreach}<br>
 {/if}
 
 {if data.contactDetails && data.contactDetails.length > 0}

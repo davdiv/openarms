@@ -1,0 +1,107 @@
+var klass = require("hsp/klass");
+var autoComplete = require("./autoComplete.hsp.js");
+
+var Ctrl = klass({
+    attributes: {
+        values: {
+            type: "object",
+            binding: "2-way"
+        },
+        onComputeSuggestions: {
+            type: "callback"
+        },
+        onChooseSuggestion: {
+            type: "callback"
+        },
+        onRemoveSuggestion: {
+            type: "callback"
+        },
+        onEnter: {
+            type: "callback"
+        },
+        displaySuggestion: {
+            type: "object" // in fact, this is a template
+        },
+        displaySelection: {
+            type: "object" // in fact, this is a template
+        },
+        "class":{
+            type:"string"
+        }
+    },
+    $init: function(){
+        if (!this.displaySelection) {
+            this.displaySelection = this.displaySuggestion;
+        }
+    },
+    chooseSuggestion: function (event) {
+        var forwardedEvent = {
+            text: event.text,
+            suggestion: event.suggestion,
+            values: this.values || [],
+            preventDefault: false
+        };
+        this.onChooseSuggestion(forwardedEvent);
+        event.preventDefault = true;
+        if (!forwardedEvent.preventDefault) {
+            forwardedEvent.values.push(forwardedEvent.suggestion);
+            forwardedEvent.text = "";
+        }
+        this.values = forwardedEvent.values;
+        event.text = forwardedEvent.text;
+    },
+    removeSuggestion: function (event, index) {
+        event.preventDefault();
+        var forwardedEvent = {
+            preventDefault: false,
+            index: index,
+            values: this.values
+        };
+        this.onRemoveSuggestion(forwardedEvent);
+        if (!forwardedEvent.preventDefault) {
+            forwardedEvent.values.splice(index,1);
+        }
+        this.values = forwardedEvent.values;
+    },
+    enter: function (event) {
+        var forwardedEvent = {
+            text: event.text,
+            values: this.values,
+            suggestion: null
+        };
+        this.onEnter(forwardedEvent);
+        this.values = forwardedEvent.values;
+        delete forwardedEvent.values;
+        if (forwardedEvent.suggestion) {
+            this.chooseSuggestion(forwardedEvent);
+        }
+        event.text = forwardedEvent.text;
+    }
+});
+
+# template multiAutoComplete using c:Ctrl
+    <span class="form-control input-sm {c.class}">
+        <span class="multi-auto-complete">
+        {if c.values}
+            {foreach index,value in c.values}
+                <span class="entry">
+                    <span>
+                        <#c.displaySelection data="{value}"/>
+                        &nbsp;
+                        <a href="#" onclick="{c.removeSuggestion(event,index)}"><span class="glyphicon glyphicon-remove"></span></a>
+                    </span>
+                </span>
+            {/foreach}
+        {/if}
+        <#autoComplete
+            onComputeSuggestions="{c.onComputeSuggestions(event)}"
+            onChooseSuggestion="{c.chooseSuggestion(event)}"
+            onEnter="{c.enter(event)}"
+            displaySuggestion="{c.displaySuggestion}"
+        />
+        </span>
+    </span>
+# /template
+
+
+module.exports = multiAutoComplete;

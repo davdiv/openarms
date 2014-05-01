@@ -15,6 +15,8 @@ gulp.task("dev", function () {
         .pipe(gulp.dest(staticsDevDir + "/bootstrap"));
     gulp.src("node_modules/page/index.js").pipe(newer(staticsDevDir + "/page.js")).pipe(rename("page.js")).pipe(
         gulp.dest(staticsDevDir));
+    gulp.src("node_modules/diacritics/index.js").pipe(newer(staticsDevDir + "/diacritics.js")).pipe(rename("diacritics.js")).pipe(
+            gulp.dest(staticsDevDir));
     gulp.src("node_modules/qs/index.js").pipe(newer(staticsDevDir + "/qs.js")).pipe(rename("qs.js")).pipe(
         gulp.dest(staticsDevDir));
     gulp.src("node_modules/hashspace/hsp/**/*.js").pipe(newer(staticsDevDir + "/hsp")).pipe(

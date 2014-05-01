@@ -1,0 +1,23 @@
+var klass = require("hsp/klass");
+var displayCountry = require("./displayCountry.hsp.js");
+var countrySuggestions = require("./countrySuggestions");
+var multiAutoComplete = require("../widgets/multiAutoComplete.hsp.js");
+
+var Ctrl = klass({
+    attributes: {
+        values: {
+            type:"object",
+            binding: "2-way"
+        }
+    }
+});
+
+# template multiCountryField using c:Ctrl
+    <#multiAutoComplete
+        values="{c.values}"
+        onComputeSuggestions="{countrySuggestions.onComputeSuggestions(event)}"
+        onEnter="{countrySuggestions.onEnter(event)}"
+        displaySuggestion="{displayCountry}"/>
+# /template
+
+module.exports = multiCountryField;

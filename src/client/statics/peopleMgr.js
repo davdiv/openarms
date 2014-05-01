@@ -22,15 +22,15 @@ module.exports = {
         // existing person
         return cacheInstance.setItemContent(object);
     },
-    search: function (text) {
+    search : function(text) {
         // TODO: request the server instead of looking in the cache
         var res = [];
         var items = cacheInstance.items;
-        for (var key in items) {
+        for ( var key in items) {
             if (items.hasOwnProperty(key)) {
                 var curItem = items[key];
                 if (curItem.content) {
-                    res.push(curItem.content);
+                    res.push(curItem.content.id);
                 }
             }
         }

@@ -69,3 +69,37 @@
 .dragging {
 	background-color: #d9edf7;
 }
+
+.form-control input {
+	border: none;
+	background-color: transparent;
+	width: 100%;
+}
+
+.form-control input:focus {
+    outline: none;
+}
+
+.multi-auto-complete {
+	display: table;
+	width: 100%;
+}
+
+.multi-auto-complete .entry {
+	display: table-cell;
+	white-space: nowrap;
+	width: 1%;
+	padding: 0 5px 0 0;
+}
+
+.multi-auto-complete .entry>span {
+	padding: 3px;
+	border: 1px solid #ccc;
+	background-color: #eee;
+	border-radius: 3px;
+}
+
+.multi-auto-complete input {
+	display: table-cell;
+	width: 100%;
+}

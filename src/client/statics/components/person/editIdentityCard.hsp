@@ -2,6 +2,8 @@ var klass = require("hsp/klass");
 var formatDate = require("../../dates/format").date;
 var computeAge = require("../../dates/age");
 var sexField = require("../../widgets/sexField.hsp.js");
+var multiCountryField = require("../../countries/multiCountryField.hsp.js");
+var countryField = require("../../countries/countryField.hsp.js");
 var maritalStatusField = require("../../widgets/maritalStatusField.hsp.js");
 var birthDateField = require("../../widgets/birthDateField.hsp.js");
 var contactDetailTypes = {
@@ -14,24 +16,6 @@ var Ctrl = klass({
        data: {
            type: "object",
            binding: "1-way"
-       }
-   },
-   addNationality: function () {
-       var data = this.data;
-       if (!data.nationalities) {
-           data.nationalities = [];
-       }
-       data.nationalities.push({});
-   },
-   removeNationality : function (index, nationality) {
-       var data = this.data;
-       if (!data.nationalities[index] == nationality) {
-           // safety check
-           return;
-       }
-       data.nationalities.splice(index, 1);
-       if (data.nationalities.length == 0) {
-           data.nationalities = null;
        }
    },
    addContactDetail: function (type) {
@@ -110,25 +94,14 @@ var Ctrl = klass({
 <div class="form-group">
 <label class="col-sm-3 control-label">Pays de naissance</label>
 <div class="col-sm-9">
-<input class="form-control input-sm" type="text" value="{data.birthCountry}">
+<#countryField value="{data.birthCountry}"/>
 </div>
 </div>
 
 <div class="form-group">
 <label class="col-sm-3 control-label">Nationalité(s)</label>
 <div class="col-sm-9">
-{if data.nationalities}
-{foreach nationalityIndex,nationality in data.nationalities}
-<div class="form-inline input-group input-group-sm">
-<input class="form-control input-sm" type="text" value="{nationality.value}">
-<span class="input-group-btn">
-<button type="button" class="btn btn-default" onclick="{c.removeNationality(nationalityIndex,nationality)}"><span class="glyphicon glyphicon-remove"></span></button>
-</span>
-</div>
-<br>
-{/foreach}
-{/if}
-<button type="button" class="btn btn-default btn-sm" onclick="{c.addNationality()}"><span class="glyphicon glyphicon-plus"></span></button>
+<#multiCountryField values="{data.nationalities}"/>
 </div>
 </div>
 

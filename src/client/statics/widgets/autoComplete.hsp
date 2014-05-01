@@ -4,7 +4,7 @@ var promiseUtils = require("../promiseUtils");
 var isPromise = promiseUtils.isPromise;
 
 # template defaultDisplaySuggestion(data)
-    {data.label}
+    {data}
 # /template
 
 var AutoCompleteController = klass({
@@ -33,21 +33,13 @@ var AutoCompleteController = klass({
             type : "callback"
         },
         displaySuggestion : {
-            type : "object", // in fact, we expect a template
-            defaultValue : defaultDisplaySuggestion
-        },
-        beforeInput: {
-            type:"template"
-        },
-        afterInput: {
-            type:"template"
-        },
-        content: {
-            type:"template",
-            defaultContent: true
+            type : "object"
         }
     },
     $init : function () {
+        if (!this.displaySuggestion) {
+            this.displaySuggestion = defaultDisplaySuggestion;
+        }
         this.focused = false;
         this.open = false;
         this.suggestions = null;
@@ -78,20 +70,23 @@ var AutoCompleteController = klass({
             this.changeSelectedSuggestion(event.keyCode - 39);
         } else if (event.keyCode == 13) {
             if (this.open && this.selectedSuggestion != -1) {
-                this.chooseSuggestion(this.selectedSuggestion, this.suggestions[this.selectedSuggestion], event);
+                this.chooseSuggestion(this.suggestions[this.selectedSuggestion], event);
             } else {
                 this.enter(event);
             }
         }
     },
-    chooseSuggestion : function (index, suggestion) {
+    chooseSuggestion : function (suggestion) {
         this.open = false;
         var event = {
-            index : index,
+            preventDefault: false,
             suggestion : suggestion,
-            text : suggestion.label || ""
+            text : this.value
         };
         this.onChooseSuggestion(event);
+        if (!event.preventDefault) {
+            event.text = event.suggestion != null ? event.suggestion + "" : "" ;
+        }
         this.value = event.text;
     },
     enter : function (domEvent) {
@@ -135,21 +130,16 @@ var AutoCompleteController = klass({
     }
 });
 
-
 # template autoComplete using c:AutoCompleteController
     <div class="{'dropdown','open':c.open}">
-        <div class="{c.class}">
-            {if c.beforeInput}<#c.beforeInput />{/if}
-            <input
-                type="text"
-                class="form-control"
-                value="{c.value}"
-                oninput="{c.onType(event)}"
-                onkeydown="{c.onKeyDown(event)}"
-                onfocus="{c.onFocus(event)}"
-                onblur="{c.onBlur(event)}"/>
-            {if c.afterInput}<#c.afterInput />{/if}
-        </div>
+        <input
+            type="text"
+            class="{c.class}"
+            value="{c.value}"
+            oninput="{c.onType(event)}"
+            onkeydown="{c.onKeyDown(event)}"
+            onfocus="{c.onFocus(event)}"
+            onblur="{c.onBlur(event)}"/>
     {if c.open}
         <ul class="dropdown-menu" onmousedown="{c.preventDefault(event)}" onclick="{c.preventDefault(event)}">
             {if isPromise(c.suggestions)}
@@ -163,15 +153,13 @@ var AutoCompleteController = klass({
             {else}
                 {foreach index,suggestion in c.suggestions}
                     <li class="{'active':index == c.selectedSuggestion}">
-                        <a href="#" onmouseover="{c.onSuggestionMouseOver(index)}" onclick="{c.chooseSuggestion(index, suggestion, event)}"><#c.displaySuggestion data="{suggestion}"/></a>
+                        <a href="#" onmouseover="{c.onSuggestionMouseOver(index)}" onclick="{c.chooseSuggestion(suggestion, event)}"><#c.displaySuggestion data="{suggestion}"/></a>
                     </li>
                 {/foreach}
             {/if}
-            {if c.content}<#c.content/>{/if}
         </ul>
     {/if}
     </div>
 # /template
-
 
 module.exports = autoComplete;
