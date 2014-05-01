@@ -1,9 +1,7 @@
-var notMetaData = function(key) {
-    return !(/^\+/.test(key));
-}
+var isNotMetaData = require("./serialization").isNotMetaData;
 
 var forAllKeys = function(object, fn) {
-    Object.keys(object).filter(notMetaData).forEach(fn);
+    Object.keys(object).filter(isNotMetaData).forEach(fn);
 }
 
 module.exports = function(dest, src) {

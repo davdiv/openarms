@@ -1,7 +1,7 @@
 var klass = require("hsp/klass");
 var optionButton = require("./optionButton.hsp.js");
 var maritalStatuses = require("../maritalStatuses");
-var maritalStatusKeys = Object.keys(maritalStatuses);
+var maritalStatusKeys = Object.keys(maritalStatuses).filter(require("../serialization").isNotMetaData);
 
 var Ctrl = klass({
     attributes: {

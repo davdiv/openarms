@@ -1,8 +1,16 @@
 // so that the value is the object in the replacer:
 Date.prototype.toJSON = null;
 
-var replacer = function (key, value) {
-    if (/^\+/.test(key)) {
+var isMetaData = function(key) {
+    return /^\+/.test(key);
+};
+
+var isNotMetaData = function(key) {
+    return !isMetaData(key);
+};
+
+var replacer = function(key, value) {
+    if (isMetaData(key)) {
         return undefined;
     }
     if (/date$/i.test(key) && value) {
@@ -14,7 +22,7 @@ var replacer = function (key, value) {
     return value;
 };
 
-var reviver = function (key, value) {
+var reviver = function(key, value) {
     if (/date$/i.test(key) && value) {
         return new Date(value[0], value[1] - 1, value[2]);
     }
@@ -24,15 +32,15 @@ var reviver = function (key, value) {
     return value;
 };
 
-var stringify = function (object) {
+var stringify = function(object) {
     return JSON.stringify(object, replacer);
 };
 
-var parse = function (string) {
+var parse = function(string) {
     return JSON.parse(string, reviver);
 };
 
-var clone = function (object) {
+var clone = function(object) {
     var serialized = stringify(object);
     return parse(serialized);
 };
@@ -40,5 +48,7 @@ var clone = function (object) {
 module.exports = {
     stringify : stringify,
     parse : parse,
-    clone : clone
+    clone : clone,
+    isMetaData : isMetaData,
+    isNotMetaData : isNotMetaData
 };
