@@ -1,28 +1,29 @@
 var autoComplete = require("../widgets/autoComplete.hsp.js");
+var promise = require("noder-js/promise");
+var peopleMgr = require("../peopleMgr");
+var personRef = require("./personId/personRef.hsp.js");
+var personName = require("./person/name.hsp.js");
 var page = require("page");
 var searchUrl = "/search?q=";
-var promise = require("noder-js/promise");
-
-var delay = function (returnValue, delay) {
-    var defer = promise.defer();
-    setTimeout(function() {
-        if (Math.floor(Math.random() *2) == 0 ) {
-            defer.resolve(returnValue);
-        } else {
-            defer.reject(new Error("Random error. Please retry!"));
-        }
-    },delay);
-    return defer.promise;
-};
 
 var computeSuggestions = function (event) {
-    event.returnValue = delay([ {
-            label : "Page d'accueil",
-            url : "/"
-        }, {
-            label : "Plus d'infos sur " + event.text,
-            url : searchUrl + encodeURIComponent(event.text)
-        } ],200);
+    var text = event.text;
+    event.returnValue = promise.done.thenSync(peopleMgr.search.bind(peopleMgr, text)).thenSync(function (people) {
+        var res = people.map(function (item) {
+            return {person: item, url: "/people/" + item};
+        });
+        res.unshift({
+            icon: "glyphicon glyphicon-plus",
+            label: "Nouvelle fiche pour " + text,
+            url: "/people/new?lastName=" + encodeURIComponent(text)
+        });
+        res.push({
+            icon: "glyphicon glyphicon-search",
+            label: "Tous les résultats pour " + text,
+            url: searchUrl + encodeURIComponent(text)
+        });
+        return res;
+    });
 };
 
 var chooseSuggestion = function (event) {
@@ -38,7 +39,11 @@ var enter = function (event) {
 };
 
 # template displayLine(data)
-    {data.label}
+    {if data.person}
+        <#personRef template="{personName}" data="{data.person}"/>
+    {else}
+        <span class="{data.icon}"></span> {data.label}
+    {/if}
 # /template
 
 # template search
