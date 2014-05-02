@@ -1,7 +1,7 @@
-var personLink = require("../personId/personLink.hsp.js");
+var personRef = require("../personId/personRef.hsp.js");
 
 # template viewVisit(data)
-    <#personLink data="{data.person}" />
+    <#personRef data="{data.person}" />
 # /template
 
 module.exports = viewVisit;

@@ -1,6 +1,6 @@
 var klass = require("hsp/klass");
 var personField = require("../personId/personField.hsp.js");
-var personInfo = require("../personId/personInfo.hsp.js");
+var personRef = require("../personId/personRef.hsp.js");
 var detailedLine = require("../person/detailedLine.hsp.js");
 
 var Ctrl = klass({
@@ -47,7 +47,7 @@ var Ctrl = klass({
         <tbody>
             {foreach personIndex,person in data.people}
                 <tr>
-                    <#personInfo value="{person.id}"/>
+                    <#personRef data="{person.id}" template="{detailedLine}"/>
                     <td><button class="btn btn-default btn-xs" onclick="{c.removePerson(personIndex, person)}"><span class="glyphicon glyphicon-remove"></span></button></td>
                 </tr>
             {/foreach}

@@ -1,6 +1,7 @@
 var hsp = require("hsp/rt");
 var klass = require("hsp/klass");
-var personLink = require("./personLink.hsp.js");
+var personRef = require("./personRef.hsp.js");
+var personName = require("../person/name.hsp.js");
 var singleAutoComplete = require("../../widgets/singleAutoComplete.hsp.js");
 var dragUtils = require("../../dragUtils");
 var peopleMgr = require("../../peopleMgr");
@@ -67,13 +68,18 @@ var Ctrl = klass({
     }
 });
 
+# template personRefName(data)
+    <#personRef template="{personName}" data="{data}"/>
+# /template
+
 # template personField using c:Ctrl
     <span ondragover="{c.onDragOver(event)}" ondragleave="{c.onDragLeave(event)}" ondrop="{c.onDrop(event)}" style="display:block;position:relative;">
         {if c.dragging}
             <#singleAutoComplete
                 class="dragging"
                 value="{c.dragging !== true ? c.dragging : null}"
-                displaySuggestion="{personLink}"
+                displaySuggestion="{personRefName}"
+                displaySelection="{personRef}"
             />
         {else}
             <#singleAutoComplete
@@ -81,7 +87,8 @@ var Ctrl = klass({
                 onComputeSuggestions="{c.onComputeSuggestions(event)}"
                 onChooseSuggestion="{c.onChooseSuggestion(event)}"
                 onRemoveSuggestion="{c.onRemoveSuggestion(event)}"
-                displaySuggestion="{personLink}"
+                displaySuggestion="{personRefName}"
+                displaySelection="{personRef}"
             />
         {/if}
     </span>
