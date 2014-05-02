@@ -2,41 +2,19 @@ var klass = require("hsp/klass");
 var titleImage = require("../widgets/titleImage.hsp.js");
 var login = require("../login");
 
-var LoginCtrl = klass({
-    attributes : {
-        page : {
-            type : "object"
-        },
-        controller : {
-            type : "object"
-        }
-    },
-    $init : function () {
-        this.data = this.controller.data;
-    },
-    login : function () {
-        this.page.processing = true;
-        this.data.password = "";
-        login.login({
-            login : this.data.login,
-            password : this.data.password
-        }).thenSync(this.page.remove.bind(this.page));
-    }
-});
-
 # template iconTemplate(page)
     <span class="glyphicon glyphicon-lock"></span> {page.title}
 # /template
 
-# template template using c:LoginCtrl
-    {let loginModule = login}
+# template template(controller)
+    {let c=controller, loginModule = login}
     <#titleImage image="img-lg-lock" title="Authentification"/>
     <div class="container">
         <div class="row">
             <div class="col-sm-6 col-sm-offset-3 col-xs-10 col-xs-offset-1">
                 {if loginModule.data.connected}
                     <p>Vous êtes connecté en tant qu'utilisateur <b>{loginModule.data.userDisplayName}</b>.</p>
-                    <button type="submit" class="btn btn-default" onclick="{login.logout()}">Se déconnecter</button>
+                    <button type="submit" class="btn btn-default" onclick="{loginModule.logout()}">Se déconnecter</button>
                 {else}
                     <div class="form-group">
                         <label for="username">Nom d'utilisateur</label>
@@ -53,18 +31,22 @@ var LoginCtrl = klass({
     </div>
 # /template
 
-// this wrapper template is needed because of a bug in hashspace
-# template wrapperTemplate(page, controller)
-   <#template page="{page}" controller="{controller}"/>
-# /template
-
 module.exports = klass({
-    template : wrapperTemplate,
+    template : template,
     iconTemplate : iconTemplate,
-    init : function () {
+    init : function (page) {
+        this.page = page;
         this.data = {
             login : login.data.userLogin,
             password : ""
         };
+    },
+    login : function () {
+        this.page.processing = true;
+        this.data.password = "";
+        login.login({
+            login : this.data.login,
+            password : this.data.password
+        }).thenSync(this.page.$dispose.bind(this.page));
     }
 });
