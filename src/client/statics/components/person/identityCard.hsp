@@ -9,7 +9,7 @@ var contactDetailProtocol = {
 };
 
 # template identityCard(data)
-<div class="img-lg-portrait{data.sex ? '-' + data.sex : ''} img-responsive block"></div>
+<div class="img-lg-portrait{data.sex ? '-' + data.sex : ''} img-responsive block" style="margin-right:16px;"></div>
 <div class="block">
 <h3>{data.firstName} {data.lastName} <small>{data.familyName}</small></h3>
 {if data.birthDate}

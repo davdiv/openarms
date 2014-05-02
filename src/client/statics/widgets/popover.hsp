@@ -1,0 +1,73 @@
+var klass = require("hsp/klass");
+
+var Ctrl = klass({
+    attributes: {
+        visibleArea:{
+            type:"template",
+            defaultContent: true
+        },
+        hidingArea:{
+            type:"template"
+        },
+        popoverWidth: {
+            type:"object",
+            binding:"1-way"
+        }
+    },
+    $init: function () {
+        if (!this.popoverWidth) {
+            this.popoverWidth = 400;
+        }
+    },
+    $refresh: function () {
+        this.rootElt = this.$getElement(0);
+    },
+    show: function () {
+        var rootElt = this.rootElt;
+        if (rootElt) {
+            var popoverWidth = this.popoverWidth;
+            var viewportWidth = document.documentElement.clientWidth;
+            // check that the viewport is large enough:
+            if (viewportWidth < popoverWidth + 20) {
+                return;
+            }
+            var positionInViewport = rootElt.getBoundingClientRect();
+            this.topPosition = rootElt.offsetHeight;
+            var leftPosition = (rootElt.offsetWidth - popoverWidth) / 2;
+            var leftDiff = positionInViewport.left + leftPosition - 10;
+            if (leftDiff < 0) {
+                leftPosition -= leftDiff;
+            }
+            var rightDiff = viewportWidth - positionInViewport.left - leftPosition - popoverWidth - 10;
+            if (rightDiff < 0) {
+                leftPosition += rightDiff;
+            }
+            this.leftPosition = leftPosition;
+            this.arrowLeftPosition = rootElt.offsetWidth / 2 - leftPosition;
+            this.open = true;
+        }
+    },
+    hide: function() {
+        this.open = false;
+    },
+    mouseEnter: function () {
+        this.show();
+    },
+    mouseLeave: function () {
+        this.hide();
+    }
+});
+
+# template popover using c:Ctrl
+<span style="display:inline-block;position:relative;vertical-align:middle;" onmouseenter="{c.mouseEnter(event)}" onmouseleave="{c.mouseLeave(event)}">
+    <#c.visibleArea />
+    {if c.open}
+        <div class="popover bottom" style="display:block;top:{c.topPosition}px;left:{c.leftPosition}px;width:{c.popoverWidth}px;max-width:{c.popoverWidth}px;">
+            <div class="arrow" style="left:{c.arrowLeftPosition}px"></div>
+            <div class="popover-content"><#c.hidingArea /></div>
+        </div>
+    {/if}
+</span>
+# /template
+
+module.exports = popover;

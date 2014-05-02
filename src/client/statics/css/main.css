@@ -13,7 +13,6 @@
 [class|=img-lg] {
 	min-width: 128px;
 	min-height: 128px;
-	margin: 16px;
 }
 
 .spinner.modal-backdrop {
@@ -54,6 +53,14 @@
 
 .space-right {
 	margin-right: 55px;
+}
+
+.block-container.left {
+    text-align: left;
+}
+
+.block-container.center {
+    text-align: center;
 }
 
 .block-container.right {
