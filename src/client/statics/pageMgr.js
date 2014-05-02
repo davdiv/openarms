@@ -41,6 +41,7 @@ var updateUrl = function() {
 var Page = klass({
     $constructor : function(route, ctxt) {
         this.url = ctxt.canonicalPath;
+        this.urlPattern = route.path;
         this.params = ctxt.params;
         this.query = qs.parse(ctxt.querystring);
         this.title = route.title;
@@ -74,18 +75,20 @@ var Page = klass({
             this.$dispose();
         }
     },
-    setUrl : function(newUrl) {
-        this.url = newUrl;
-        setTimeout(updateUrl.bind(this), 1);
-    },
-    setQuery : function(newQuery) {
-        var newQueryString = qs.stringify(newQuery);
-        if (newQueryString) {
-            newQueryString = "?" + newQueryString;
+    updateUrl : function() {
+        var urlPattern = this.urlPattern;
+        var params = this.params;
+        for ( var p in params) {
+            if (params.hasOwnProperty(p)) {
+                urlPattern = urlPattern.replace(":" + p, params[p]);
+            }
         }
-        var newUrl = this.url.replace(/(?:\?[^#]*)?(?=#|$)/, newQueryString);
-        this.query = newQuery;
-        this.setUrl(newUrl);
+        var queryString = qs.stringify(this.query);
+        if (queryString) {
+            urlPattern += "?" + queryString;
+        }
+        this.url = urlPattern;
+        setTimeout(updateUrl.bind(this), 1);
     }
 });
 

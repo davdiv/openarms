@@ -11,15 +11,15 @@ module.exports = [ {
     "module" : "pages/search.hsp.js",
     "title" : "Recherche"
 }, {
-    "path" : "/people/:person",
+    "path" : "/people/:id",
     "module" : "pages/person.hsp.js",
     "title" : "Personne"
 }, {
-    "path" : "/visits/:visit",
+    "path" : "/visits/:id",
     "module" : "pages/visit.hsp.js",
     "title" : "Visite"
 }, {
-    "path" : "/registrations/:registration",
+    "path" : "/registrations/:id",
     "module" : "pages/registration.hsp.js",
     "title" : "Inscription"
 } ];

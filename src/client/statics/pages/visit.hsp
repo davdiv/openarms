@@ -3,14 +3,18 @@ var editable = require("../components/editable.hsp.js");
 var viewVisit = require("../components/visit/viewVisit.hsp.js");
 var editVisit = require("../components/visit/editVisit.hsp.js");
 
-# template template(page)
+# template template(controller)
+    {let c = controller}
     <div class="container-fluid">
         <h2><span class="glyphicon glyphicon-chevron-right"></span> Visite</h2>
         <#editable
-            savedData="{page.savedData}"
-            editedData="{page.editedData}"
-            savingData="{page.savingData}"
-            currentView="{page.currentView}"
+            onSave="{c.onUserSave(event)}"
+            onRefresh="{c.onUserRefresh(event)}"
+            onCancel="{c.onUserCancel(event)}"
+            savedData="{c.savedData}"
+            editedData="{c.editedData}"
+            savingData="{c.savingData}"
+            currentView="{c.currentView}"
             viewer="{viewVisit}"
             editor="{editVisit}"
         />
@@ -21,15 +25,16 @@ var editVisit = require("../components/visit/editVisit.hsp.js");
     <span class="glyphicon glyphicon-calendar"></span> {page.title}
 # /template
 
+var BaseClass = require("./abstract/editable");
+
 module.exports = klass({
+    $extends: BaseClass,
     template : template,
     iconTemplate : iconTemplate,
-    init: function(page){
-        page.currentView="edit";
-        page.savedData = null;
-        page.editedData = {
-            person: page.query.person,
-            date: new Date()
-        };
+    createData: function (query) {
+        var res = {};
+        res.person = query.person;
+        res.date = new Date();
+        return res;
     }
 });

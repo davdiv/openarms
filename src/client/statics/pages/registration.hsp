@@ -4,44 +4,23 @@ var editable = require("../components/editable.hsp.js");
 var viewFamily = require("../components/registration/viewFamily.hsp.js");
 var editFamily = require("../components/registration/editFamily.hsp.js");
 
-var delay = function (returnValue, delay) {
-    var defer = promise.defer();
-    setTimeout(function() {
-        if (Math.floor(Math.random() *2) == 0 ) {
-            defer.resolve(returnValue);
-        } else {
-            defer.reject(new Error("Random error. Please retry!"));
-        }
-    },delay);
-    return defer.promise;
-};
-
-var refresh = function(event) {
-    event.returnValue = delay({
-        myValue:"",
-        myTime: new Date().getTime()
-    }, 2000);
-};
-
-var save = function (event, value) {
-    event.returnValue = delay(value, 5000);
-};
-
-# template viewer(data)
-    {data.myValue}<br>{data.myTime}
-# /template
-
-# template editor(data)
-    <input type="text" value="{data.myValue}"><br>{data.myTime}
-# /template
-
-# template template(page)
+# template template(controller)
+    {let c = controller}
     <div class="container-fluid">
         <h2><span class="glyphicon glyphicon-chevron-right"></span> Famille</h2>
-        <#editable savedData="{page.savedFamilyData}" editedData="{page.editedFamilyData}" savingData="{page.savingFamilyData}" currentView="{page.familyCurrentView}" viewer="{viewFamily}" editor="{editFamily}"/>
+        <#editable
+            onSave="{c.onUserSave(event)}"
+            onRefresh="{c.onUserRefresh(event)}"
+            onCancel="{c.onUserCancel(event)}"
+            savedData="{c.savedData}"
+            editedData="{c.editedData}"
+            savingData="{c.savingData}"
+            currentView="{c.currentView}"
+            viewer="{viewFamily}"
+            editor="{editFamily}"
+        />
         <h2><span class="glyphicon glyphicon-chevron-right"></span> Visites</h2>
         <h2><span class="glyphicon glyphicon-chevron-right"></span> Autre</h2>
-        <#editable savedData="{page.savedData}" editedData="{page.editedData}" savingData="{page.savingData}" onEdit="{refresh(event)}" onRefresh="{refresh(event)}" onSave="{save(event, page.editedData)}" viewer="{viewer}" editor="{editor}"/>
     </div>
 # /template
 
@@ -49,12 +28,17 @@ var save = function (event, value) {
     <span class="glyphicon glyphicon-file"></span> {page.title}
 # /template
 
+var BaseClass = require("./abstract/editable");
+
 module.exports = klass({
+    $extends : BaseClass,
     template : template,
     iconTemplate : iconTemplate,
-    init: function (page) {
-        page.savedData = delay({myTime:"initial time", myValue:"initial value"},2000);
-        page.editedFamilyData = {};
-        page.familyCurrentView = "edit";
+    createData: function (query) {
+        var res = {};
+        if (query.person) {
+            res.people = [query.person];
+        }
+        return res;
     }
 });
