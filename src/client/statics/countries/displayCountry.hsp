@@ -2,11 +2,8 @@ var countries = require("./countriesList");
 
 # template displayCountry(data)
     {let name = countries[data]}
-    {if !name}
-        <span class="glyphicon glyphicon-exclamation-sign" title="Pays inconnu"></span> {data}
-    {else}
-        <span class="img-sm" style="background-image:url({staticsRootDirectory}/images/flags/{data}.png);"></span> {name}
-    {/if}
+    {if !name}<span class="glyphicon glyphicon-exclamation-sign" title="Pays inconnu"></span> {data}{else}
+    <span class="img-sm" style="background-image:url({staticsRootDirectory}/images/flags/{data}.png);"></span> {name}{/if}
 # /template
 
 module.exports = displayCountry;

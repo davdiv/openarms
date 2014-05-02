@@ -7,14 +7,10 @@ var computeAge = require("../../dates/age");
     <span class="glyphicon glyphicon-user"></span>
 {/if}
 {if data.firstName || data.lastName}
-    {if data.firstName}{" "}{data.firstName}{/if}
-    {if data.lastName}{" "}{data.lastName}{/if}
-{else}
-    {" "}Personne
-{/if}
-{if data.birthDate}
-    {" "}({computeAge(data.birthDate)})
-{/if}
+    {if data.firstName} {data.firstName}{/if}
+    {if data.lastName} {data.lastName}{/if}
+{else} Personne{/if}
+{if data.birthDate} ({computeAge(data.birthDate)}){/if}
 # /template
 
 module.exports = name;
