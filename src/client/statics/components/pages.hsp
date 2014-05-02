@@ -8,10 +8,10 @@ var closePage = function (event, page) {
 # template pages(pageMgr)
     <ul class="nav navbar-nav">
     {foreach page in pageMgr.pages}
-        <li class="{'active': page === pageMgr.activePage}">
+        <li class="{page === pageMgr.activePage ? 'active' : ''}">
             <a href="{page.url}">
-            {if page.iconTemplate}
-                <#page.iconTemplate page="{page}" />
+            {if page.controller.iconTemplate}
+                <#page.controller.iconTemplate page="{page}" controller="{page.controller}" />
             {else if page.processing}
                 <span class="spinner"></span> {page.title}
             {else}

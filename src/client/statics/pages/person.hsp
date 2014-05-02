@@ -95,7 +95,7 @@ var createIdentity = function (query) {
     return res;
 };
 
-module.exports = {
+module.exports = klass({
     template : wrapperTemplate,
     iconTemplate : iconTemplate,
     init: function (page) {
@@ -109,4 +109,4 @@ module.exports = {
             page.savedIdentity = peopleMgr.getIdentity(page.params.person);
         }
     }
-};
+});

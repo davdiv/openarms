@@ -6,10 +6,13 @@ var LoginCtrl = klass({
     attributes : {
         page : {
             type : "object"
+        },
+        controller : {
+            type : "object"
         }
     },
     $init : function () {
-        this.data = this.page.data;
+        this.data = this.controller.data;
     },
     login : function () {
         this.page.processing = true;
@@ -51,17 +54,17 @@ var LoginCtrl = klass({
 # /template
 
 // this wrapper template is needed because of a bug in hashspace
-# template wrapperTemplate(page)
-   <#template page="{page}" />
+# template wrapperTemplate(page, controller)
+   <#template page="{page}" controller="{controller}"/>
 # /template
 
-module.exports = {
+module.exports = klass({
     template : wrapperTemplate,
     iconTemplate : iconTemplate,
-    init : function (page) {
-        page.data = {
+    init : function () {
+        this.data = {
             login : login.data.userLogin,
             password : ""
         };
     }
-};
+});

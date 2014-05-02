@@ -1,3 +1,4 @@
+var klass = require("hsp/klass");
 var promise = require("noder-js/promise");
 var editable = require("../components/editable.hsp.js");
 var viewFamily = require("../components/registration/viewFamily.hsp.js");
@@ -48,7 +49,7 @@ var save = function (event, value) {
     <span class="glyphicon glyphicon-file"></span> {page.title}
 # /template
 
-module.exports = {
+module.exports = klass({
     template : template,
     iconTemplate : iconTemplate,
     init: function (page) {
@@ -56,4 +57,4 @@ module.exports = {
         page.editedFamilyData = {};
         page.familyCurrentView = "edit";
     }
-};
+});

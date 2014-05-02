@@ -1,4 +1,6 @@
-# template template(page)
+var klass = require("hsp/klass");
+
+# template template()
     <div class="container-fluid">
         Bienvenue dans Openarms!
     </div>
@@ -8,7 +10,7 @@
     <span class="glyphicon glyphicon-home"></span> {page.title}
 # /template
 
-module.exports = {
+module.exports = klass({
     template : template,
     iconTemplate : iconTemplate
-};
+});

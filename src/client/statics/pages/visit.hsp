@@ -1,3 +1,4 @@
+var klass = require("hsp/klass");
 var editable = require("../components/editable.hsp.js");
 var viewVisit = require("../components/visit/viewVisit.hsp.js");
 var editVisit = require("../components/visit/editVisit.hsp.js");
@@ -20,7 +21,7 @@ var editVisit = require("../components/visit/editVisit.hsp.js");
     <span class="glyphicon glyphicon-calendar"></span> {page.title}
 # /template
 
-module.exports = {
+module.exports = klass({
     template : template,
     iconTemplate : iconTemplate,
     init: function(page){
@@ -31,4 +32,4 @@ module.exports = {
             date: new Date()
         };
     }
-};
+});

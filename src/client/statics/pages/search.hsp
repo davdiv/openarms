@@ -1,3 +1,5 @@
+var klass = require("hsp/klass");
+
 # template template(page)
     <div class="container-fluid">
         Votre recherche: {page.title}<br>
@@ -9,11 +11,11 @@
     <span class="glyphicon glyphicon-search"></span> {page.title}
 # /template
 
-module.exports = {
+module.exports = klass({
     template : template,
     iconTemplate : iconTemplate,
     init : function (page) {
         page.title = page.query.q;
         page.encodedQuery = encodeURIComponent(page.query.q);
     }
-};
+});

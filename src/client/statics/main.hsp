@@ -4,7 +4,7 @@ var navBar = require("./components/navBar.hsp.js");
     {let activePage = pageMgr.activePage}
     <#navBar pageMgr="{pageMgr}"/>
     {if activePage && !activePage.processing}
-        <#activePage.template page="{activePage}" />
+        <#activePage.controller.template page="{activePage}" controller="{activePage.controller}" />
     {/if}
 # /template
 

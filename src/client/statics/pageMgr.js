@@ -1,45 +1,8 @@
+var klass = require("hsp/klass");
 var pagejs = require("page");
 var qs = require("qs");
 var asyncRequire = require("noder-js/asyncRequire").create(module);
 var routes = require("./routes");
-
-var initPage = function (module) {
-    this.module = module;
-    this.template = module.template;
-    this.iconTemplate = module.iconTemplate;
-    if (module.init) {
-        return module.init(this);
-    }
-};
-
-var stopProcessing = function () {
-    this.processing = false;
-};
-
-var Page = function (route, ctxt) {
-    this.url = ctxt.canonicalPath;
-    this.params = ctxt.params;
-    this.query = qs.parse(ctxt.querystring);
-    this.title = route.title;
-    this.template = null;
-    this.iconTemplate = null;
-    this.processing = true;
-    asyncRequire(route.module).thenSync(initPage.bind(this)).thenSync(stopProcessing.bind(this)).end();
-};
-
-var continueClosing = function (reallyClose) {
-    if (reallyClose !== false) {
-        this.remove();
-    }
-};
-
-Page.prototype.close = function () {
-    if (module.close) {
-        module.close(this).thenSync(continueClosing.bind(this)).end();
-    } else {
-        this.remove();
-    }
-};
 
 var pages = [];
 var data = module.exports = {
@@ -47,43 +10,87 @@ var data = module.exports = {
     activePage : null
 };
 
-Page.prototype.remove = function () {
-    var index = pages.indexOf(this);
-    if (index > -1) {
-        pages.splice(index, 1);
+var insertPage = function(pageToInsert) {
+    pages.push(pageToInsert);
+};
+
+var initPage = function(ModuleCstr) {
+    var controller = new ModuleCstr(this);
+    this.controller = controller;
+    if (controller.init) {
+        return controller.init(this);
     }
+};
+
+var stopProcessing = function() {
+    this.processing = false;
+};
+
+var continueClosing = function(reallyClose) {
+    if (reallyClose !== false) {
+        this.$dispose();
+    }
+};
+
+var updateUrl = function() {
     if (data.activePage == this) {
-        data.activePage = null;
-        if (index >= pages.length) {
-            index -= 1;
-        }
-        pagejs(index < 0 ? "/" : pages[index].url);
+        pagejs.replace(this.url);
     }
 };
 
-Page.prototype.setUrl = function (newUrl) {
-    var oldUrl = this.url;
-    this.url = newUrl;
-    setTimeout(function () {
-        var url = location.pathname + location.search + location.hash;
-        if (url == oldUrl) {
-            pagejs.replace(newUrl);
+var Page = klass({
+    $constructor : function(route, ctxt) {
+        this.url = ctxt.canonicalPath;
+        this.params = ctxt.params;
+        this.query = qs.parse(ctxt.querystring);
+        this.title = route.title;
+        this.processing = true;
+        this.controller = null;
+        insertPage(this);
+        asyncRequire(route.module).thenSync(initPage.bind(this)).thenSync(stopProcessing.bind(this)).end();
+    },
+    $dispose : function() {
+        var controller = this.controller;
+        if (controller.$dispose) {
+            controller.$dispose();
         }
-    }, 1);
-};
-
-Page.prototype.setQuery = function (newQuery) {
-    var newQueryString = qs.stringify(newQuery);
-    if (newQueryString) {
-        newQueryString = "?" + newQueryString;
+        var index = pages.indexOf(this);
+        if (index > -1) {
+            pages.splice(index, 1);
+        }
+        if (data.activePage == this) {
+            data.activePage = null;
+            if (index >= pages.length) {
+                index -= 1;
+            }
+            pagejs(index < 0 ? "/" : pages[index].url);
+        }
+    },
+    close : function() {
+        var controller = this.controller;
+        if (controller.close) {
+            controller.close().thenSync(continueClosing.bind(this)).end();
+        } else {
+            this.$dispose();
+        }
+    },
+    setUrl : function(newUrl) {
+        this.url = newUrl;
+        setTimeout(updateUrl.bind(this), 1);
+    },
+    setQuery : function(newQuery) {
+        var newQueryString = qs.stringify(newQuery);
+        if (newQueryString) {
+            newQueryString = "?" + newQueryString;
+        }
+        var newUrl = this.url.replace(/(?:\?[^#]*)?(?=#|$)/, newQueryString);
+        this.query = newQuery;
+        this.setUrl(newUrl);
     }
-    var newUrl = this.url.replace(/(?:\?[^#]*)?(?=#|$)/, newQueryString);
-    this.query = newQuery;
-    this.setUrl(newUrl);
-};
+});
 
-var findPageWithUrl = function (url) {
-    for (var i = 0, l = pages.length; i < l; i++) {
+var findPageWithUrl = function(url) {
+    for ( var i = 0, l = pages.length; i < l; i++) {
         var curPage = pages[i];
         if (curPage.url === url) {
             return curPage;
@@ -91,23 +98,18 @@ var findPageWithUrl = function (url) {
     }
 };
 
-var insertPage = function (pageToInsert) {
-    pages.push(pageToInsert);
-};
-
-var processRoute = function (route) {
-    return function (ctxt) {
+var processRoute = function(route) {
+    return function(ctxt) {
         var url = ctxt.canonicalPath;
         var page = findPageWithUrl(url);
         if (!page) {
             page = new Page(route, ctxt);
-            insertPage(page);
         }
         data.activePage = page;
     };
 };
 
-routes.forEach(function (curRoute) {
+routes.forEach(function(curRoute) {
     pagejs(curRoute.path, processRoute(curRoute));
 });
 
