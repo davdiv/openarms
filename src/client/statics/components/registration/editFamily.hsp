@@ -1,7 +1,11 @@
 var klass = require("hsp/klass");
-var personField = require("../personId/personField.hsp.js");
+var promise = require("noder-js/promise");
+var autoComplete = require("../../widgets/autoComplete.hsp.js");
 var personRef = require("../personId/personRef.hsp.js");
+var personName = require("../person/name.hsp.js");
 var detailedLine = require("../person/detailedLine.hsp.js");
+var peopleMgr = require("../../peopleMgr");
+var pagejs = require("page");
 
 var Ctrl = klass({
     attributes: {
@@ -10,23 +14,46 @@ var Ctrl = klass({
             binding: "1-way"
         }
     },
-    addPersonId: function (event) {
-        var newId = event.value;
-        if (!newId) {
-            return;
+    chooseSuggestion: function (event) {
+        var suggestion = event.suggestion;
+        event.preventDefault = true;
+        event.text = "";
+        if (!suggestion.person) {
+            pagejs(suggestion.url);
+        } else {
+            var data = this.data;
+            if (!data.people) {
+                data.people = [];
+            }
+            data.people.push(suggestion.person);
         }
-        var data = this.data;
-        if (!data.people) {
-            data.people = [];
-        }
-        data.people.push({
-            id: newId
-        });
-        event.value = null;
     },
-    removePerson: function (index, person) {
+    enter: function (event) {
+        var firstName = event.text;
+        event.text = "";
+        pagejs(this.buildNewPersonUrl);
+    },
+    buildNewPersonUrl: function (name) {
+        return "/people/new?firstName=" + encodeURIComponent(name) + "&registration=";
+    },
+    computeSuggestions: function (event) {
+        var text = event.text;
+        var self = this;
+        event.returnValue = promise.done.thenSync(peopleMgr.search.bind(peopleMgr, text)).thenSync(function (people) {
+            var res = people.map(function (item) {
+                return {person: item};
+            });
+            res.unshift({
+                icon: "glyphicon glyphicon-plus",
+                label: "Nouvelle fiche pour " + text,
+                url: self.buildNewPersonUrl(text)
+            });
+            return res;
+        });
+    },
+    removePerson: function (index, personId) {
         var people = this.data.people;
-        if (people[index] !== person) {
+        if (people[index] !== personId) {
             // safety check
             return;
         }
@@ -34,26 +61,42 @@ var Ctrl = klass({
     }
 });
 
+# template displaySuggestion(data)
+    {if data.person}
+        <#personRef template="{personName}" data="{data.person}"/>
+    {else}
+        <span class="{data.icon}"></span> {data.label}
+    {/if}
+# /template
+
 # template editFamily using c:Ctrl
     {let data = c.data}
+    <#autoComplete
+        class="form-control"
+        placeholder="Tapez ici le nom de chaque personne à ajouter"
+        onChooseSuggestion="{c.chooseSuggestion(event)}"
+        onComputeSuggestions="{c.computeSuggestions(event)}"
+        onEnter="{c.enter(event)}"
+        displaySuggestion="{displaySuggestion}"
+    />
+    {if data.people && data.people.length > 0}
     <table class="table">
+        <thead>
+            <tr><#detailedLine.titleLine /><th></th></tr>
+        </thead>
         <tbody>
-            <tr>
-                <td colspan="{detailedLine.columnsNumber}"><#personField onchange="{c.addPersonId(event)}"/></td>
-                <td><a class="btn btn-default btn-sm" href="/people/new"><span class="glyphicon glyphicon-plus"></span> Nouvelle personne</a></td>
-            </tr>
-        </tbody>
-    {if data.people}
-        <tbody>
-            {foreach personIndex,person in data.people}
+            {foreach personIndex,personId in data.people}
                 <tr>
-                    <#personRef data="{person.id}" template="{detailedLine}"/>
-                    <td><button class="btn btn-default btn-xs" onclick="{c.removePerson(personIndex, person)}"><span class="glyphicon glyphicon-remove"></span></button></td>
+                    <#personRef data="{personId}" template="{detailedLine}"/>
+                    <td>
+                        <button class="btn btn-default btn-xs" onclick="{c.removePerson(personIndex,personId)}"><span class="glyphicon glyphicon-remove"></span></button>
+                    </td>
                 </tr>
             {/foreach}
         </tbody>
-    {/if}
     </table>
+    {/if}
+    <br>
 # /template
 
 module.exports = editFamily;

@@ -17,6 +17,10 @@ var AutoCompleteController = klass({
             binding : "2-way",
             type : "string"
         },
+        placeholder: {
+            binding: "1-way",
+            type: "string"
+        },
         onComputeSuggestions : {
             type : "callback"
         },
@@ -136,6 +140,7 @@ var AutoCompleteController = klass({
             type="text"
             class="{c.class}"
             value="{c.value}"
+            placeholder="{c.placeholder}"
             oninput="{c.onType(event)}"
             onkeydown="{c.onKeyDown(event)}"
             onfocus="{c.onFocus(event)}"

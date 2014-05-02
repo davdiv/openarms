@@ -63,6 +63,7 @@ var Ctrl = klass({
     },
     onRemoveSuggestion: function (event) {
         event.preventDefault = true;
+        event.value = null;
         this.value = null;
         this.callOnChange();
     }
@@ -73,7 +74,7 @@ var Ctrl = klass({
 # /template
 
 # template personField using c:Ctrl
-    <span ondragover="{c.onDragOver(event)}" ondragleave="{c.onDragLeave(event)}" ondrop="{c.onDrop(event)}" style="display:block;position:relative;">
+    <span ondragover="{c.onDragOver(event)}" ondragleave="{c.onDragLeave(event)}" ondrop="{c.onDrop(event)}">
         {if c.dragging}
             <#singleAutoComplete
                 class="dragging"

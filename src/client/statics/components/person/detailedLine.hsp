@@ -4,8 +4,13 @@ var maritalStatuses = require("../../maritalStatuses");
 var displayCountry = require("../../countries/displayCountry.hsp.js");
 
 # template detailedLine(data)
-<td>{if data.sex}<span class="img-sm-symbol-{data.sex}"></span>{/if}</td>
-<td>{data.firstName}</td>
+<td>
+{if data.id}
+<a href="/people/{data.id}"><span class="{data.sex ? 'img-sm-symbol-' + data.sex : 'glyphicon glyphicon-user'}"></span> {data.firstName}</a>
+{else}
+<span class="{data.sex ? 'img-sm-symbol-' + data.sex : 'glyphicon glyphicon-user'}"></span> {data.firstName}
+{/if}
+</td>
 <td>{data.lastName} <small>{data.familyName}</small></td>
 <td>{if data.maritalStatus}{maritalStatuses[data.maritalStatus]}{/if}</td>
 <td>{if data.birthDate}{computeAge(data.birthDate)} ans <small>({formatDate(data.birthDate)})</small>{/if}</td>
@@ -19,6 +24,16 @@ var displayCountry = require("../../countries/displayCountry.hsp.js");
 <td>{if data.nationalities}{foreach nationality in data.nationalities}<#displayCountry data="{nationality}"/>{if !nationality_islast}, {/if}{/foreach}{/if}</td>
 # /template
 
-detailedLine.columnsNumber = 7;
+# template titleLine
+<th><span class="glyphicon glyphicon-user"></span> Prénom</th>
+<th>Nom</th>
+<th>Etat marital</th>
+<th>Age</th>
+<th>Lieu de naissance</th>
+<th>Nationalité(s)</th>
+# /template
+
+detailedLine.titleLine = titleLine;
+detailedLine.columnsNumber = 6;
 
 module.exports = detailedLine;
