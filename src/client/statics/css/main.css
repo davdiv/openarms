@@ -1,16 +1,16 @@
-.spinner, [class^=img-lg-], [class^=img-sm-] {
+.spinner, [class|=img-lg], [class|=img-sm] {
 	display: inline-block;
 	vertical-align: middle;
 	background-position:center;
 	background-repeat:no-repeat;
 }
 
-.spinner, [class^=img-sm-] {
+.spinner, [class|=img-sm] {
 	min-width: 16px;
 	min-height: 16px;
 }
 
-[class^=img-lg-] {
+[class|=img-lg] {
 	min-width: 128px;
 	min-height: 128px;
 	margin: 16px;

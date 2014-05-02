@@ -5,7 +5,7 @@ var countries = require("./countriesList");
     {if !name}
         <span class="glyphicon glyphicon-exclamation-sign" title="Pays inconnu"></span> {data}
     {else}
-        <span class="img-sm-flag" style="background-image:url({staticsRootDirectory}/images/flags/{data}.png)"></span> {name}
+        <span class="img-sm" style="background-image:url({staticsRootDirectory}/images/flags/{data}.png);"></span> {name}
     {/if}
 # /template
 
