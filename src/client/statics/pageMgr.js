@@ -1,6 +1,7 @@
 var klass = require("hsp/klass");
 var pagejs = require("page");
 var qs = require("qs");
+var promise = require("noder-js/promise");
 var asyncRequire = require("noder-js/asyncRequire").create(module);
 var routes = require("./routes");
 
@@ -54,6 +55,7 @@ var Page = klass({
         var controller = this.controller;
         if (controller.$dispose) {
             controller.$dispose();
+            this.controller = null;
         }
         var index = pages.indexOf(this);
         if (index > -1) {
@@ -66,11 +68,14 @@ var Page = klass({
             }
             pagejs(index < 0 ? "/" : pages[index].url);
         }
+        this.url = null;
+        this.params = null;
+        this.query = null;
     },
     close : function() {
         var controller = this.controller;
         if (controller.close) {
-            controller.close().thenSync(continueClosing.bind(this)).end();
+            promise.done.thenSync(controller.close.bind(controller)).thenSync(continueClosing.bind(this)).end();
         } else {
             this.$dispose();
         }

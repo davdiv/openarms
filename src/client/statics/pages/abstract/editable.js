@@ -47,5 +47,10 @@ module.exports = klass({
         if (!this.savedData) {
             this.page.$dispose();
         }
+    },
+    close : function () {
+        if (this.editedData) {
+            return confirm("Cette page peut contenir des données non enregistrées qui seront perdues si elle est fermée. Êtes-vous sûr(e) de vouloir la fermer?");
+        }
     }
 });
