@@ -22,4 +22,8 @@ module.exports = [ {
     "path" : "/registrations/:id",
     "module" : "pages/registration.hsp.js",
     "title" : "Inscription"
+}, {
+    "path" : "/account/sheets/:id",
+    "module" : "pages/account/sheet.hsp.js",
+    "title" : "Feuille de comptes"
 } ];

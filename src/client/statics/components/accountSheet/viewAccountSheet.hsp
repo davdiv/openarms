@@ -1,0 +1,55 @@
+var klass = require("hsp/klass");
+var formatCurrency = require("../../utils/formatCurrency");
+var formatDate = require("../../dates/format").date;
+var personRef = require("../../components/personId/personRef.hsp.js");
+
+# template displayDay(day)
+    <tbody>
+    <tr>
+        <th>
+            <span class="glyphicon glyphicon-chevron-right"></span> {formatDate(day.date)}
+                {if day.personInCharge || (day.team && day.team.length > 0)}
+                    avec {if day.personInCharge}<#personRef data="{day.personInCharge}"/>{/if}
+                    {if day.team.length > 0}
+                        <small>
+                            {foreach person in day.team}
+                                {if !person_isfirst || day.personInCharge}, {/if}<#personRef data="{person}"/>
+                            {/foreach}
+                        </small>
+                    {/if}
+                {/if}
+        </th>
+        <th>{formatCurrency(day.amount)}</th>
+    </tr>
+    {foreach index,line in day.lines}
+        {if line.amount !== 0}
+            <tr><td>{line.item}</td><td>{formatCurrency(line.amount)}</td></tr>
+        {/if}
+    {/foreach}
+    </tbody>
+# /template
+
+# template viewAccountSheet(data)
+<table class="table">
+{if data.days}
+    {foreach day in data.days}
+        <#displayDay day="{day}" />
+    {/foreach}
+{/if}
+    <tbody>
+    <tr><th><span class="glyphicon glyphicon-chevron-right"></span> Somme</th><th>{formatCurrency(data.sumAmount)}</th></tr>
+    <tr><th>Montant réel {if data.countedBy}<small>compté par <#personRef data="{data.countedBy}"/></small>{/if}</th><th>{formatCurrency(data.realAmount)}</th></tr>
+    <tr><th>Différence</th><th>{formatCurrency(data.realAmount - data.sumAmount)}
+    {if data.realAmount == data.sumAmount}
+    &nbsp;&nbsp;<span class="glyphicon glyphicon-ok"></span>
+    {/if}</th></tr>
+    </tbody>
+</table>
+
+    {if data.notes}
+        <p><b>Remarques:</b> {data.notes}</p>
+    {/if}
+
+# /template
+
+module.exports = viewAccountSheet;

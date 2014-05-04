@@ -1,0 +1,32 @@
+var klass = require("hsp/klass");
+var editable = require("../../components/editable.hsp.js");
+var viewer = require("../../components/accountSheet/viewAccountSheet.hsp.js");
+var editor = require("../../components/accountSheet/editAccountSheet.hsp.js");
+
+
+# template template(controller)
+    {let c = controller}
+    <div class="container-fluid">
+        {let savedData = c.savedData}
+        <h2><span class="glyphicon glyphicon-chevron-right"></span> Feuille de comptes</h2>
+        <#editable
+            onSave="{c.onUserSave(event)}"
+            onRefresh="{c.onUserRefresh(event)}"
+            onCancel="{c.onUserCancel(event)}"
+            savedData="{c.savedData}"
+            editedData="{c.editedData}"
+            savingData="{c.savingData}"
+            currentView="{c.currentView}"
+            viewer="{viewer}"
+            editor="{editor}"
+        />
+        <hr>
+    </div>
+# /template
+
+var BaseClass = require("../abstract/editable");
+
+module.exports = klass({
+    $extends: BaseClass,
+    template : template
+});

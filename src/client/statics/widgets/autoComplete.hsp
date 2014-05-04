@@ -15,7 +15,7 @@ var AutoCompleteController = klass({
         },
         value : {
             binding : "2-way",
-            type : "string"
+            type: "object"
         },
         placeholder: {
             binding: "1-way",
