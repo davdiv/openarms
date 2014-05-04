@@ -52,7 +52,7 @@ computeSuggestions.onEnter = function(event) {
         var upperCaseNoAccent = diacritics.remove(text).toUpperCase();
         for ( var i = 0, l = countriesList.length; i < l; i++) {
             var curCountry = countriesList[i];
-            if (curCountry.find === upperCaseNoAccent) {
+            if (curCountry.find === upperCaseNoAccent || curCountry.code === upperCaseNoAccent) {
                 text = curCountry.code;
                 break;
             }
