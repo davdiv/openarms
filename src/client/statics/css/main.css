@@ -88,25 +88,21 @@
 }
 
 .multi-auto-complete {
-	display: table;
 	width: 100%;
+	height: auto;
+	padding: 0px 5px;
 }
 
-.multi-auto-complete .entry {
-	display: table-cell;
-	white-space: nowrap;
-	width: 1%;
-	padding: 0 5px 0 0;
-}
-
-.multi-auto-complete .entry>span {
-	padding: 3px;
+.multi-auto-complete>span {
+	display: inline-block;
+	padding: 2px;
 	border: 1px solid #ccc;
-	background-color: #eee;
-	border-radius: 3px;
+    background-color: #eee;
+    border-radius: 3px;
+	margin: 2px;
 }
 
-.multi-auto-complete input {
-	display: table-cell;
-	width: 100%;
+.multi-auto-complete>div {
+	display: inline-block;
+	margin: 5px;
 }

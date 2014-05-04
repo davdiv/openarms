@@ -80,16 +80,13 @@ var Ctrl = klass({
 });
 
 # template multiAutoComplete using c:Ctrl
-    <span class="form-control input-sm {c.class}">
-        <span class="multi-auto-complete">
+    <span class="multi-auto-complete form-control input-sm {c.class}">
         {if c.values}
             {foreach index,value in c.values}
-                <span class="entry">
-                    <span>
-                        <#c.displaySelection data="{value}"/>
-                        &nbsp;
-                        <a href="#" onclick="{c.removeSuggestion(event,index)}"><span class="glyphicon glyphicon-remove"></span></a>
-                    </span>
+                <span>
+                    <#c.displaySelection data="{value}"/>
+                    &nbsp;
+                    <a href="#" onclick="{c.removeSuggestion(event,index)}"><span class="glyphicon glyphicon-remove"></span></a>
                 </span>
             {/foreach}
         {/if}
@@ -99,7 +96,6 @@ var Ctrl = klass({
             onEnter="{c.enter(event)}"
             displaySuggestion="{c.displaySuggestion}"
         />
-        </span>
     </span>
 # /template
 
