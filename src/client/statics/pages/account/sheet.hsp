@@ -2,6 +2,7 @@ var klass = require("hsp/klass");
 var editable = require("../../components/editable.hsp.js");
 var viewer = require("../../components/accountSheet/viewAccountSheet.hsp.js");
 var editor = require("../../components/accountSheet/editAccountSheet.hsp.js");
+var RestCache = require("../../restCache");
 
 # template iconTemplate(page)
 <span class="glyphicon glyphicon-euro"></span> {page.title}
@@ -33,6 +34,7 @@ module.exports = klass({
     $extends: BaseClass,
     template : template,
     iconTemplate : iconTemplate,
+    cache: new RestCache("account/sheets"),
     createData: function() {
         return {
             days: [{

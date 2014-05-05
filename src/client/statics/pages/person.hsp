@@ -5,6 +5,7 @@ var identityCard = require("../components/person/identityCard.hsp.js");
 var editIdentityCard = require("../components/person/editIdentityCard.hsp.js");
 var personName = require("../components/person/name.hsp.js");
 var peopleMgr = require("../peopleMgr");
+var isPromise = require("../promiseUtils").isPromise;
 
 # template iconTemplate(controller)
     <#personName data="{controller.savedData}" />
@@ -32,7 +33,7 @@ var peopleMgr = require("../peopleMgr");
             editor="{editIdentityCard}"
             currentView="{c.currentView}"/>
         <hr>
-        {if savedData}
+        {if savedData && !isPromise(savedData)}
         <h2><span class="glyphicon glyphicon-chevron-right"></span> Foyer</h2>
         {if !c.registration}
             <p>{savedData.firstName||"Cette personne"} n'appartient (pour l'instant) à aucun foyer inscrit.
@@ -65,19 +66,11 @@ module.exports = klass({
     $extends: BaseClass,
     template : template,
     iconTemplate : iconTemplate,
+    cache: peopleMgr,
     createData : function (query) {
         var res = {};
         res.firstName = query.firstName;
         res.lastName = query.lastName;
         return res;
-    },
-    loadData : function (id) {
-        return peopleMgr.getIdentity(id);
-    },
-    saveData: function (data) {
-        return peopleMgr.saveIdentity(data);
-    },
-    refreshData : function(id) {
-        return peopleMgr.refreshIdentity(id);
     }
 });

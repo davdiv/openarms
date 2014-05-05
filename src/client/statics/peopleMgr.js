@@ -1,27 +1,19 @@
-var Cache = require("./cache");
+var RestCache = require("./restCache");
+var server = require("./server");
 
-var cacheInstance = new Cache(function(id) {
-    // TODO: request the server
-    return {
-        id : id
-    };
-});
+var cacheInstance = new RestCache("people");
 
 // Fill the cache with some people (for demo purposes):
 cacheInstance.setItemContent({id:"pierredupont",firstName:"Pierre",sex:"male",lastName:"Dupont"});
 cacheInstance.setItemContent({id:"mariedurand",firstName:"Marie",lastName:"Durand", sex:"female"});
 
 module.exports = {
+    refreshItemContent : cacheInstance.refreshItemContent.bind(cacheInstance),
     refreshIdentity : cacheInstance.refreshItemContent.bind(cacheInstance),
+    getItemContent : cacheInstance.getItemContent.bind(cacheInstance),
     getIdentity : cacheInstance.getItemContent.bind(cacheInstance),
-    saveIdentity : function(object) {
-        if (!cacheInstance.getId(object)) {
-            // new person
-            object.id = new Date().getTime();
-        }
-        // existing person
-        return cacheInstance.setItemContent(object);
-    },
+    saveIdentity : cacheInstance.saveItemContent.bind(cacheInstance),
+    saveItemContent : cacheInstance.saveItemContent.bind(cacheInstance),
     search : function(text) {
         // TODO: request the server instead of looking in the cache
         var res = [];

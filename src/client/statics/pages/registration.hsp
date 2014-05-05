@@ -3,6 +3,7 @@ var promise = require("noder-js/promise");
 var editable = require("../components/editable.hsp.js");
 var viewFamily = require("../components/registration/viewFamily.hsp.js");
 var editFamily = require("../components/registration/editFamily.hsp.js");
+var RestCache = require("../restCache");
 
 # template template(controller)
     {let c = controller}
@@ -34,6 +35,7 @@ module.exports = klass({
     $extends : BaseClass,
     template : template,
     iconTemplate : iconTemplate,
+    cache: new RestCache("registrations"),
     createData: function (query) {
         var res = {};
         if (query.person) {

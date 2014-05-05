@@ -2,6 +2,7 @@ var klass = require("hsp/klass");
 var editable = require("../components/editable.hsp.js");
 var viewVisit = require("../components/visit/viewVisit.hsp.js");
 var editVisit = require("../components/visit/editVisit.hsp.js");
+var RestCache = require("../restCache");
 
 # template template(controller)
     {let c = controller}
@@ -31,6 +32,7 @@ module.exports = klass({
     $extends: BaseClass,
     template : template,
     iconTemplate : iconTemplate,
+    cache: new RestCache("visits"),
     createData: function (query) {
         var res = {};
         res.person = query.person;

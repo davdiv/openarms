@@ -2,6 +2,7 @@ var klass = require("hsp/klass");
 var promise = require("noder-js/promise");
 
 module.exports = klass({
+    cache : null,
     init : function(page) {
         this.page = page;
         var id = page.params.id;
@@ -23,13 +24,27 @@ module.exports = klass({
         return {};
     },
     loadData : function(id) {
-        return {};
+        if (this.cache) {
+            return this.cache.getItemContent(id);
+        } else {
+            return {
+                id : id
+            };
+        }
     },
     saveData : function(data) {
-        return data;
+        if (this.cache) {
+            return this.cache.saveItemContent(data);
+        } else {
+            return data;
+        }
     },
     refreshData : function(id) {
-        return this.loadData(id);
+        if (this.cache) {
+            return this.cache.refreshItemContent(id);
+        } else {
+            return this.loadData(id);
+        }
     },
     onUserRefresh : function(event) {
         event.returnValue = this.refreshData(this.page.params.id);
@@ -48,7 +63,7 @@ module.exports = klass({
             this.page.$dispose();
         }
     },
-    close : function () {
+    close : function() {
         if (this.editedData) {
             return confirm("Cette page peut contenir des données non enregistrées qui seront perdues si elle est fermée. Êtes-vous sûr(e) de vouloir la fermer?");
         }

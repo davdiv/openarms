@@ -1,21 +1,24 @@
 var q = require("q");
+var mongodb = require("mongodb");
 
-var parse = function (argv) {
+var parse = function(argv) {
     var minimist = require("minimist");
     return minimist(argv, {
         "string" : [],
-        "boolean" : [ "help", "version", "dev" ],
+        "boolean" : [ "help", "version", "dev", "db-empty" ],
         "alias" : {
             "help" : "h",
             "version" : "v"
         },
         "default" : {
-            port: parseInt(process.env.PORT, 10) || 8080
+            "port" : parseInt(process.env.PORT, 10) || 8080,
+            "db-url" : process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || mongodb.Db.DEFAULT_URL,
+            "db-empty" : process.env.OPENARMS_DB_EMPTY == "empty"
         }
     });
 };
 
-var execute = function (options) {
+var execute = function(options) {
     if (options.version) {
         console.log(require("../../package.json").version);
         return q(0);
@@ -29,7 +32,7 @@ var execute = function (options) {
     }
 };
 
-module.exports = function (argv) {
+module.exports = function(argv) {
     var options = parse(argv);
     return execute(options);
 };
