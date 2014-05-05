@@ -22,7 +22,7 @@ var editVisit = require("../components/visit/editVisit.hsp.js");
 # /template
 
 # template iconTemplate(page)
-    <span class="glyphicon glyphicon-calendar"></span> {page.title}
+    <span class="glyphicon glyphicon-shopping-cart"></span> {page.title}
 # /template
 
 var BaseClass = require("./abstract/editable");

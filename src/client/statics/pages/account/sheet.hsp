@@ -3,6 +3,9 @@ var editable = require("../../components/editable.hsp.js");
 var viewer = require("../../components/accountSheet/viewAccountSheet.hsp.js");
 var editor = require("../../components/accountSheet/editAccountSheet.hsp.js");
 
+# template iconTemplate(page)
+<span class="glyphicon glyphicon-euro"></span> {page.title}
+# /template
 
 # template template(controller)
     {let c = controller}

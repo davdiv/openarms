@@ -2,7 +2,13 @@ var klass = require("hsp/klass");
 
 # template template()
     <div class="container-fluid">
-        Bienvenue dans Openarms!
+        <h4>Bienvenue dans Openarms!</h4>
+        <p>
+            <a class="btn btn-default" href="/people/new"><span class="glyphicon glyphicon-user"></span> Nouvelle fiche</a>
+            {" "}<a class="btn btn-default" href="/registrations/new"><span class="glyphicon glyphicon-file"></span> Nouveau foyer</a>
+            {" "}<a class="btn btn-default" href="/visits/new"><span class="glyphicon glyphicon-shopping-cart"></span> Nouvelle visite</a>
+            {" "}<a class="btn btn-default" href="/account/sheets/new"><span class="glyphicon glyphicon-euro"></span> Nouvelle feuille de comptes</a>
+        </p>
     </div>
 # /template
 

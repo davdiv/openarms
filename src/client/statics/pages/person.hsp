@@ -33,14 +33,16 @@ var peopleMgr = require("../peopleMgr");
             currentView="{c.currentView}"/>
         <hr>
         {if savedData}
-        <h2><span class="glyphicon glyphicon-chevron-right"></span> Inscription</h2>
+        <h2><span class="glyphicon glyphicon-chevron-right"></span> Foyer</h2>
         {if !c.registration}
-            <p>{savedData.firstName||"Cette personne"} n'appartient à aucune famille inscrite.</p>
-            <p><a href="/registrations/new?person={savedData.id}" class="btn btn-primary">Nouvelle inscription</a></p>
+            <p>{savedData.firstName||"Cette personne"} n'appartient (pour l'instant) à aucun foyer inscrit.
+            Vous pouvez l'ajouter à un foyer existant ou à un nouveau foyer.</p>
+            <p><a href="/registrations/new?person={savedData.id}" class="btn btn-primary"><span class="glyphicon glyphicon-file"></span> Nouveau foyer</a>
+            </p>
         {/if}
         <hr>
         <h2><span class="glyphicon glyphicon-chevron-right"></span> Dernières visites</h2>
-        <p><a href="/visits/new?person={savedData.id}" class="btn btn-primary">Nouvelle visite</a></p>
+        <p><a href="/visits/new?person={savedData.id}" class="btn btn-primary"><span class="glyphicon glyphicon-shopping-cart"></span> Nouvelle visite</a></p>
         {if !c.visits || c.visits.length == 0}
             <p>{savedData.firstName||"Cette personne"} n'a aucune visite enregistrée.</p>
         {else}
