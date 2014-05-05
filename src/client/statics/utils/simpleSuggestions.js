@@ -1,4 +1,3 @@
-var isNotMetaData = require("../serialization").isNotMetaData;
 var diacritics = require("diacritics");
 var maxEntries = 10;
 
