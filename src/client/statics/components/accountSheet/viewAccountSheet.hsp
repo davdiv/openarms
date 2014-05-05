@@ -21,11 +21,13 @@ var personRef = require("../../components/personId/personRef.hsp.js");
         </th>
         <th>{formatCurrency(day.amount)}</th>
     </tr>
+    {if day.lines}
     {foreach index,line in day.lines}
         {if line.amount !== 0}
             <tr><td>{line.item}</td><td>{formatCurrency(line.amount)}</td></tr>
         {/if}
     {/foreach}
+    {/if}
     </tbody>
 # /template
 

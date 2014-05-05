@@ -17,13 +17,17 @@ var Ctrl = klass({
             binding : "1-way"
         }
     },
+    $init: function() {
+        this.recompute();
+    },
+    onDataChange: function () {
+        this.recompute();
+    },
     addDay: function () {
         if (!this.data.days) {
             this.data.days = [];
         }
-        var day = {
-            lines: []
-        };
+        var day = {};
         this.data.days.push(day);
         this.addLine(day,0);
     },
@@ -32,9 +36,13 @@ var Ctrl = klass({
         this.recompute();
     },
     addLine: function (day, index) {
+        if (!day.lines) {
+            day.lines = [];
+        }
         day.lines.splice(index, 0, {
             amount: 0
         });
+        this.recompute();
     },
     removeLine: function(day, index) {
         day.lines.splice(index,1);
@@ -79,6 +87,7 @@ var Ctrl = klass({
             </div>
         </div>
 
+        {if day.lines}
         {foreach index,line in day.lines}
         <div class="form-group">
             <div class="col-sm-3 col-sm-offset-3">
@@ -91,7 +100,7 @@ var Ctrl = klass({
             <div class="col-sm-2">
                 <#amountField value="{line.amount}" onchange="{c.recompute()}"/>
             </div>
-            <div class="col-sm-1">
+            <div class="col-sm-2">
                 <div class="btn-group btn-group-sm">
                     <button class="btn btn-default" onclick="{c.addLine(day, index+1)}"><span class="glyphicon glyphicon-plus"></span></button>
                     <button class="btn btn-default" onclick="{c.removeLine(day, index)}"><span class="glyphicon glyphicon-remove"></span></button>
@@ -99,6 +108,7 @@ var Ctrl = klass({
             </div>
         </div>
         {/foreach}
+        {/if}
 
         <div class="form-group">
             <label class="col-sm-3 control-label">Total</label>
@@ -116,7 +126,7 @@ var Ctrl = klass({
     {/if}
     <div class="well form-horizontal">
         <div class="pull-right">
-            <button class="btn btn-default" onclick="{c.addDay()}"><span class="glyphicon glyphicon-plus"></span>Ajouter un jour</button>
+            <button class="btn btn-default" onclick="{c.addDay()}"><span class="glyphicon glyphicon-plus"></span> Ajouter un jour</button>
         </div>
 
         <div class="form-group">

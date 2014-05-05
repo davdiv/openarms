@@ -31,5 +31,13 @@ var BaseClass = require("../abstract/editable");
 
 module.exports = klass({
     $extends: BaseClass,
-    template : template
+    template : template,
+    iconTemplate : iconTemplate,
+    createData: function() {
+        return {
+            days: [{
+                lines: [{amount:0}]
+            }]
+        };
+    }
 });
