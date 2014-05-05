@@ -45,6 +45,9 @@ var personRef = require("../../components/personId/personRef.hsp.js");
     {/if}</th></tr>
     </tbody>
 </table>
+    {if data.tags && data.tags.length > 0}
+        <p><b>Tags:</b> {foreach tag in data.tags}{if !tag_isfirst}, {/if}{tag}{/foreach}</p>
+    {/if}
 
     {if data.notes}
         <p><b>Remarques:</b> {data.notes}</p>

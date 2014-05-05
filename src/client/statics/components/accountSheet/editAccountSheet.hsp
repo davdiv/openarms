@@ -1,6 +1,8 @@
 var klass = require("hsp/klass");
 var dateField = require("../../widgets/dateField.hsp.js");
 var autoComplete = require("../../widgets/autoComplete.hsp.js");
+var multiAutoComplete = require("../../widgets/multiAutoComplete.hsp.js");
+var tagSuggestions = require("./tagSuggestions");
 var amountField = require("../../widgets/amountField.hsp.js");
 var formatCurrency = require("../../utils/formatCurrency");
 var personField = require("../../components/personId/personField.hsp.js");
@@ -143,6 +145,17 @@ var Ctrl = klass({
             <label class="col-sm-3 control-label">Compté par</label>
             <div class="col-sm-5">
                 <#personField value="{c.data.countedBy}"/>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Tags</label>
+            <div class="col-sm-5">
+                <#multiAutoComplete
+                    values="{data.tags}"
+                    onComputeSuggestions="{tagSuggestions.onComputeSuggestions(event)}"
+                    onEnter="{tagSuggestions.onEnter(event)}"
+                />
             </div>
         </div>
 

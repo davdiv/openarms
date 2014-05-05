@@ -1,6 +1,10 @@
 var klass = require("hsp/klass");
 var autoComplete = require("./autoComplete.hsp.js");
 
+# template defaultDisplaySuggestion(data)
+    {data}
+# /template
+
 var Ctrl = klass({
     attributes: {
         values: {
@@ -30,6 +34,9 @@ var Ctrl = klass({
         }
     },
     $init: function(){
+        if (!this.displaySuggestion) {
+            this.displaySuggestion = defaultDisplaySuggestion;
+        }
         if (!this.displaySelection) {
             this.displaySelection = this.displaySuggestion;
         }
