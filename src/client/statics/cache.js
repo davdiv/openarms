@@ -29,7 +29,10 @@ var Item = klass({
             return this.setError(new Error("setValue called with no value!"));
         }
         var savedContent = this.savedContent;
-        updateObject(savedContent, value);
+        var unmodified = savedContent.lastChangeTimestamp && savedContent.lastChangeTimestamp.getTime() === value.lastChangeTimestamp.getTime();
+        if (!unmodified) {
+            updateObject(savedContent, value);
+        }
         this.content = savedContent;
         if (this.defer) {
             this.defer.resolve(savedContent);
@@ -73,10 +76,6 @@ var Cache = klass({
         throw new Error("Not implemented");
     },
 
-    getId : function(object) {
-        return object.id;
-    },
-
     getItem : function(id) {
         if (!id) {
             throw new Error("Trying to get an item without id.");
@@ -102,7 +101,7 @@ var Cache = klass({
     },
 
     setItemContent : function(object) {
-        var id = this.getId(object);
+        var id = object.id;
         if (!id) {
             throw new Error("Trying to set an item without id.");
         }
@@ -113,6 +112,10 @@ var Cache = klass({
     setItemError : function(id, error) {
         var curItem = this.getItem(id);
         return curItem.setError(error);
+    },
+
+    setItemsContent : function(items) {
+        return items.map(this.setItemContent, this);
     }
 });
 

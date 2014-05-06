@@ -1,0 +1,280 @@
+var klass = require("hsp/klass");
+var formatDate = require("../../dates/format").date;
+var formatCurrency = require("../../utils/formatCurrency");
+var promiseUtils = require("../../promiseUtils");
+var isPromise = promiseUtils.isPromise;
+var accountSheetsMgr = require("../../accountSheetsMgr");
+var notMetaData = require("../../serialization").isNotMetaData;
+
+var isTagSelected = function (selectedTags, tag) {
+    return selectedTags ? !! selectedTags[tag] : false;
+};
+
+var forEach = function(array, fn) {
+    if (array) {
+        array.forEach(fn);
+    }
+};
+
+var sortByDate = function (l1, l2) {
+    return l1.date > l2.date ? 1 : -1;
+};
+
+var sortByAmount = function (l1, l2) {
+    return l2.total - l1.total;
+};
+
+var add = function (object, amount) {
+    if (amount > 0) {
+        object.income += amount;
+    } else if (amount < 0) {
+        object.outcome -= amount;
+    } else {
+        return;
+    }
+    object.total += amount;
+    object.number++;
+};
+
+var includeIn = function(object, line) {
+    var item = line.item;
+    var amount = line.amount;
+    if (!amount) {
+        return;
+    }
+    var objectItem = object[item];
+    if (objectItem == null) {
+        objectItem = object[item] = {
+            item: item,
+            income: 0,
+            outcome: 0,
+            number: 0,
+            total: 0
+        };
+    }
+    add(objectItem, amount);
+};
+
+var objectValues = function (object) {
+    return Object.keys(object).filter(notMetaData).map(function (name) {
+        return object[name];
+    });
+};
+
+# template showSummary(controller)
+    {let results=controller.results}
+    <table class="table">
+    <tbody>
+        <tr>
+        <th>Désignation</th>
+        <th>Nombre</th>
+        <th>Dépenses</th>
+        <th>Recettes</th>
+        <th>Total</th>
+        </tr>
+    {foreach item in results.items}
+        <tr>
+            <td>{item.item}</td>
+            <td>{item.number}</td>
+            <td>{formatCurrency(item.outcome)}</td>
+            <td>{formatCurrency(item.income)}</td>
+            <td>{formatCurrency(item.total)}</td>
+        </tr>
+    {/foreach}
+        <tr>
+            {let total=results.total}
+            <th>Total</th>
+            <th>{total.number}</th>
+            <th>{formatCurrency(total.outcome)}</th>
+            <th>{formatCurrency(total.income)}</th>
+            <th>{formatCurrency(total.total)}</th>
+        </tr>
+    </tbody>
+    </table>
+# /template
+
+# template showDetails(controller)
+    {let results=controller.results}
+    <table class="table">
+    <tbody>
+        <tr>
+        <th>Tags</th>
+        <th>Date</th>
+        <th>Désignation</th>
+        <th>Montant</th>
+        </tr>
+    {foreach line in results.lines}
+        <tr>
+            <td>
+                <a href="/account/sheets/{line.id}"><span class="glyphicon glyphicon-th-list"></span></a>
+                {foreach tag in line.tags} <span class="badge">{tag}</span>{/foreach}
+            </td>
+            <td>{formatDate(line.date)}</td>
+            <td>{line.item}</td>
+            <td>{formatCurrency(line.amount)}</td>
+        </tr>
+    {/foreach}
+        <tr>
+            <th colspan="3">Total</th>
+            <th>{formatCurrency(results.total.total)}</th>
+        </tr>
+    </tbody>
+    </table>
+# /template
+
+# template displayResults(controller)
+    {let results = controller.results}
+    {if controller.filterTags || results.tags.length}
+    <h3><span class="glyphicon glyphicon-chevron-right"></span> Filtres</h3>
+    <div class="btn-group">
+        <button onclick="{controller.clearTags()}" class="btn btn-default {controller.filterTags ? '' : 'active'}">Aucun filtre</button>
+        {foreach tag in results.tags}
+            <button onclick="{controller.clickTag(tag)}" class="btn btn-default {isTagSelected(controller.filterTags, tag) ? 'active' : ''}">{tag}</button>
+        {/foreach}
+    </div>
+    {/if}
+    <h3><span class="glyphicon glyphicon-chevron-right"></span> Résumé</h3>
+        <#showSummary controller="{controller}"/>
+    <h3><span class="glyphicon glyphicon-chevron-right"></span> Détails</h3>
+    <p><a href="#" onclick="{controller.toggleDetails(event)}">{if controller.showDetails}Masquer les détails{else}Afficher les détails{/if}</a></p>
+    {if controller.showDetails}
+        <#showDetails controller="{controller}"/>
+    {/if}
+# /template
+
+# template displaySearch(controller)
+    <button onclick="{controller.search()}" class="btn btn-default">Rechercher</button>
+# /template
+
+# template template(controller)
+    <div class="container-fluid">
+        <h3><span class="glyphicon glyphicon-chevron-right"></span> Recherche</h3>
+        {if controller.results}
+            <p><a href="#" onclick="{controller.toggleSearch(event)}">{if controller.showSearch}Masquer la zone de recherche{else}Afficher la zone de recherche{/if}</a></p>
+        {/if}
+        {if !controller.results || controller.showSearch}
+            <#displaySearch controller="{controller}" />
+        {/if}
+    </div>
+    <div class="container-fluid">
+    {if controller.results}
+        {if isPromise(controller.results)}
+            {if controller.resultsError}
+                <div class="alert alert-danger">{controller.resultsError}</div>
+            {else}
+                <span class="spinner"></span> Veuillez patienter...
+            {/if}
+        {else}
+            <#displayResults controller="{controller}"/>
+        {/if}
+    {/if}
+    </div>
+# /template
+
+module.exports = klass({
+    template : template,
+    init: function () {
+        this.filterTags = null;
+        this.showSearch = false;
+        this.showDetails = false;
+    },
+    toggleDetails: function (event) {
+        event.preventDefault();
+        this.showDetails = !this.showDetails;
+    },
+    toggleSearch: function (event) {
+        event.preventDefault();
+        this.showSearch = !this.showSearch;
+    },
+    clearTags: function () {
+        this.filterTags = null;
+        this.computeResults();
+    },
+    clickTag : function (tag) {
+        if (this.filterTags && this.filterTags[tag]) {
+            delete this.filterTags[tag];
+            if (Object.keys(this.filterTags).filter(notMetaData).length == 0) {
+                this.filterTags = null;
+            }
+        } else {
+            if (!this.filterTags) {
+                this.filterTags = {};
+            }
+            this.filterTags[tag] = true;
+        }
+        this.computeResults();
+    },
+    computeResults : function (allSheets) {
+        if (!allSheets) {
+            allSheets = this.results.allSheets;
+        }
+        var self = this;
+        var filterTags = this.filterTags ? Object.keys(this.filterTags).filter(notMetaData) : null;
+        var lines = [];
+        var tags = {};
+        var items = {};
+        var total = {
+            income: 0,
+            outcome: 0,
+            number: 0,
+            total: 0
+        };
+        forEach(allSheets, function(sheet) {
+            var sheetTags = {};
+            forEach(sheet.tags, function (tag) {
+                tags[tag] = true;
+                sheetTags[tag] = true;
+            });
+            var filterOut = !!filterTags;
+            forEach(filterTags, function (filterTag) {
+                if (sheetTags[filterTag]) {
+                    filterOut = false;
+                }
+            });
+            if (filterOut) {
+                return;
+            }
+            var lastDate = null;
+            forEach(sheet.days, function (day) {
+                lastDate = day.date;
+                forEach(day.lines, function (line) {
+                    lines.push({
+                        amount: line.amount,
+                        item: line.item,
+                        date: day.date,
+                        id: sheet.id,
+                        tags: sheet.tags
+                    });
+                    includeIn(items, line);
+                    add(total, line.amount);
+                })
+            });
+            var difference = sheet.realAmount - sheet.sumAmount;
+            if (difference !== 0) {
+                // add the difference as a line
+                var line = {
+                    amount: difference,
+                    item: "Différence",
+                    date: lastDate,
+                    id: sheet.id,
+                    tags: sheet.tags
+                };
+                lines.push(line);
+                includeIn(items, line);
+                add(total, difference)
+            }
+        });
+        lines.sort(sortByDate);
+        this.results = {
+            tags: Object.keys(tags),
+            allSheets: allSheets,
+            lines: lines,
+            items: objectValues(items).sort(sortByAmount),
+            total: total
+        }
+    },
+    search : function() {
+        var query = {};
+        accountSheetsMgr.search(query).thenSync(this.computeResults.bind(this)).end();
+    }
+});

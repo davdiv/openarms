@@ -1,25 +1,29 @@
 var ObjectID = require("mongodb").ObjectID;
 var Q = require("q");
 
+var postProcessDoc = function(doc) {
+    var res = doc.current;
+    res.id = doc._id.toString();
+    return res;
+};
+
 exports.insert = function(collection, doc) {
     doc.lastChangeTimestamp = new Date();
     return Q.ninvoke(collection, "insert", [ {
         current : doc
     } ]).then(function(array) {
-        var res = array[0];
-        res.current.id = res._id.toString();
-        return res.current;
+        return postProcessDoc(array[0]);
     });
 };
 
 exports.save = function(collection, doc) {
-    var id = doc.id;
+    var id = new ObjectID(doc.id);
     delete doc.id;
     var lastChangeTimestamp = doc.lastChangeTimestamp;
     doc.lastChangeTimestamp = new Date();
     return Q.ninvoke(collection, "update", {
-        _id : new ObjectID(id),
-        'current.lastChangeTimestamp': lastChangeTimestamp
+        _id : id,
+        'current.lastChangeTimestamp' : lastChangeTimestamp
     }, {
         '$set' : {
             current : doc
@@ -27,8 +31,10 @@ exports.save = function(collection, doc) {
     }).then(function(array) {
         var numUpdates = array[0];
         if (numUpdates == 1) {
-            doc.id = id;
-            return doc;
+            return postProcessDoc({
+                _id : id,
+                current : doc
+            });
         } else {
             return Q.reject("Modification concurrente.");
         }
@@ -44,10 +50,19 @@ exports.get = function(collection, id) {
         }
     }).then(function(res) {
         if (res) {
-            res.current.id = res._id.toString();
-            return res.current;
+            return postProcessDoc(res);
         } else {
             return Q.reject("Non trouvé");
         }
+    });
+};
+
+exports.search = function(collection, query, options) {
+    query = query || {};
+    options = options || {};
+    return Q.ninvoke(collection.find(query, {
+        "current" : 1
+    }, options), "toArray").then(function(array) {
+        return array.map(postProcessDoc);
     });
 };

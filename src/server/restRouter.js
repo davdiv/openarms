@@ -10,6 +10,13 @@ var RestRouter = function(dbCollection) {
         }).then(null, next);
     });
 
+    router.post("/search", bodyParser, function(req, res, next) {
+        var body = req.body || {};
+        dbHistory.search(dbCollection, body.query, body.options).then(function(array) {
+            res.send(200, array);
+        }).then(null, next);
+    });
+
     router.get("/:id", function(req, res, next) {
         dbHistory.get(dbCollection, req.params.id).then(function(doc) {
             res.set("ETag", '"' + doc.lastChangeTimestamp.getTime() + '"');

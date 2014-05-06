@@ -26,4 +26,8 @@ module.exports = [ {
     "path" : "/account/sheets/:id",
     "module" : "pages/account/sheet.hsp.js",
     "title" : "Feuille de comptes"
+}, {
+    "path" : "/account/sum",
+    "module" : "pages/account/sum.hsp.js",
+    "title" : "Comptes"
 } ];

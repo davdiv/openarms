@@ -5,6 +5,10 @@ var forAllKeys = function(object, fn) {
 }
 
 module.exports = function(dest, src) {
+    if (dest === src) {
+        // same object
+        return;
+    }
     forAllKeys(dest, function(key) {
         if (!src.hasOwnProperty(key)) {
             delete dest[key];

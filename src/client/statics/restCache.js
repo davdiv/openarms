@@ -13,13 +13,19 @@ var RestCache = klass({
     },
     saveItemContent : function(object) {
         var response;
-        var id = this.getId(object);
+        var id = object.id;
         if (!id) {
             response = server("POST", this.basePath, object);
         } else {
             response = server("PUT", this.basePath + "/" + id, object);
         }
         return response.thenSync(this.setItemContent.bind(this));
+    },
+    search : function(query, options) {
+        return server("POST", this.basePath + "/search", {
+            query : query,
+            options : options
+        }).thenSync(this.setItemsContent.bind(this));
     }
 });
 
