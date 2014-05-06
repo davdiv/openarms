@@ -22,7 +22,7 @@ var Ctrl = klass({
     },
     onDataChange: function () {
         if (this.data) {
-            this.identity = peopleMgr.getIdentity(this.data);
+            this.identity = peopleMgr.getItemContent(this.data);
             promiseUtils.resolvePromise(this,"identity","error");
         }
         this.minimalIdentity = {
