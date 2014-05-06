@@ -43,10 +43,12 @@ var EditableCtrl = klass({
             type: "callback"
         },
         viewer: {
-            type: "object" // in fact, this is a template
+            type: "object", // in fact, this is a template
+            binding: "1-way"
         },
         editor: {
-            type: "object" // in fact, this is a template
+            type: "object", // in fact, this is a template
+            binding: "1-way"
         }
     },
     refresh: function() {

@@ -5,7 +5,6 @@ var identityCard = require("../components/person/identityCard.hsp.js");
 var editIdentityCard = require("../components/person/editIdentityCard.hsp.js");
 var personName = require("../components/person/name.hsp.js");
 var peopleMgr = require("../peopleMgr");
-var isPromise = require("../promiseUtils").isPromise;
 
 # template iconTemplate(controller)
     <#personName data="{controller.savedData}" />
@@ -17,23 +16,9 @@ var isPromise = require("../promiseUtils").isPromise;
     </div>
 # /template
 
-# template template(controller)
-    {let c = controller}
+# template actionTemplate(controller)
+    {let c = controller, savedData = c.savedData}
     <div class="container-fluid">
-        {let savedData = c.savedData}
-        <h2><span class="glyphicon glyphicon-chevron-right"></span> Identité</h2>
-        <#editable
-            onSave="{c.onUserSave(event)}"
-            onRefresh="{c.onUserRefresh(event)}"
-            onCancel="{c.onUserCancel(event)}"
-            savedData="{c.savedData}"
-            editedData="{c.editedData}"
-            savingData="{c.savingData}"
-            viewer="{viewer}"
-            editor="{editIdentityCard}"
-            currentView="{c.currentView}"/>
-        <hr>
-        {if savedData && !isPromise(savedData)}
         <h2><span class="glyphicon glyphicon-chevron-right"></span> Foyer</h2>
         {if !c.registration}
             <p>{savedData.firstName||"Cette personne"} n'appartient (pour l'instant) à aucun foyer inscrit.
@@ -56,16 +41,17 @@ var isPromise = require("../promiseUtils").isPromise;
             </tbody>
             </table>
         {/if}
-        {/if}
     </div>
 # /template
 
-var BaseClass = require("./abstract/editable");
+var BaseClass = require("./abstract/editable.hsp.js");
 
 module.exports = klass({
     $extends: BaseClass,
-    template : template,
     iconTemplate : iconTemplate,
+    viewerTemplate : viewer,
+    editorTemplate : editIdentityCard,
+    actionTemplate : actionTemplate,
     cache: peopleMgr,
     createData : function (query) {
         var res = {};

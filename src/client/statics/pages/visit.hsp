@@ -4,36 +4,19 @@ var viewVisit = require("../components/visit/viewVisit.hsp.js");
 var editVisit = require("../components/visit/editVisit.hsp.js");
 var RestCache = require("../restCache");
 
-# template template(controller)
-    {let c = controller}
-    <div class="container-fluid">
-        <h2><span class="glyphicon glyphicon-chevron-right"></span> Visite</h2>
-        <#editable
-            onSave="{c.onUserSave(event)}"
-            onRefresh="{c.onUserRefresh(event)}"
-            onCancel="{c.onUserCancel(event)}"
-            savedData="{c.savedData}"
-            editedData="{c.editedData}"
-            savingData="{c.savingData}"
-            currentView="{c.currentView}"
-            viewer="{viewVisit}"
-            editor="{editVisit}"
-        />
-    </div>
-# /template
-
 # template iconTemplate(page)
     <span class="glyphicon glyphicon-shopping-cart"></span> {page.title}
 # /template
 
-var BaseClass = require("./abstract/editable");
+var BaseClass = require("./abstract/editable.hsp.js");
 
 module.exports = klass({
-    $extends: BaseClass,
-    template : template,
+    $extends : BaseClass,
+    viewerTemplate : viewVisit,
+    editorTemplate : editVisit,
     iconTemplate : iconTemplate,
-    cache: new RestCache("visits"),
-    createData: function (query) {
+    cache : new RestCache("visits"),
+    createData : function(query) {
         var res = {};
         res.person = query.person;
         res.date = new Date();

@@ -8,31 +8,12 @@ var RestCache = require("../../restCache");
 <span class="glyphicon glyphicon-euro"></span> {page.title}
 # /template
 
-# template template(controller)
-    {let c = controller}
-    <div class="container-fluid">
-        {let savedData = c.savedData}
-        <h2><span class="glyphicon glyphicon-chevron-right"></span> Feuille de comptes</h2>
-        <#editable
-            onSave="{c.onUserSave(event)}"
-            onRefresh="{c.onUserRefresh(event)}"
-            onCancel="{c.onUserCancel(event)}"
-            savedData="{c.savedData}"
-            editedData="{c.editedData}"
-            savingData="{c.savingData}"
-            currentView="{c.currentView}"
-            viewer="{viewer}"
-            editor="{editor}"
-        />
-        <hr>
-    </div>
-# /template
-
-var BaseClass = require("../abstract/editable");
+var BaseClass = require("../abstract/editable.hsp.js");
 
 module.exports = klass({
     $extends: BaseClass,
-    template : template,
+    viewerTemplate: viewer,
+    editorTemplate: editor,
     iconTemplate : iconTemplate,
     cache: new RestCache("account/sheets"),
     createData: function() {

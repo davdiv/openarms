@@ -1,7 +1,32 @@
 var klass = require("hsp/klass");
 var promise = require("noder-js/promise");
+var editable = require("../../components/editable.hsp.js");
+var isPromise = require("../../promiseUtils").isPromise;
+
+# template template(controller)
+    <div class="container-fluid">
+        <#editable
+            onSave="{controller.onUserSave(event)}"
+            onRefresh="{controller.onUserRefresh(event)}"
+            onCancel="{controller.onUserCancel(event)}"
+            savedData="{controller.savedData}"
+            editedData="{controller.editedData}"
+            savingData="{controller.savingData}"
+            currentView="{controller.currentView}"
+            viewer="{controller.viewerTemplate}"
+            editor="{controller.editorTemplate}"
+            />
+    </div>
+    {if controller.actionTemplate && controller.savedData && !isPromise(controller.savedData)}
+        <#controller.actionTemplate controller="{controller}"/>
+    {/if}
+# /template
 
 module.exports = klass({
+    template: template,
+    viewerTemplate: null,
+    editorTemplate: null,
+    actionTemplate: null,
     cache : null,
     init : function(page) {
         this.page = page;

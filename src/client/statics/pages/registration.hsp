@@ -5,41 +5,22 @@ var viewFamily = require("../components/registration/viewFamily.hsp.js");
 var editFamily = require("../components/registration/editFamily.hsp.js");
 var RestCache = require("../restCache");
 
-# template template(controller)
-    {let c = controller}
-    <div class="container-fluid">
-        <h2><span class="glyphicon glyphicon-chevron-right"></span> Famille</h2>
-        <#editable
-            onSave="{c.onUserSave(event)}"
-            onRefresh="{c.onUserRefresh(event)}"
-            onCancel="{c.onUserCancel(event)}"
-            savedData="{c.savedData}"
-            editedData="{c.editedData}"
-            savingData="{c.savingData}"
-            currentView="{c.currentView}"
-            viewer="{viewFamily}"
-            editor="{editFamily}"
-        />
-        <h2><span class="glyphicon glyphicon-chevron-right"></span> Visites</h2>
-        <h2><span class="glyphicon glyphicon-chevron-right"></span> Autre</h2>
-    </div>
-# /template
-
 # template iconTemplate(page)
     <span class="glyphicon glyphicon-file"></span> {page.title}
 # /template
 
-var BaseClass = require("./abstract/editable");
+var BaseClass = require("./abstract/editable.hsp.js");
 
 module.exports = klass({
     $extends : BaseClass,
-    template : template,
+    viewerTemplate : viewFamily,
+    editorTemplate : editFamily,
     iconTemplate : iconTemplate,
-    cache: new RestCache("registrations"),
-    createData: function (query) {
+    cache : new RestCache("registrations"),
+    createData : function(query) {
         var res = {};
         if (query.person) {
-            res.people = [query.person];
+            res.people = [ query.person ];
         }
         return res;
     }
