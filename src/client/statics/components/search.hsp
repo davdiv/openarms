@@ -1,6 +1,6 @@
 var autoComplete = require("../widgets/autoComplete.hsp.js");
 var promise = require("noder-js/promise");
-var peopleMgr = require("../peopleMgr");
+var peopleSuggestions = require("./personId/peopleSuggestions");
 var personRef = require("./personId/personRef.hsp.js");
 var personName = require("./person/name.hsp.js");
 var page = require("page");
@@ -8,7 +8,7 @@ var searchUrl = "/search?q=";
 
 var computeSuggestions = function (event) {
     var text = event.text;
-    event.returnValue = promise.done.thenSync(peopleMgr.search.bind(peopleMgr, text)).thenSync(function (people) {
+    event.returnValue = promise.done.thenSync(peopleSuggestions.bind(null, text)).thenSync(function (people) {
         var res = people.map(function (item) {
             return {person: item, url: "/people/" + item};
         });

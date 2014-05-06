@@ -4,7 +4,7 @@ var autoComplete = require("../../widgets/autoComplete.hsp.js");
 var personRef = require("../personId/personRef.hsp.js");
 var personName = require("../person/name.hsp.js");
 var detailedLine = require("../person/detailedLine.hsp.js");
-var peopleMgr = require("../../peopleMgr");
+var peopleSuggestions = require("../personId/peopleSuggestions");
 var pagejs = require("page");
 
 var Ctrl = klass({
@@ -39,7 +39,7 @@ var Ctrl = klass({
     computeSuggestions: function (event) {
         var text = event.text;
         var self = this;
-        event.returnValue = promise.done.thenSync(peopleMgr.search.bind(peopleMgr, text)).thenSync(function (people) {
+        event.returnValue = promise.done.thenSync(peopleSuggestions.bind(null, text)).thenSync(function (people) {
             var res = people.map(function (item) {
                 return {person: item};
             });

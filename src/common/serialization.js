@@ -17,6 +17,27 @@ var getDateReplacement = isServer ? function(value) {
     return [ value.getFullYear(), value.getMonth() + 1, value.getDate() ];
 };
 
+var getRegExpReplacement = function(value) {
+    var flags = "";
+    if (value.global) {
+        flags += "g";
+    }
+    if (value.ignoreCase) {
+        flags += "i";
+    }
+    if (value.multiline) {
+        flags += "m";
+    }
+    return {
+        $regExp : [ value.source, flags ]
+    };
+};
+
+var createRegExp = function(value) {
+    var param = value.$regExp;
+    return new RegExp(param[0], param[1]);
+};
+
 var isMetaData = function(key) {
     return /^\+/.test(key);
 };
@@ -35,6 +56,9 @@ var replacer = function(key, value) {
     if (/timestamp$/i.test(key) && value) {
         return value.getTime();
     }
+    if (value instanceof RegExp) {
+        return getRegExpReplacement(value);
+    }
     return value;
 };
 
@@ -44,6 +68,9 @@ var reviver = function(key, value) {
     }
     if (/timestamp$/i.test(key) && value) {
         return new Date(value);
+    }
+    if (value && value.$regExp) {
+        return createRegExp(value);
     }
     return value;
 };
