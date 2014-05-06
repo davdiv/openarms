@@ -83,14 +83,29 @@ module.exports = klass({
             page.updateUrl();
         });
     },
-    onUserCancel : function() {
+    onUserCancel : function(event) {
+        var hasChanges = this.hasChanges();
+        if (hasChanges) {
+            var willCancelChanges = confirm("Êtes-vous sûr(e) de vouloir annuler les modifications?");
+            if (!willCancelChanges) {
+                event.preventDefault = true;
+                return;
+            }
+        }
         if (!this.savedData) {
             this.page.$dispose();
         }
     },
+    hasChanges: function () {
+        // TODO: compare in more details the edited and saved data
+        return !!this.editedData;
+    },
     close : function() {
-        if (this.editedData) {
-            return confirm("Cette page peut contenir des données non enregistrées qui seront perdues si elle est fermée. Êtes-vous sûr(e) de vouloir la fermer?");
+        var hasChanges = this.hasChanges();
+        var willClose = true;
+        if (hasChanges) {
+            willClose = confirm("Cette page peut contenir des données non enregistrées qui seront perdues si elle est fermée.\nÊtes-vous sûr(e) de vouloir la fermer?");
         }
+        return willClose;
     }
 });
