@@ -17,7 +17,7 @@ var forEach = function(array, fn) {
 };
 
 var sortByDate = function (l1, l2) {
-    return l1.date > l2.date ? 1 : -1;
+    return l1.date < l2.date ? 1 : -1;
 };
 
 var sortByAmount = function (l1, l2) {
@@ -68,8 +68,8 @@ var objectValues = function (object) {
         <tr>
         <th>Désignation</th>
         <th>Nombre</th>
-        <th>Dépenses</th>
-        <th>Recettes</th>
+        <th>Sorties</th>
+        <th>Entrées</th>
         <th>Total</th>
         </tr>
     {foreach item in results.items}
