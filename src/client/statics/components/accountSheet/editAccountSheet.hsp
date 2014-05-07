@@ -17,12 +17,6 @@ var Ctrl = klass({
             binding : "1-way"
         }
     },
-    $init: function() {
-        this.recompute();
-    },
-    onDataChange: function () {
-        this.recompute();
-    },
     addDay: function () {
         if (!this.data.days) {
             this.data.days = [];
