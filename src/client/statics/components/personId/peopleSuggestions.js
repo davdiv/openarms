@@ -4,7 +4,7 @@ var getId = function(object) {
     return object.id;
 };
 
-var mapGetId = function (array) {
+var mapGetId = function(array) {
     return array.map(getId);
 };
 
@@ -20,7 +20,7 @@ var suggestions = module.exports = function(text) {
         } ]
     }, {
         limit : 10,
-        sort : "current.lastName"
+        sort : [ [ "current.firstName", "asc" ], [ "current.lastName", "asc" ] ]
     }).thenSync(mapGetId);
 };
 
