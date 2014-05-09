@@ -1,4 +1,17 @@
+var klass = require("hsp/klass");
 var RestCache = require("./restCache");
-var sheetsMgr = new RestCache("account/sheets");
+var validateAccountSheet = require("./model/accountSheet");
 
-module.exports = sheetsMgr;
+var AccountSheetsCache = klass({
+    $extends : RestCache,
+    $constructor : function () {
+        RestCache.$constructor.call(this, "account/sheets");
+    },
+
+    saveItemContent : function (object) {
+        validateAccountSheet(object);
+        return RestCache.saveItemContent.call(this, object);
+    }
+});
+
+module.exports = new AccountSheetsCache();
