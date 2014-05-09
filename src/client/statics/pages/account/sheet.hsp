@@ -2,6 +2,7 @@ var klass = require("hsp/klass");
 var editable = require("../../components/editable.hsp.js");
 var viewer = require("../../components/accountSheet/viewAccountSheet.hsp.js");
 var editor = require("../../components/accountSheet/editAccountSheet.hsp.js");
+var today = require("../../dates/today");
 
 # template iconTemplate(page)
 <span class="glyphicon glyphicon-euro"></span> {page.title}
@@ -18,6 +19,7 @@ module.exports = klass({
     createData: function() {
         return {
             days: [{
+                date: today(),
                 lines: [{amount:0}]
             }]
         };

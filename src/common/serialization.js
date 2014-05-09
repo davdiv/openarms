@@ -7,15 +7,49 @@ Date.prototype.toJSON = null;
 var isServer = global.process && global.process.versions && global.process.versions.node;
 // Use UTC dates on the server, local dates on the client
 var createDate = isServer ? function (value) {
-    return new Date(Date.UTC(value[0], value[1] - 1, value[2]));
+    var date = value.$date;
+    if (value.length === 3) {
+        return new Date(Date.UTC(date[0], date[1] - 1, date[2]));
+    } else {
+        return new Date(date);
+    }
 } : function (value) {
-    return new Date(value[0], value[1] - 1, value[2]);
+    var date = value.$date;
+    if (value.length === 3) {
+        return new Date(date[0], date[1] - 1, date[2]);
+    } else {
+        return new Date(date);
+    }
 };
 var getDateReplacement = isServer ? function (value) {
-    return [ value.getUTCFullYear(), value.getUTCMonth() + 1, value.getUTCDate() ];
-} : function (value) {
-    return [ value.getFullYear(), value.getMonth() + 1, value.getDate() ];
-};
+    if (value.getUTCHours() === 0 && value.getUTCMinutes() === 0 && value.getUTCSeconds() === 0 &&
+        value.getUTCMilliseconds() === 0) {
+        // this is a date
+        return {
+            $date : [ value.getUTCFullYear(), value.getUTCMonth() + 1, value.getUTCDate() ]
+        };
+    } else {
+        // this is a timestamp
+        return {
+            $date : value.getTime()
+        };
+    }
+
+}
+    : function (value) {
+        if (value.getHours() === 0 && value.getMinutes() === 0 && value.getSeconds() === 0 &&
+            value.getMilliseconds() === 0) {
+            // this is a date
+            return {
+                $date : [ value.getFullYear(), value.getMonth() + 1, value.getDate() ]
+            };
+        } else {
+            // this is a timestamp
+            return {
+                $date : value.getTime()
+            };
+        }
+    };
 
 var isMetaData = function (key) {
     return /^\+/.test(key);
@@ -29,21 +63,15 @@ var replacer = function (key, value) {
     if (isMetaData(key)) {
         return undefined;
     }
-    if (/date$/i.test(key) && value) {
+    if (value instanceof Date) {
         return getDateReplacement(value);
-    }
-    if (/timestamp$/i.test(key) && value) {
-        return value.getTime();
     }
     return value;
 };
 
 var reviver = function (key, value) {
-    if (/date$/i.test(key) && value) {
+    if (value && value.$date) {
         return createDate(value);
-    }
-    if (/timestamp$/i.test(key) && value) {
-        return new Date(value);
     }
     return value;
 };

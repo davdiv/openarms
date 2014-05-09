@@ -1,10 +1,12 @@
 var klass = require("hsp/klass");
+var dateField = require("../../widgets/dateField.hsp.js");
 var formatDate = require("../../dates/format").date;
 var formatCurrency = require("../../utils/formatCurrency");
 var promiseUtils = require("../../promiseUtils");
 var isPromise = promiseUtils.isPromise;
 var accountSheetsMgr = require("../../accountSheetsMgr");
-var notMetaData = require("../../serialization").isNotMetaData;
+var serialization = require("../../serialization");
+var notMetaData = serialization.isNotMetaData;
 var forEach = require("../../utils/forEach");
 
 var isTagSelected = function (selectedTags, tag) {
@@ -13,6 +15,10 @@ var isTagSelected = function (selectedTags, tag) {
 
 var sortByDate = function (l1, l2) {
     return l1.date < l2.date ? 1 : -1;
+};
+
+var sortByEndDate = function (l1, l2) {
+    return l1.endDate < l2.endDate ? 1 : -1;
 };
 
 var sortByAmount = function (l1, l2) {
@@ -88,7 +94,7 @@ var objectValues = function (object) {
     </table>
 # /template
 
-# template showDetails(controller)
+# template showLineDetails(controller)
     {let results=controller.results}
     <table class="table">
     <tbody>
@@ -110,7 +116,40 @@ var objectValues = function (object) {
         </tr>
     {/foreach}
         <tr>
-            <th colspan="3">Total</th>
+            <th colspan="3">Total ({results.lines.length} mouvements de caisse)</th>
+            <th>{formatCurrency(results.total.total)}</th>
+        </tr>
+    </tbody>
+    </table>
+# /template
+
+# template showSheetDetails(controller)
+    {let results=controller.results}
+    <table class="table">
+    <tbody>
+        <tr>
+        <th>Tags</th>
+        <th>Date de début</th>
+        <th>Date de fin</th>
+        <th>Somme</th>
+        <th>Différence</th>
+        <th>Montant réel</th>
+        </tr>
+    {foreach sheet in results.sheets}
+        <tr>
+            <td>
+                <a href="/account/sheets/{sheet.id}"><span class="glyphicon glyphicon-th-list"></span></a>
+                {foreach tag in sheet.tags} <span class="badge">{tag}</span>{/foreach}
+            </td>
+            <td>{formatDate(sheet.beginDate)}</td>
+            <td>{formatDate(sheet.endDate)}</td>
+            <td>{formatCurrency(sheet.sumAmount)}</td>
+            <td>{formatCurrency(sheet.difference)}</td>
+            <td>{formatCurrency(sheet.realAmount)}</td>
+        </tr>
+    {/foreach}
+        <tr>
+            <th colspan="5">Total ({results.sheets.length} feuilles de compte)</th>
             <th>{formatCurrency(results.total.total)}</th>
         </tr>
     </tbody>
@@ -130,15 +169,37 @@ var objectValues = function (object) {
     {/if}
     <h3><span class="glyphicon glyphicon-chevron-right"></span> Résumé</h3>
         <#showSummary controller="{controller}"/>
-    <h3><span class="glyphicon glyphicon-chevron-right"></span> Détails</h3>
-    <p><a href="#" onclick="{controller.toggleDetails(event)}">{if controller.showDetails}Masquer les détails{else}Afficher les détails{/if}</a></p>
-    {if controller.showDetails}
-        <#showDetails controller="{controller}"/>
+    <h3><span class="glyphicon glyphicon-chevron-right"></span> Feuilles de compte</h3>
+    <p><a href="#" onclick="{controller.toggleSheetDetails(event)}">{if controller.showSheetDetails}Masquer les détails{else}Afficher les détails{/if}</a></p>
+    {if controller.showSheetDetails}
+        <#showSheetDetails controller="{controller}"/>
+    {/if}
+    <h3><span class="glyphicon glyphicon-chevron-right"></span> Mouvements de caisse</h3>
+    <p><a href="#" onclick="{controller.toggleLineDetails(event)}">{if controller.showLineDetails}Masquer les détails{else}Afficher les détails{/if}</a></p>
+    {if controller.showLineDetails}
+        <#showLineDetails controller="{controller}"/>
     {/if}
 # /template
 
 # template displaySearch(controller)
-    <button onclick="{controller.search()}" class="btn btn-default">Rechercher</button>
+    {let query = controller.query}
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Date de début</label>
+            <div class="col-sm-3">
+                <#dateField value="{query.beginDate}"/>
+             </div>
+            <label class="col-sm-2 control-label">Date de fin</label>
+            <div class="col-sm-3">
+                <#dateField value="{query.endDate}"/>
+            </div>
+        </div>
+        <div class="block-container right">
+            <div class="block">
+                <button onclick="{controller.search()}" class="btn btn-primary">Rechercher</button>
+            </div>
+        </div>
+    </div>
 # /template
 
 # template template(controller)
@@ -169,13 +230,19 @@ var objectValues = function (object) {
 module.exports = klass({
     template : template,
     init: function () {
+        this.query = {};
         this.filterTags = null;
         this.showSearch = false;
-        this.showDetails = false;
+        this.showLineDetails = false;
+        this.showSheetDetails = false;
     },
-    toggleDetails: function (event) {
+    toggleLineDetails: function (event) {
         event.preventDefault();
-        this.showDetails = !this.showDetails;
+        this.showLineDetails = !this.showLineDetails;
+    },
+    toggleSheetDetails: function (event) {
+        event.preventDefault();
+        this.showSheetDetails = !this.showSheetDetails;
     },
     toggleSearch: function (event) {
         event.preventDefault();
@@ -197,15 +264,13 @@ module.exports = klass({
             }
             this.filterTags[tag] = true;
         }
-        this.computeResults();
+        this.results = this.computeResults(this.results.query, this.results.allSheets);
     },
-    computeResults : function (allSheets) {
-        if (!allSheets) {
-            allSheets = this.results.allSheets;
-        }
+    computeResults : function (query, allSheets) {
         var self = this;
         var filterTags = this.filterTags ? Object.keys(this.filterTags).filter(notMetaData) : null;
         var lines = [];
+        var sheets = [];
         var tags = {};
         var items = {};
         var total = {
@@ -229,9 +294,15 @@ module.exports = klass({
             if (filterOut) {
                 return;
             }
-            var lastDate = null;
+            var beginDate = null;
+            var endDate = null;
             forEach(sheet.days, function (day) {
-                lastDate = day.date;
+                if (!beginDate || day.date < beginDate) {
+                    beginDate = day.date;
+                }
+                if (!endDate || day.date > endDate) {
+                    endDate = day.date;
+                }
                 forEach(day.lines, function (line) {
                     lines.push({
                         amount: line.amount,
@@ -250,7 +321,7 @@ module.exports = klass({
                 var line = {
                     amount: difference,
                     item: "Différence",
-                    date: lastDate,
+                    date: endDate,
                     id: sheet.id,
                     tags: sheet.tags
                 };
@@ -258,18 +329,43 @@ module.exports = klass({
                 includeIn(items, line);
                 add(total, difference)
             }
+            sheets.push({
+                beginDate: beginDate,
+                endDate: endDate,
+                id: sheet.id,
+                realAmount: sheet.realAmount,
+                sumAmount: sheet.sumAmount,
+                difference: difference,
+                tags: sheet.tags
+            });
         });
         lines.sort(sortByDate);
-        this.results = {
+        sheets.sort(sortByEndDate);
+        return {
+            query: query,
             tags: Object.keys(tags),
             allSheets: allSheets,
+            sheets: sheets,
             lines: lines,
             items: objectValues(items).sort(sortByAmount),
             total: total
         }
     },
     search : function() {
-        var query = {};
-        accountSheetsMgr.search(query).thenSync(this.computeResults.bind(this)).end();
+        var query = serialization.clone(this.query);
+        var dbQuery = {};
+        if (query.beginDate || query.endDate) {
+            var dateCriteria = dbQuery["current.days.date"] = {};
+            if (query.beginDate) {
+                dateCriteria["$gte"] = query.beginDate;
+            }
+            if (query.endDate) {
+                var endDate = new Date(query.endDate.getTime());
+                endDate.setDate(endDate.getDate()+1);
+                dateCriteria["$lt"] = endDate;
+            }
+        }
+        this.results = accountSheetsMgr.search(dbQuery).thenSync(this.computeResults.bind(this, query));
+        promiseUtils.resolvePromise(this, "results","resultsError");
     }
 });
