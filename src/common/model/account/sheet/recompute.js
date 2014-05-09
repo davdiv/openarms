@@ -1,6 +1,8 @@
+var forEach = require("../../../utils/forEach");
+
 module.exports = function (data) {
     var allDays = 0;
-    data.days.forEach(function (day) {
+    forEach(data.days, function (day) {
         var allLines = 0;
         if (day.lines) {
             day.lines.forEach(function (line) {

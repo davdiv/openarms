@@ -5,15 +5,10 @@ var promiseUtils = require("../../promiseUtils");
 var isPromise = promiseUtils.isPromise;
 var accountSheetsMgr = require("../../accountSheetsMgr");
 var notMetaData = require("../../serialization").isNotMetaData;
+var forEach = require("../../utils/forEach");
 
 var isTagSelected = function (selectedTags, tag) {
     return selectedTags ? !! selectedTags[tag] : false;
-};
-
-var forEach = function(array, fn) {
-    if (array) {
-        array.forEach(fn);
-    }
 };
 
 var sortByDate = function (l1, l2) {
