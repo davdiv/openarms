@@ -2,9 +2,10 @@ var q = require("q");
 var express = require("express");
 var path = require("path");
 var routes = require("../common/routes.js");
-var serialization = require('../common/serialization');
+var serialization = require("../common/serialization");
 var RestRouter = require("./restRouter");
 var initDatabase = require("./database/init");
+var CollectionBase = require("./database/collectionBase")
 
 var startServer = function(options, db) {
     var defer = q.defer();
@@ -25,10 +26,10 @@ var startServer = function(options, db) {
 
     app.use(express.static(staticsRoot));
 
-    app.use("/api/people", new RestRouter(db.collection("people")));
-    app.use("/api/registrations", new RestRouter(db.collection("registrations")));
-    app.use("/api/visits", new RestRouter(db.collection("visits")));
-    app.use("/api/account/sheets", new RestRouter(db.collection("accountSheets")));
+    app.use("/api/people", new RestRouter(new CollectionBase(db.collection("people"))));
+    app.use("/api/registrations", new RestRouter(new CollectionBase(db.collection("registrations"))));
+    app.use("/api/visits", new RestRouter(new CollectionBase(db.collection("visits"))));
+    app.use("/api/account/sheets", new RestRouter(new CollectionBase(db.collection("accountSheets"))));
 
     var server = app.listen(options.port);
     server.on("listening", function() {
