@@ -80,6 +80,10 @@ module.exports = klass({
         }, options), "toArray").then(function (array) {
             return array.map(self.processFromDB, self);
         });
+    },
+
+    suggestions : function (query) {
+        throw new Error("Not implemented.");
 
     }
 

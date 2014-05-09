@@ -5,7 +5,8 @@ var routes = require("../common/routes.js");
 var serialization = require("../common/serialization");
 var RestRouter = require("./restRouter");
 var initDatabase = require("./database/init");
-var CollectionBase = require("./database/collectionBase")
+var CollectionBase = require("./database/collectionBase");
+var PeopleCollection = require("./collections/people");
 
 var startServer = function(options, db) {
     var defer = q.defer();
@@ -26,7 +27,7 @@ var startServer = function(options, db) {
 
     app.use(express.static(staticsRoot));
 
-    app.use("/api/people", new RestRouter(new CollectionBase(db.collection("people"))));
+    app.use("/api/people", new RestRouter(new PeopleCollection(db.collection("people"))));
     app.use("/api/registrations", new RestRouter(new CollectionBase(db.collection("registrations"))));
     app.use("/api/visits", new RestRouter(new CollectionBase(db.collection("visits"))));
     app.use("/api/account/sheets", new RestRouter(new CollectionBase(db.collection("accountSheets"))));

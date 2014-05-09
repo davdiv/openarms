@@ -3,15 +3,15 @@ var Cache = require("./cache");
 var server = require("./server");
 
 var RestCache = klass({
-    $constructor : function(basePath) {
+    $constructor : function (basePath) {
         this.basePath = basePath;
         Cache.$constructor.call(this);
     },
     $extends : Cache,
-    refreshContent : function(id) {
+    refreshContent : function (id) {
         return server("GET", this.basePath + "/" + id);
     },
-    saveItemContent : function(object) {
+    saveItemContent : function (object) {
         var response;
         var id = object.id;
         if (!id) {
@@ -21,11 +21,15 @@ var RestCache = klass({
         }
         return response.thenSync(this.setItemContent.bind(this));
     },
-    search : function(query, options) {
+    search : function (query, options) {
         return server("POST", this.basePath + "/search", {
             query : query,
             options : options
         }).thenSync(this.setItemsContent.bind(this));
+    },
+    suggestions : function (query) {
+        return server("GET", this.basePath + "/suggestions?q=" + encodeURIComponent(query)).thenSync(
+            this.setItemsContent.bind(this));
     }
 });
 
