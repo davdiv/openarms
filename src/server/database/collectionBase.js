@@ -1,6 +1,7 @@
 var klass = require("hashspace/hsp/klass");
 var ObjectID = require("mongodb").ObjectID;
 var Q = require("q");
+var NotFoundError = require("../../common/notFoundError");
 
 module.exports = klass({
     $constructor : function (collection) {
@@ -66,7 +67,7 @@ module.exports = klass({
             if (res) {
                 return self.processFromDB(res);
             } else {
-                return Q.reject("Non trouvé");
+                return Q.reject(new NotFoundError());
             }
         });
     },

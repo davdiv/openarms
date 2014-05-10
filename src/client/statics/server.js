@@ -2,7 +2,15 @@ var request = require("noder-js/request");
 var serialization = require("./serialization");
 var promise = require("noder-js/promise");
 
-module.exports = function(method, action, data) {
+var ConnectionError = function () {
+};
+
+var UnknownError = function (status, responseText) {
+    this.status = status;
+    this.responseText = responseText;
+};
+
+var server = module.exports = function (method, action, data) {
     var url = "/api/" + action;
     if (data != null) {
         data = serialization.stringify(data);
@@ -10,17 +18,26 @@ module.exports = function(method, action, data) {
     return request(url, {
         method : method,
         data : data
-    }).thenSync(function(response) {
+    }).thenSync(function (response) {
         return serialization.parse(response);
-    }, function(error) {
+    }, function (error) {
         var httpRequest = error.args ? error.args[1] : null;
         if (httpRequest) {
-            if (httpRequest.status == 0) {
-                error = "La connexion au serveur a échoué.";
-            } else if (httpRequest.responseText) {
-                error = httpRequest.responseText;
+            var status = httpRequest.status;
+            if (status == 0) {
+                error = new ConnectionError();
             } else {
-                error = "Une erreur inconnue s'est produite sur le serveur.";
+                var responseText = httpRequest.responseText;
+                if (responseText) {
+                    // Try to parse the response from the server as json:
+                    try {
+                        error = serialization.parse(responseText);
+                    } catch (e) {
+                        error = new UnknownError(status, responseText);
+                    }
+                } else {
+                    error = new UnknownError(status, responseText);
+                }
             }
         }
         var defer = promise.defer();
@@ -28,3 +45,6 @@ module.exports = function(method, action, data) {
         return defer.promise;
     });
 };
+
+server.ConnectionError = ConnectionError;
+server.UnknownError = UnknownError;

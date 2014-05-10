@@ -8,6 +8,7 @@ var accountSheetsMgr = require("../../accountSheetsMgr");
 var serialization = require("../../serialization");
 var notMetaData = serialization.isNotMetaData;
 var forEach = require("../../utils/forEach");
+var showError = require("../../components/error/showError.hsp.js");
 
 var isTagSelected = function (selectedTags, tag) {
     return selectedTags ? !! selectedTags[tag] : false;
@@ -216,7 +217,7 @@ var objectValues = function (object) {
     {if controller.results}
         {if isPromise(controller.results)}
             {if controller.resultsError}
-                <div class="alert alert-danger">{controller.resultsError}</div>
+                <#showError error="{controller.resultsError}" />
             {else}
                 <span class="spinner"></span> Veuillez patienter...
             {/if}

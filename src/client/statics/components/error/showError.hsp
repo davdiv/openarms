@@ -1,0 +1,81 @@
+var klass = require("hsp/klass");
+var NotFoundError = require("../../notFoundError");
+var ValidationError = require("../../validationError");
+var validationErrorsList = require("./validationErrorsList");
+var server = require("../../server");
+
+var Ctrl = klass({
+    attributes:{
+        "class": {
+            type:"object",
+            binding:"1-way"
+        },
+        error: {
+            type:"object",
+            binding:"1-way"
+        }
+    },
+    $init: function () {
+        this.onErrorChange();
+    },
+    onErrorChange : function () {
+        var error = this.error;
+        if (error instanceof server.ConnectionError) {
+            this.template = showServerConnectionError;
+        } else if (error instanceof server.UnknownError){
+            this.template = showServerUnknownError;
+        } else if (error instanceof ValidationError) {
+            this.template = showValidationError;
+        } else if (error instanceof NotFoundError) {
+            this.template = showNotFoundError;
+        } else {
+            this.template = showDefaultError;
+        }
+        this.showDetails = false;
+    },
+    toggleDetails : function (event) {
+        event.preventDefault();
+        this.showDetails = !this.showDetails;
+    }
+});
+
+# template toggleDetails(c)
+    <a href="#" onclick="{c.toggleDetails(event)}">{if c.showDetails}Masquer{else}Afficher{/if} les détails</a>
+# /template
+
+# template showError using c:Ctrl
+<div class="alert alert-danger {c.class}">
+<#c.template c="{c}"/>
+</div>
+# /template
+
+# template showValidationError(c)
+{let errors = c.error.errors}
+{errors.length} erreurs se sont produites. Veuillez les corriger avant de réessayer.
+<ul>
+{foreach error in errors}
+<li>{if error.path.length > 0}<small>{error.path.join(".")}:</small> {/if}{validationErrorsList[error.id] || "Erreur inconnue"}</li>
+{/foreach}
+</ul><br>
+# /template
+
+# template showServerConnectionError(c)
+La connexion au serveur a échoué.
+# /template
+
+# template showServerUnknownError(c)
+Le serveur a renvoyé une erreur non reconnue ({c.error.status}).
+<#toggleDetails c="{c}" />
+{if c.showDetails}<br><br><pre>{c.error.responseText}</pre>{/if}
+# /template
+
+# template showNotFoundError(c)
+Le document demandé n'a pas pu être trouvé.
+# /template
+
+# template showDefaultError(c)
+Erreur inconnue<br>
+{c.error}
+# /template
+
+module.exports = showError;

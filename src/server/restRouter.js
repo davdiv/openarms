@@ -1,8 +1,12 @@
 var express = require("express");
 var bodyParser = require("./bodyParser");
+var idValidator = require("./idValidator");
+var ValidationError = require("../common/validationError");
 
 var RestRouter = function (dbCollection) {
     var router = express.Router();
+    router.param("id", idValidator)
+
     router.post("/", bodyParser, function (req, res, next) {
         dbCollection.insert(req.body).then(function (doc) {
             res.send(200, doc);
@@ -37,7 +41,7 @@ var RestRouter = function (dbCollection) {
 
     router.put("/:id", bodyParser, function (req, res, next) {
         if (req.body.id !== req.params.id) {
-            res.send(404, "Id incorrect.");
+            next(new ValidationError("id.different", req.body.id, [ req.body.id, req.params.id ]));
             return;
         }
         dbCollection.save(req.body).then(function (doc) {

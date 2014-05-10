@@ -1,6 +1,6 @@
 var klass = require("hsp/klass");
 var RestCache = require("./restCache");
-var validateAccountSheet = require("./model/accountSheet");
+var validateAccountSheet = require("./model/accountSheets");
 
 var AccountSheetsCache = klass({
     $extends : RestCache,

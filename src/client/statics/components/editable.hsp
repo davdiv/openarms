@@ -2,6 +2,7 @@ var klass = require("hsp/klass");
 var clone = require("../serialization").clone;
 var promiseUtils = require("../promiseUtils");
 var isPromise = promiseUtils.isPromise;
+var showError = require("./error/showError.hsp.js");
 
 var copy = function (original) {
     if (isPromise(original)) {
@@ -175,7 +176,7 @@ var isValidData = function (data) {
 # template showSavingStatus(c)
     {if isPromise(c.savingData)}
         {if c.savingDataError}
-            <div class="alert alert-danger">Les données n'ont pas pu être enregistrées correctement.<br>{c.savingDataError}</div>
+            <#showError error="{c.savingDataError}" />
         {else}
             <div><span class="spinner"></span> Enregistrement...<br><br></div>
         {/if}
@@ -184,7 +185,7 @@ var isValidData = function (data) {
 
 # template showPromise(c, error)
     {if error}
-        <div class="alert alert-danger {c.editedData?'':'space-right'}">{error}</div>
+        <#showError error="{error}" class="{c.editedData?'':'space-right'}" />
     {else}
         <span class="spinner"></span> Chargement...<br>
     {/if}

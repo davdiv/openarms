@@ -1,5 +1,7 @@
 var jsonStringify = JSON.stringify;
 var jsonParse = JSON.parse;
+var ValidationError = require("./validationError");
+var NotFoundError = require("./notFoundError");
 
 // so that the value is the object in the replacer:
 Date.prototype.toJSON = null;
@@ -66,12 +68,30 @@ var replacer = function (key, value) {
     if (value instanceof Date) {
         return getDateReplacement(value);
     }
+    if (value instanceof ValidationError) {
+        return {
+            $validationErrors : value.errors
+        };
+    }
+    if (value instanceof NotFoundError) {
+        return {
+            $notFoundError : true
+        };
+    }
     return value;
 };
 
 var reviver = function (key, value) {
     if (value && value.$date) {
         return createDate(value);
+    }
+    if (value && value.$validationErrors) {
+        return new ValidationError({
+            errors : value.$validationErrors
+        });
+    }
+    if (value && value.$notFoundError) {
+        return new NotFoundError();
     }
     return value;
 };

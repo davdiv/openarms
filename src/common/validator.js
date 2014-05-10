@@ -1,6 +1,8 @@
 var notMetaData = require("./serialization").isNotMetaData;
 var forEach = require("./utils/forEach");
 
+var ValidationError = require("./validationError");
+
 var arrayToKeys = function (array) {
     var res = {};
     forEach(array, function (key) {
@@ -14,12 +16,25 @@ var callValidators = function (validators) {
         return validators;
     } else if (Array.isArray(validators)) {
         return function (value) {
+            var errors = [];
             validators.forEach(function (fn) {
-                fn(value);
+                try {
+                    fn(value);
+                } catch (e) {
+                    if (!(e instanceof ValidationError)) {
+                        throw e;
+                    }
+                    errors.push(e);
+                }
             });
+            if (errors.length > 0) {
+                throw new ValidationError(errors);
+            }
         };
     }
 };
+
+exports.ValidationError = ValidationError;
 
 exports.validator = callValidators;
 
@@ -28,8 +43,9 @@ exports.object = function (config) {
     return function (value) {
         if (value != null) {
             if (typeof value != "object") {
-                throw new Error("Expected an object");
+                throw new ValidationError("object", value);
             }
+            var errors = [];
             var remainingProperties = arrayToKeys(Object.keys(value).filter(notMetaData));
             configKeys.forEach(function (key) {
                 var valueKey = value[key];
@@ -42,13 +58,20 @@ exports.object = function (config) {
                 try {
                     callValidators(config[key])(valueKey);
                 } catch (e) {
-                    throw new Error(key + ":" + e);
+                    if (!(e instanceof ValidationError)) {
+                        throw e;
+                    }
+                    e.prependPath(key);
+                    errors.push(e);
                 }
                 delete remainingProperties[key];
             });
             remainingProperties = Object.keys(remainingProperties);
             if (remainingProperties.length > 0) {
-                throw new Error("Invalid propertie(s): " + remainingProperties.join(','));
+                e.push(new ValidationError("object.extra-properties", object, [ remainingProperties ]));
+            }
+            if (errors.length > 0) {
+                throw new ValidationError(errors);
             }
         }
     };
@@ -58,47 +81,79 @@ exports.array = function (config) {
     var validator = callValidators(config);
     return function (value) {
         if (value && !Array.isArray(value)) {
-            throw new Error("Expected an array");
+            throw new ValidationError("array", value);
         }
-        forEach(value, validator);
+        var errors = [];
+        forEach(value, function (value, index) {
+            try {
+                validator(value);
+            } catch (e) {
+                if (!(e instanceof ValidationError)) {
+                    throw e;
+                }
+                e.prependPath(index);
+                errors.push(e);
+            }
+        });
+        if (errors.length > 0) {
+            throw new ValidationError(errors);
+        }
+    }
+};
+
+exports.removeStringDuplicates = function (value) {
+    if (value == null || !Array.isArray(value)) {
+        return;
+    }
+    var keys = {};
+    for (var i = 0, l = value.length; i < l; i++) {
+        var curItem = value[i];
+        if (typeof curItem == "string") {
+            if (keys[curItem] == 1) {
+                value.splice(i, 1);
+                i--;
+            } else {
+                keys[curItem] = 1;
+            }
+        }
     }
 };
 
 exports.minLength = function (minLength) {
     return function (value) {
         if (value != null && value.length < minLength) {
-            throw new Error("Size of element is not sufficient.");
+            throw new ValidationError("minLength", value, [ value.length, minLength ]);
         }
     }
 };
 
 exports.string = function (value) {
     if (value != null && typeof value !== "string") {
-        throw new Error("Expected a string");
+        throw new ValidationError("string", value);
     }
 };
 
 exports.number = function (value) {
     if (value != null && typeof value !== "number") {
-        throw new Error("Expected a number");
+        throw new ValidationError("number", value);
     }
 };
 
 exports.date = function (value) {
     if (value != null && !(value instanceof Date)) {
-        throw new Error("Expected a date");
+        throw new ValidationError("date", value);
     }
 };
 
 exports.pastDate = function (value) {
-    if (value != null && value.getTime() > Date.now()) {
-        throw new Error("Expected a past date");
+    if (value != null && value instanceof Date && value.getTime() > Date.now()) {
+        throw new ValidationError("pastDate", value);
     }
 };
 
 exports.mandatory = function (value) {
     if (value == null) {
-        throw new Error("Expected a value");
+        throw new ValidationError("mandatory", value);
     }
 };
 
@@ -109,7 +164,7 @@ exports.enumValue = function (values) {
     return function (value) {
         if (value != null) {
             if (typeof value != "string" || values[value] == null) {
-                throw new Error("Invalid enum value: " + value);
+                throw new ValidationError("enumValue", value);
             }
         }
     }
@@ -118,6 +173,6 @@ exports.enumValue = function (values) {
 var idRegex = /^[0-9a-f]{24}$/;
 exports.id = function (value) {
     if (value != null && (typeof value != "string" || !idRegex.test(value))) {
-        throw new Error("Invalid id");
+        throw new ValidationError("id", value);
     }
 }
