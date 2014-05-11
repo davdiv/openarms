@@ -1,4 +1,5 @@
 var forEach = require("../../../utils/forEach");
+var computeCashboxDetails = require("../cashboxDetails/recompute");
 
 module.exports = function (data) {
     var allDays = 0;
@@ -13,4 +14,9 @@ module.exports = function (data) {
         allDays += allLines;
     });
     data.sumAmount = allDays;
+    var realAmountDetails = data.realAmountDetails;
+    if (realAmountDetails) {
+        computeCashboxDetails(realAmountDetails);
+        data.realAmount = realAmountDetails.total.general.total;
+    }
 };

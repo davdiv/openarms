@@ -47,6 +47,18 @@
 	background-image: url(../images/portrait.png);
 }
 
+.img-lg-coins {
+	background-image: url(../images/coins.png);
+}
+
+.img-lg-banknotes {
+	background-image: url(../images/banknotes.png);
+}
+
+.img-lg-checks {
+	background-image: url(../images/checks.png);
+}
+
 .nav li a a.close {
 	margin-right: -5px;
 }

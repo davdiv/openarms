@@ -1,5 +1,6 @@
 var klass = require("hsp/klass");
 var dateField = require("../../widgets/dateField.hsp.js");
+var formatDate = require("../../dates/format").date;
 var autoComplete = require("../../widgets/autoComplete.hsp.js");
 var multiAutoComplete = require("../../widgets/multiAutoComplete.hsp.js");
 var tagSuggestions = require("./tagSuggestions");
@@ -9,6 +10,8 @@ var personField = require("../../components/personId/personField.hsp.js");
 var peopleField = require("../../components/personId/peopleField.hsp.js");
 var recompute = require("../../model/account/sheet/recompute");
 var computeLineSuggestions = require("./lineSuggestions");
+var editCashboxDetails = require("../cashboxDetails/editCashboxDetails.hsp.js");
+var createCashboxDetails = require("../../model/account/cashboxDetails/create");
 
 var Ctrl = klass({
     attributes : {
@@ -25,7 +28,8 @@ var Ctrl = klass({
         this.data.days.push(day);
         this.addLine(day,0);
     },
-    removeDay: function(index) {
+    removeDay: function(index, event) {
+        event.preventDefault();
         this.data.days.splice(index,1);
         this.recompute();
     },
@@ -42,17 +46,25 @@ var Ctrl = klass({
         day.lines.splice(index,1);
         this.recompute();
     },
+    addRealAmountDetails : function() {
+        this.data.realAmountDetails = createCashboxDetails();
+        this.recompute();
+    },
+    removeRealAmountDetails : function (event) {
+        event.preventDefault();
+        delete this.data.realAmountDetails;
+    },
     recompute: function () {
         recompute(this.data);
     }
 })
 
 # template displayDay(c, day, index)
-    <div class="well form-horizontal">
-        <div class="pull-right">
-            <button class="btn btn-default" onclick="{c.removeDay(index)}"><span class="glyphicon glyphicon-remove"></span> Supprimer</button>
-        </div>
-
+    <div class="panel panel-default">
+      <div class="panel-heading">
+          <h3 class="panel-title">{formatDate(day.date)}&nbsp; <a href="#" class="close" onclick="{c.removeDay(index,event)}">&times;</a></h3>
+      </div>
+      <div class="panel-body form-horizontal">
         <div class="form-group">
             <label class="col-sm-3 control-label">Date</label>
             <div class="col-sm-5">
@@ -108,6 +120,7 @@ var Ctrl = klass({
             <label class="col-sm-3 control-label">Total</label>
             <div class="col-sm-5"><p class="form-control-static">{formatCurrency(day.amount)}</p></div>
         </div>
+      </div>
     </div>
 # /template
 
@@ -118,11 +131,27 @@ var Ctrl = klass({
             <#displayDay c="{c}" day="{day}" index="{index}" />
         {/foreach}
     {/if}
-    <div class="well form-horizontal">
-        <div class="pull-right">
-            <button class="btn btn-default" onclick="{c.addDay()}"><span class="glyphicon glyphicon-plus"></span> Ajouter un jour</button>
+    <div style="margin:16px;">
+        <button class="btn btn-default btn-sm" onclick="{c.addDay()}"><span class="glyphicon glyphicon-plus"></span> Ajouter un jour</button>
+        {if !data.realAmountDetails}
+            {" "}<button class="btn btn-default btn-sm" onclick="{c.addRealAmountDetails()}"><span class="glyphicon glyphicon-list-alt"></span> Détailler le montant réel</button>
+        {/if}
+    </div>
+    {if data.realAmountDetails}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Montant réel: {formatCurrency(data.realAmount)} <a href="#" class="close" onclick="{c.removeRealAmountDetails(event)}">&times;</a></h3>
         </div>
-
+        <div class="panel-body">
+            <#editCashboxDetails data="{data.realAmountDetails}" onchange="{c.recompute()}"/>
+        </div>
+    </div>
+    {/if}
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Total</h3>
+      </div>
+      <div class="panel-body form-horizontal">
         <div class="form-group">
             <label class="col-sm-3 control-label">Somme</label>
             <div class="col-sm-5"><p class="form-control-static">{formatCurrency(data.sumAmount)}</p></div>
@@ -141,14 +170,18 @@ var Ctrl = klass({
         <div class="form-group">
             <label class="col-sm-3 control-label">Montant réel</label>
             <div class="col-sm-5">
-                <#amountField value="{c.data.realAmount}"/>
+                {if data.realAmountDetails}
+                    <p class="form-control-static">{formatCurrency(data.realAmount)}</p>
+                {else}
+                    <#amountField value="{data.realAmount}"/>
+                {/if}
             </div>
         </div>
 
         <div class="form-group">
             <label class="col-sm-3 control-label">Compté par</label>
             <div class="col-sm-5">
-                <#personField value="{c.data.countedBy}"/>
+                <#personField value="{data.countedBy}"/>
             </div>
         </div>
 
@@ -169,7 +202,7 @@ var Ctrl = klass({
                 <textarea class="form-control" type="text" value="{data.notes}"></textarea>
             </div>
         </div>
-
+      </div>
     </div>
 # /template
 

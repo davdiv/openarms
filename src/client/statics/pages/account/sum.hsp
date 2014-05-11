@@ -108,7 +108,7 @@ var objectValues = function (object) {
     {foreach line in results.lines}
         <tr>
             <td>
-                <a href="/account/sheets/{line.id}"><span class="glyphicon glyphicon-th-list"></span></a>
+                <a href="/account/sheets/{line.id}"><span class="glyphicon glyphicon-list-alt"></span></a>
                 {foreach tag in line.tags} <span class="badge">{tag}</span>{/foreach}
             </td>
             <td>{formatDate(line.date)}</td>
@@ -139,7 +139,7 @@ var objectValues = function (object) {
     {foreach sheet in results.sheets}
         <tr>
             <td>
-                <a href="/account/sheets/{sheet.id}"><span class="glyphicon glyphicon-th-list"></span></a>
+                <a href="/account/sheets/{sheet.id}"><span class="glyphicon glyphicon-list-alt"></span></a>
                 {foreach tag in sheet.tags} <span class="badge">{tag}</span>{/foreach}
             </td>
             <td>{formatDate(sheet.beginDate)}</td>

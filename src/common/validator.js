@@ -68,7 +68,7 @@ exports.object = function (config) {
             });
             remainingProperties = Object.keys(remainingProperties);
             if (remainingProperties.length > 0) {
-                e.push(new ValidationError("object.extra-properties", object, [ remainingProperties ]));
+                errors.push(new ValidationError("object.extra-properties", value, [ remainingProperties ]));
             }
             if (errors.length > 0) {
                 throw new ValidationError(errors);

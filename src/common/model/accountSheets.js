@@ -1,4 +1,5 @@
 var v = require("../validator");
+var cashboxDetails = require("./cashboxDetails");
 
 var notZero = function (value) {
     if (value === 0) {
@@ -19,6 +20,7 @@ module.exports = v.validator([ v.mandatory, v.object({
     }) ]) ],
     sumAmount : v.number,
     realAmount : v.number,
+    realAmountDetails : cashboxDetails,
     countedBy : v.id,
     tags : [ v.removeStringDuplicates, v.array([ v.mandatory, v.string, v.minLength(1) ]) ],
     notes : v.string,

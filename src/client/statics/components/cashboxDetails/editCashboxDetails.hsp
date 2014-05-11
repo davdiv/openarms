@@ -1,0 +1,100 @@
+var klass = require("hsp/klass");
+
+var formatCurrency = require("../../utils/formatCurrency");
+var cashCountField = require("../../widgets/cashCountField.hsp.js");
+var dateField = require("../../widgets/dateField.hsp.js");
+var amountField = require("../../widgets/amountField.hsp.js");
+var formatDate = require("../../dates/format").date;
+
+var Ctrl = klass({
+    attributes: {
+        data: {
+            type: "object",
+            binding: "1-way"
+        },
+        onchange: {
+            type: "callback"
+        }
+    },
+    addCheck : function() {
+        var data = this.data;
+        if (!data.checks) {
+            data.checks = [];
+        }
+        data.checks.push({
+            total: 0
+        });
+        this.onchange();
+    },
+    removeCheck: function(index) {
+        this.data.checks.splice(index,1);
+        this.onchange();
+    }
+});
+
+# template itemsHeader(title, image, total)
+    <div class="img-lg-{image} img-responsive block" style="margin-right:16px;"></div>
+    <div class="block" style="min-width: 150px;">
+        <h2>{title}</h2>
+        <table class="table">
+            <tr><th>Nombre</th><td>{total.number}</td></tr>
+            <tr><th>Montant</th><td>{formatCurrency(total.total)}</td></tr>
+        </table>
+    </div>
+# /template
+
+# template itemsTable(title, image, total, itemsArray, controller)
+    <#itemsHeader title="{title}" image="{image}" total="{total}" />
+    {foreach item in itemsArray}
+        <#cashCountField number="{item.number}" unitValue="{item.unitValue}" onchange="{controller.onchange()}"/>
+    {/foreach}
+# /template
+
+# template checksTable(title, image, total, itemsArray, controller)
+    <#itemsHeader title="{title}" image="{image}" total="{total}" />
+    <table class="table table-striped table-hover">
+    <thead>
+        <tr><th>Banque</th><th>Numéro</th><th>Date</th><th>Montant</th><th></th></tr>
+    </thead>
+    <tbody>
+        {if itemsArray}
+        {foreach index,item in itemsArray}
+            <tr>
+                <td><input value="{item.checkBank}" type="text" class="form-control input-sm"></td>
+                <td><input value="{item.checkNumber}" type="text" class="form-control input-sm"></td>
+                <td><#dateField value="{item.checkDate}"/></td>
+                <td><#amountField value="{item.total}" onchange="{controller.onchange()}"/></td>
+                <td><button title="Supprimer cette ligne" type="button" class="btn btn-default btn-xs" onclick="{controller.removeCheck(index)}">
+                    <span class="glyphicon glyphicon-minus"></span>
+                </button></td>
+            </tr>
+        {/foreach}
+        {/if}
+    </tbody>
+    <tfoot>
+        <tr class="active">
+            <td colspan="5">
+                <button title="Ajouter une ligne" type="button" class="btn btn-default btn-xs" onclick="{controller.addCheck()}">
+                    <span class="glyphicon glyphicon-plus"></span>
+                </button>
+            </td>
+        </tr>
+    </tfoot>
+    </table>
+# /template
+
+# template cashboxDetailsTemplate using controller:Ctrl
+    <div class="row">
+    <div class="col-md-4">
+        <#itemsTable title="Billets" image="banknotes" total="{controller.data.total.banknotes}" itemsArray="{controller.data.banknotes}" controller="{controller}"/>
+    </div>
+    <div class="col-md-4">
+        <#itemsTable title="Pièces" image="coins" total="{controller.data.total.coins}" itemsArray="{controller.data.coins}" controller="{controller}"/>
+    </div>
+    <div class="col-md-4">
+        <#checksTable title="Chèques" image="checks" total="{controller.data.total.checks}" itemsArray="{controller.data.checks}" controller="{controller}"/>
+    </div>
+    </div>
+# /template
+
+module.exports = cashboxDetailsTemplate;
