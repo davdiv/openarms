@@ -251,7 +251,7 @@ module.exports = klass({
     },
     clearTags: function () {
         this.filterTags = null;
-        this.computeResults();
+        this.results = this.computeResults(this.results.query, this.results.allSheets);
     },
     clickTag : function (tag) {
         if (this.filterTags && this.filterTags[tag]) {
