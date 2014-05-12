@@ -9,6 +9,10 @@ var serialization = require("../../serialization");
 var notMetaData = serialization.isNotMetaData;
 var forEach = require("../../utils/forEach");
 var showError = require("../../components/error/showError.hsp.js");
+var createCashboxDetails = require("../../model/account/cashboxDetails/create");
+var recomputeCashboxDetails = require("../../model/account/cashboxDetails/recompute");
+var addCashboxDetails = require("../../model/account/cashboxDetails/add");
+var viewCashboxDetails = require("../../components/cashboxDetails/viewCashboxDetails.hsp.js");
 
 var isTagSelected = function (selectedTags, tag) {
     return selectedTags ? !! selectedTags[tag] : false;
@@ -180,6 +184,13 @@ var objectValues = function (object) {
     {if controller.showLineDetails}
         <#showLineDetails controller="{controller}"/>
     {/if}
+    {if results.cashboxDetails}
+        <h3><span class="glyphicon glyphicon-chevron-right"></span> Contenu de la caisse</h3>
+        <p><a href="#" onclick="{controller.toggleCashboxDetails(event)}">{if controller.showCashboxDetails}Masquer les détails{else}Afficher les détails{/if}</a></p>
+        {if controller.showCashboxDetails}
+            <#viewCashboxDetails data="{results.cashboxDetails}"/>
+        {/if}
+    {/if}
 # /template
 
 # template displaySearch(controller)
@@ -236,6 +247,7 @@ module.exports = klass({
         this.showSearch = false;
         this.showLineDetails = false;
         this.showSheetDetails = false;
+        this.showCashboxDetails = false;
     },
     toggleLineDetails: function (event) {
         event.preventDefault();
@@ -244,6 +256,10 @@ module.exports = klass({
     toggleSheetDetails: function (event) {
         event.preventDefault();
         this.showSheetDetails = !this.showSheetDetails;
+    },
+    toggleCashboxDetails: function (event) {
+        event.preventDefault();
+        this.showCashboxDetails = !this.showCashboxDetails;
     },
     toggleSearch: function (event) {
         event.preventDefault();
@@ -274,6 +290,7 @@ module.exports = klass({
         var sheets = [];
         var tags = {};
         var items = {};
+        var cashboxDetails = createCashboxDetails();
         var total = {
             income: 0,
             outcome: 0,
@@ -294,6 +311,13 @@ module.exports = klass({
             });
             if (filterOut) {
                 return;
+            }
+            if (cashboxDetails) {
+                if (sheet.realAmountDetails) {
+                    addCashboxDetails(cashboxDetails, sheet.realAmountDetails);
+                } else {
+                    cashboxDetails = null;
+                }
             }
             var beginDate = null;
             var endDate = null;
@@ -340,6 +364,9 @@ module.exports = klass({
                 tags: sheet.tags
             });
         });
+        if (cashboxDetails) {
+            recomputeCashboxDetails(cashboxDetails);
+        }
         lines.sort(sortByDate);
         sheets.sort(sortByEndDate);
         return {
@@ -348,6 +375,7 @@ module.exports = klass({
             allSheets: allSheets,
             sheets: sheets,
             lines: lines,
+            cashboxDetails: cashboxDetails,
             items: objectValues(items).sort(sortByAmount),
             total: total
         }
