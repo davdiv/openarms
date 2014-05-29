@@ -1,0 +1,62 @@
+var klass = require("hsp/klass");
+var showError = require("../components/error/showError.hsp.js");
+var promise = require("noder-js/promise");
+var promiseUtils = require("../promiseUtils");
+var isPromise = promiseUtils.isPromise;
+
+var readFile = function (file) {
+    var defer = promise.defer()
+    var finalRes = {
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        content: null
+    };
+    var fileReader = new FileReader();
+    fileReader.readAsBinaryString(file);
+    fileReader.onload = function (evt) {
+        finalRes.content = evt.target.result;
+        defer.resolve(finalRes);
+    };
+    return defer.promise;
+};
+
+var Ctrl = klass({
+    attributes: {
+        file: {
+            type: "object",
+            binding: "2-way"
+        }
+    },
+    onFileChange: function() {
+        promiseUtils.resolvePromise(this, "file", "error");
+    },
+    fileSelected: function (event) {
+        var fileInput = event.target;
+        var file = fileInput.files[0];
+        this.file = readFile(file);
+    },
+    removeClick: function (event) {
+        event.preventDefault();
+        this.file = null;
+    }
+});
+
+# template fileSelector using c:Ctrl
+    {if c.file}
+        {if isPromise(c.file)}
+            {if c.error}
+                <span class="glyphicon glyphicon-exclamation-sign"></span> Une erreur s'est produite
+            {else}
+                <span class="spinner"></span> Lecture du fichier...
+            {/if}
+        {else}
+            {c.file.name} ({c.file.size} o)
+        {/if}
+        <a href="#" onclick="{c.removeClick(event)}"><span class="glyphicon glyphicon-remove"></span></a>
+    {else}
+        <input type="file" onchange="{c.fileSelected(event)}">
+    {/if}
+# /template
+
+module.exports = fileSelector;

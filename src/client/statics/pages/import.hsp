@@ -1,0 +1,51 @@
+var klass = require("hsp/klass");
+var optionButton = require("../widgets/optionButton.hsp.js");
+var fileSelector = require("../widgets/fileSelector.hsp.js");
+var displayPasserelleDb = require("../passerelle/displayDb.hsp.js");
+var promiseUtils = require("../promiseUtils");
+var isPromise = promiseUtils.isPromise;
+
+# template template(controller)
+    <div class="container-fluid">
+      <h3><span class="glyphicon glyphicon-chevron-right"></span> Importer des données</h3>
+      <div class="form-horizontal">
+      <div class="form-group">
+              <label class="col-sm-3 control-label">Format des données</label>
+              <div class="col-sm-9">
+                  <div class="btn-group btn-group-sm">
+                      <#optionButton key="passerelle" value="{controller.dataType}">
+                          Base de données Passerelle (.db3)
+                      </#optionButton>
+                  </div>
+              </div>
+          </div>
+         {if controller.dataType}
+         <div class="form-group">
+            <label class="col-sm-3 control-label">Fichier de données</label>
+            <div class="col-sm-9">
+                <#fileSelector file="{controller.file}"/>
+                {if !controller.file}
+                    <p class="help-block">
+                        {if controller.dataType =="passerelle"}
+                            Veuillez sélectionner le fichier (.db3). Attention: le fichier doit être décrypté avant de pouvoir être importé ici.
+                        {/if}
+                    </p>
+                {/if}
+            </div>
+         </div>
+         {/if}
+      </div>
+      {if controller.file && !isPromise(controller.file)}
+          <#displayPasserelleDb file="{controller.file}"/>
+      {/if}
+    </div>
+# /template
+
+# template iconTemplate(page)
+    <span class="glyphicon glyphicon-import"></span> {page.title}
+# /template
+
+module.exports = klass({
+    template : template,
+    iconTemplate : iconTemplate
+});

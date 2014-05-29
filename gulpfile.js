@@ -6,6 +6,8 @@ var rename = require("gulp-rename");
 var hspCompiler = require("gulp-hsp-compiler");
 var hspTranspiler = require("gulp-hsp-transpiler");
 var runSequence = require("run-sequence");
+var wrap = require("gulp-wrap");
+var replace = require('gulp-replace');
 
 var clientDir = "build/client";
 var staticsDevDir = clientDir + "/statics-dev"
@@ -23,6 +25,10 @@ gulp.task("dev", function () {
         gulp.dest(staticsDevDir + "/hsp"));
     gulp.src("node_modules/noder-js/dist/browser/**/*.js").pipe(newer(staticsDevDir + "/noder-js")).pipe(
         gulp.dest(staticsDevDir + "/noder-js"));
+    gulp.src("node_modules/node-sqlite-purejs/js/sql.js").pipe(newer(staticsDevDir + "/sqlite.js")).pipe(rename("sqlite.js")).pipe(
+        replace(/\brequire\(/g, 'myRequire(')).pipe(
+        wrap("(function() {function myRequire() {throw new Error('Not implemented');}; <%= contents %> }).apply(exports); module.exports = exports.SQL;")).pipe(
+        gulp.dest(staticsDevDir));
     gulp.src("src/client/statics/**/*.hsp").pipe(newer({
         dest : staticsDevDir,
         ext : ".js"

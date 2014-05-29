@@ -30,4 +30,8 @@ module.exports = [ {
     "path" : "/account/sum",
     "module" : "pages/account/sum.hsp.js",
     "title" : "Comptes"
+}, {
+    "path" : "/import",
+    "module" : "pages/import.hsp.js",
+    "title" : "Importer des données"
 } ];

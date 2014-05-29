@@ -1,0 +1,42 @@
+var klass = require("hsp/klass");
+var processDb = require("./processDb");
+var displayPerson = require("../components/person/link.hsp.js");
+
+var Ctrl = klass({
+    attributes: {
+        file: {
+            type:"object",
+            binding: "1-way"
+        }
+    },
+    $init: function () {
+        this.onFileChange();
+    },
+    onFileChange: function () {
+        if (this.file) {
+            this.registrations = processDb(this.file.content);
+        } else {
+            this.registrations = [];
+        }
+    }
+});
+
+# template passerelleDB using c:Ctrl
+    <table class="table">
+        <tbody>
+    {foreach registration in c.registrations}
+        <tr>
+            <td>{registration.people.length}</td>
+            <td>
+                {foreach person in registration.people}
+                    <#displayPerson data="{person}" />
+                    {if !person_islast}, {/if}
+                {/foreach}
+            </td>
+        </tr>
+    {/foreach}
+        </tbody>
+    </table>
+# /template
+
+module.exports = passerelleDB;
