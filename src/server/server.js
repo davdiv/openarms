@@ -14,10 +14,12 @@ var AccountSheetsCollection = require("./collections/accountSheets");
 var startServer = function (options, db) {
     var defer = q.defer();
     var staticsRoot = path.join(__dirname, "../../build/client");
-    var htmlFile = path.join(staticsRoot, options.dev ? "statics-dev" : "statics", "index.html");
+    var devHtmlFile = path.join(staticsRoot, "statics-dev/index.html");
+    var prodHtmlFile = path.join(staticsRoot, "statics/index.html");
 
     var sendHtmlFile = function (req, res) {
-        res.sendfile(htmlFile);
+        var dev = "dev" in req.query ? req.query.dev != "false" : options.dev;
+        res.sendfile(dev ? devHtmlFile : prodHtmlFile);
     };
 
     var app = express();
