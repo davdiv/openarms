@@ -8,44 +8,101 @@ var hspTranspiler = require("gulp-hsp-transpiler");
 var runSequence = require("run-sequence");
 var wrap = require("gulp-wrap");
 var replace = require('gulp-replace');
+var exec = require('child_process').exec;
 
 var clientDir = "build/client";
 var staticsDevDir = clientDir + "/statics-dev"
 
-gulp.task("dev", function () {
-    gulp.src("lib/bootstrap/**").pipe(newer(staticsDevDir + "/bootstrap"))
-        .pipe(gulp.dest(staticsDevDir + "/bootstrap"));
-    gulp.src("node_modules/page/index.js").pipe(newer(staticsDevDir + "/page.js")).pipe(rename("page.js")).pipe(
+gulp.task("dev-dep-bootstrap", function () {
+    return gulp.src([ "lib/bootstrap/**", "!lib/bootstrap/**/*.js" ]).pipe(newer(staticsDevDir + "/bootstrap")).pipe(
+        gulp.dest(staticsDevDir + "/bootstrap"));
+});
+
+gulp.task("dev-dep-page", function () {
+    return gulp.src("node_modules/page/index.js").pipe(newer(staticsDevDir + "/page.js")).pipe(rename("page.js")).pipe(
         gulp.dest(staticsDevDir));
-    gulp.src("node_modules/diacritics/index.js").pipe(newer(staticsDevDir + "/diacritics.js")).pipe(rename("diacritics.js")).pipe(
-            gulp.dest(staticsDevDir));
-    gulp.src("node_modules/qs/index.js").pipe(newer(staticsDevDir + "/qs.js")).pipe(rename("qs.js")).pipe(
+});
+
+gulp.task("dev-dep-diacritics", function () {
+    return gulp.src("node_modules/diacritics/index.js").pipe(newer(staticsDevDir + "/diacritics.js")).pipe(
+        rename("diacritics.js")).pipe(gulp.dest(staticsDevDir));
+});
+
+gulp.task("dev-dep-qs", function () {
+    return gulp.src("node_modules/qs/index.js").pipe(newer(staticsDevDir + "/qs.js")).pipe(rename("qs.js")).pipe(
         gulp.dest(staticsDevDir));
-    gulp.src("node_modules/hashspace/hsp/**/*.js").pipe(newer(staticsDevDir + "/hsp")).pipe(
-        gulp.dest(staticsDevDir + "/hsp"));
-    gulp.src("node_modules/noder-js/dist/browser/**/*.js").pipe(newer(staticsDevDir + "/noder-js")).pipe(
+});
+
+gulp.task("dev-dep-hsp", function () {
+    return gulp.src(
+        [ "node_modules/hashspace/hsp/**/*.js", "!node_modules/hashspace/hsp/compiler/**",
+            "!node_modules/hashspace/hsp/transpiler/**", "!node_modules/hashspace/hsp/utils/**" ]).pipe(
+        newer(staticsDevDir + "/hsp")).pipe(gulp.dest(staticsDevDir + "/hsp"));
+});
+
+gulp.task("dev-dep-noder-js", function () {
+    return gulp.src("node_modules/noder-js/dist/browser/**/*.js").pipe(newer(staticsDevDir + "/noder-js")).pipe(
         gulp.dest(staticsDevDir + "/noder-js"));
-    gulp.src("node_modules/node-sqlite-purejs/js/sql.js").pipe(newer(staticsDevDir + "/sqlite.js")).pipe(rename("sqlite.js")).pipe(
-        replace(/\brequire\(/g, 'myRequire(')).pipe(
-        wrap("(function() {function myRequire() {throw new Error('Not implemented');}; <%= contents %> }).apply(exports); module.exports = exports.SQL;")).pipe(
-        gulp.dest(staticsDevDir));
-    gulp.src("src/client/statics/**/*.hsp").pipe(newer({
+});
+
+gulp
+    .task(
+        "dev-dep-sqlite",
+        function () {
+            return gulp
+                .src("node_modules/node-sqlite-purejs/js/sql.js")
+                .pipe(newer(staticsDevDir + "/sqlite.js"))
+                .pipe(rename("sqlite.js"))
+                .pipe(replace(/\brequire\(/g, 'myRequire('))
+                .pipe(
+                    wrap("(function() {function myRequire() {throw new Error('Not implemented');}; <%= contents %> }).apply(exports); module.exports = exports.SQL;"))
+                .pipe(gulp.dest(staticsDevDir));
+        });
+
+gulp.task("dev-hsp-compile", function () {
+    return gulp.src("src/client/statics/**/*.hsp").pipe(newer({
         dest : staticsDevDir,
         ext : ".js"
     })).pipe(hspCompiler().on('error', gutil.log)).pipe(hspTranspiler()).pipe(gulp.dest(staticsDevDir));
-    gulp.src([ "src/client/statics/**/*.js", "src/common/**/*.js" ]).pipe(newer({
+
+});
+
+gulp.task("dev-js-transpile", function () {
+    return gulp.src([ "src/client/statics/**/*.js", "src/common/**/*.js" ]).pipe(newer({
         dest : staticsDevDir
     })).pipe(hspTranspiler().on('error', gutil.log)).pipe(gulp.dest(staticsDevDir));
-    gulp.src([ "src/client/statics/**", "!**/*.js", "!**/*.hsp" ]).pipe(newer({
+
+});
+
+gulp.task("dev-statics", function () {
+    return gulp.src([ "src/client/statics/**", "!**/*.js", "!**/*.hsp" ]).pipe(newer({
         dest : staticsDevDir
     })).pipe(gulp.dest(staticsDevDir));
-    gulp.src([ "src/client/**", "!src/client/statics", "!src/client/statics/**" ]).pipe(newer({
+});
+
+gulp.task("dev-statics-root", function () {
+    return gulp.src([ "src/client/**", "!src/client/statics", "!src/client/statics/**" ]).pipe(newer({
         dest : clientDir
     })).pipe(gulp.dest(clientDir));
 });
 
+gulp.task("dev-dep", [ "dev-dep-bootstrap", "dev-dep-page", "dev-dep-diacritics", "dev-dep-qs", "dev-dep-hsp",
+    "dev-dep-noder-js", "dev-dep-sqlite" ]);
+
+gulp.task("dev-main", [ "dev-hsp-compile", "dev-js-transpile", "dev-statics", "dev-statics-root" ]);
+
+gulp.task("dev", [ "dev-dep", "dev-main" ]);
+
+gulp.task('package', [ "dev" ], function (cb) {
+    exec('./node_modules/.bin/grunt --gulp', function (err, stdout, stderr) {
+        console.log(stdout);
+        console.log(stderr);
+        cb(err);
+    });
+})
+
 gulp.task("watch", function () {
-    gulp.watch("src/**/*", [ "dev" ]);
+    gulp.watch("src/**/*", [ "dev-main" ]);
 });
 
 gulp.task("clean", function () {
@@ -59,5 +116,5 @@ gulp.task("default", function (callback) {
 });
 
 gulp.task("prepublish", function (callback) {
-    runSequence("clean", "dev", callback);
+    runSequence("clean", "package", callback);
 });
