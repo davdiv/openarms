@@ -3,6 +3,7 @@ var showError = require("../display/errors/view.hsp.js");
 var promise = require("noder-js/promise");
 var resolvePromise = require("../utils/resolvePromise");
 var isPromise = require("../utils/isPromise");
+var formatSize = require("../utils/formatSize");
 
 var readFile = function (file) {
     var defer = promise.defer()
@@ -61,7 +62,7 @@ var Ctrl = klass({
                 <span class="spinner"></span> Lecture du fichier...
             {/if}
         {else}
-            {c.file.name} ({c.file.size} o)
+            {c.file.name} ({formatSize(c.file.size)})
         {/if}
         <a href="#" onclick="{c.removeClick(event)}"><span class="glyphicon glyphicon-remove"></span></a>
         </p>
