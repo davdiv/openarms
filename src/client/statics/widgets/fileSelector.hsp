@@ -1,8 +1,8 @@
 var klass = require("hsp/klass");
-var showError = require("../components/error/showError.hsp.js");
+var showError = require("../display/errors/view.hsp.js");
 var promise = require("noder-js/promise");
-var promiseUtils = require("../promiseUtils");
-var isPromise = promiseUtils.isPromise;
+var resolvePromise = require("../utils/resolvePromise");
+var isPromise = require("../utils/isPromise");
 
 var readFile = function (file) {
     var defer = promise.defer()
@@ -29,7 +29,7 @@ var Ctrl = klass({
         }
     },
     onFileChange: function() {
-        promiseUtils.resolvePromise(this, "file", "error");
+        resolvePromise(this, "file", "error");
     },
     fileSelected: function (event) {
         var fileInput = event.target;

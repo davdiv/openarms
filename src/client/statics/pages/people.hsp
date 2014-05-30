@@ -1,0 +1,50 @@
+var klass = require("hsp/klass");
+var editable = require("../components/editable.hsp.js");
+var identityCard = require("../display/people/viewIdentityCard.hsp.js");
+var editIdentityCard = require("../display/people/edit.hsp.js");
+var personName = require("../display/people/viewName.hsp.js");
+var peopleMgr = require("../persistence/people");
+
+# template iconTemplate(controller)
+    <#personName data="{controller.savedData}" />
+# /template
+
+# template viewer(data)
+    <div>
+    <#identityCard data="{data}" />
+    </div>
+# /template
+
+# template actionTemplate(controller)
+    {let c = controller, savedData = c.savedData}
+    <div class="container-fluid">
+        <h2><span class="glyphicon glyphicon-chevron-right"></span> Foyer</h2>
+        {if !c.registration}
+            <p>{savedData.firstName||"Cette personne"} n'appartient (pour l'instant) à aucun foyer inscrit.
+            Vous pouvez l'ajouter à un foyer existant ou à un nouveau foyer.</p>
+            <p><a href="/registrations/new?person={savedData.id}" class="btn btn-primary"><span class="glyphicon glyphicon-file"></span> Nouveau foyer</a>
+            </p>
+        {/if}
+        <hr>
+        <h2><span class="glyphicon glyphicon-chevron-right"></span> Dernières visites</h2>
+        <p><a href="/visits/new?person={savedData.id}" class="btn btn-primary"><span class="glyphicon glyphicon-shopping-cart"></span> Nouvelle visite</a></p>
+        <p>{savedData.firstName||"Cette personne"} n'a aucune visite enregistrée.</p>
+    </div>
+# /template
+
+var BaseClass = require("./utils/editable.hsp.js");
+
+module.exports = klass({
+    $extends: BaseClass,
+    iconTemplate : iconTemplate,
+    viewerTemplate : viewer,
+    editorTemplate : editIdentityCard,
+    actionTemplate : actionTemplate,
+    cache: peopleMgr,
+    createData : function (query) {
+        var res = {};
+        res.firstName = query.firstName;
+        res.lastName = query.lastName;
+        return res;
+    }
+});

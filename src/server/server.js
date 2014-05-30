@@ -6,8 +6,9 @@ var serialization = require("../common/serialization");
 var RestRouter = require("./restRouter");
 var apiErrorReporter = require("./apiErrorReporter");
 var initDatabase = require("./database/init");
-var CollectionBase = require("./database/collectionBase");
+var CollectionBase = require("./collections/utils/collectionBase");
 var PeopleCollection = require("./collections/people");
+var RegistrationsCollection = require("./collections/registrations");
 var AccountSheetsCollection = require("./collections/accountSheets");
 
 var startServer = function (options, db) {
@@ -30,7 +31,7 @@ var startServer = function (options, db) {
     app.use(express.static(staticsRoot));
 
     app.use("/api/people", new RestRouter(new PeopleCollection(db.collection("people"))));
-    app.use("/api/registrations", new RestRouter(new CollectionBase(db.collection("registrations"))));
+    app.use("/api/registrations", new RestRouter(new RegistrationsCollection(db.collection("registrations"))));
     app.use("/api/visits", new RestRouter(new CollectionBase(db.collection("visits"))));
     app.use("/api/account/sheets", new RestRouter(new AccountSheetsCollection(db.collection("accountSheets"))));
     app.use("/api", apiErrorReporter);

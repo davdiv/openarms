@@ -1,7 +1,7 @@
 var express = require("express");
 var bodyParser = require("./bodyParser");
 var idValidator = require("./idValidator");
-var ValidationError = require("../common/validationError");
+var ValidationError = require("../common/validation/utils/validationError");
 
 var RestRouter = function (dbCollection) {
     var router = express.Router();

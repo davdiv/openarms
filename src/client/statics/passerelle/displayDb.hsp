@@ -1,6 +1,6 @@
 var klass = require("hsp/klass");
 var processDb = require("./processDb");
-var displayPerson = require("../components/person/link.hsp.js");
+var displayPerson = require("../display/people/viewLink.hsp.js");
 
 var Ctrl = klass({
     attributes: {

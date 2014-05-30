@@ -12,24 +12,24 @@ module.exports = [ {
     "title" : "Recherche"
 }, {
     "path" : "/people/:id",
-    "module" : "pages/person.hsp.js",
+    "module" : "pages/people.hsp.js",
     "title" : "Personne"
 }, {
     "path" : "/visits/:id",
-    "module" : "pages/visit.hsp.js",
+    "module" : "pages/visits.hsp.js",
     "title" : "Visite"
 }, {
     "path" : "/registrations/:id",
-    "module" : "pages/registration.hsp.js",
+    "module" : "pages/registrations.hsp.js",
     "title" : "Inscription"
 }, {
-    "path" : "/account/sheets/:id",
-    "module" : "pages/account/sheet.hsp.js",
-    "title" : "Feuille de comptes"
-}, {
-    "path" : "/account/sum",
-    "module" : "pages/account/sum.hsp.js",
+    "path" : "/accountSheets/sum",
+    "module" : "pages/accountSheetsSum.hsp.js",
     "title" : "Comptes"
+}, {
+    "path" : "/accountSheets/:id",
+    "module" : "pages/accountSheets.hsp.js",
+    "title" : "Feuille de comptes"
 }, {
     "path" : "/import",
     "module" : "pages/import.hsp.js",

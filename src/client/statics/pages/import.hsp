@@ -2,8 +2,7 @@ var klass = require("hsp/klass");
 var optionButton = require("../widgets/optionButton.hsp.js");
 var fileSelector = require("../widgets/fileSelector.hsp.js");
 var displayPasserelleDb = require("../passerelle/displayDb.hsp.js");
-var promiseUtils = require("../promiseUtils");
-var isPromise = promiseUtils.isPromise;
+var isPromise = require("../utils/isPromise");
 
 # template template(controller)
     <div class="container-fluid">

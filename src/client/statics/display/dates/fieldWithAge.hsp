@@ -1,0 +1,25 @@
+var dateField = require("./field.hsp.js");
+var klass = require("hsp/klass");
+var computeAge = require("./utils/age");
+
+var displayAge = function (date) {
+	return date ? computeAge(date) : "";
+};
+
+var BirthDateFieldController = klass({
+	attributes: {
+		value: {
+			type:"object",
+			binding: "2-way"
+		}
+	}
+});
+
+# template birthDateField using c:BirthDateFieldController
+	<div class="{'form-inline','input-group','input-group-sm','has-error':c.error}">
+		<#dateField value="{c.value}" error="{c.error}"/>
+		<span class="input-group-addon" style="min-width:40px;">{displayAge(c.value)}</span>
+	</div>
+# /template
+
+module.exports = birthDateField;

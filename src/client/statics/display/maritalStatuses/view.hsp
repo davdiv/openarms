@@ -1,0 +1,7 @@
+var maritalStatuses = require("../../maritalStatuses");
+
+# template viewMaritalStatus(data)
+{maritalStatuses[data]}
+# /template
+
+module.exports = viewMaritalStatus;

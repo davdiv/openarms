@@ -1,6 +1,6 @@
 var klass = require("hashspace/hsp/klass");
-var CollectionBase = require("../database/collectionBase");
-var validate = require("../../common/model/people");
+var CollectionBase = require("./utils/collectionBase");
+var validate = require("../../common/validation/people");
 
 module.exports = klass({
     $extends : CollectionBase,

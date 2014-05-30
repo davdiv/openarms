@@ -1,0 +1,27 @@
+var klass = require("hsp/klass");
+var editable = require("../components/editable.hsp.js");
+var viewer = require("../display/accountSheets/view.hsp.js");
+var editor = require("../display/accountSheets/edit.hsp.js");
+var today = require("../utils/today");
+
+# template iconTemplate(page)
+<span class="glyphicon glyphicon-euro"></span> {page.title}
+# /template
+
+var BaseClass = require("./utils/editable.hsp.js");
+
+module.exports = klass({
+    $extends: BaseClass,
+    viewerTemplate: viewer,
+    editorTemplate: editor,
+    iconTemplate : iconTemplate,
+    cache: require("../persistence/accountSheets"),
+    createData: function() {
+        return {
+            days: [{
+                date: today(),
+                lines: [{amount:0}]
+            }]
+        };
+    }
+});

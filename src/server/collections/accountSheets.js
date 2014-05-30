@@ -1,7 +1,7 @@
 var klass = require("hashspace/hsp/klass");
-var recompute = require("../../common/model/account/sheet/recompute");
-var validate = require("../../common/model/accountSheets");
-var CollectionBase = require("../database/collectionBase");
+var CollectionBase = require("./utils/collectionBase");
+var recompute = require("../../common/validation/accountSheets/recompute");
+var validate = require("../../common/validation/accountSheets/validate");
 
 module.exports = klass({
     $extends : CollectionBase,

@@ -1,0 +1,13 @@
+var computeAge = require("../dates/utils/age");
+var viewSex = require("../sexes/viewSymbol.hsp.js");
+
+# template name(data)
+<#viewSex data="{data.sex}"/>
+{if data.firstName || data.lastName}
+    {if data.firstName} {data.firstName}{/if}
+    {if data.lastName} {data.lastName}{/if}
+{else} Personne{/if}
+{if data.birthDate} ({computeAge(data.birthDate)}){/if}
+# /template
+
+module.exports = name;

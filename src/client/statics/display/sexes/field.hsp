@@ -1,0 +1,25 @@
+var klass = require("hsp/klass");
+var optionButton = require("../../widgets/optionButton.hsp.js");
+var viewSex = require("./viewSymbol.hsp.js");
+
+var SexFieldController = klass({
+    attributes: {
+        value: {
+            binding: "2-way",
+            type: "object"
+        }
+    }
+});
+
+# template sexField using c:SexFieldController
+    <div class="btn-group btn-group-sm">
+        <#optionButton title="Homme" key="male" value="{c.value}">
+            <#viewSex data="male"/>
+        </#optionButton>
+        <#optionButton title="Femme" key="female" value="{c.value}">
+            <#viewSex data="female"/>
+        </#optionButton>
+    </div>
+# /template
+
+module.exports = sexField;

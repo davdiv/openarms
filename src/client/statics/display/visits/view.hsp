@@ -1,0 +1,7 @@
+var personRef = require("../peopleId/viewAny.hsp.js");
+
+# template viewVisit(data)
+    <#personRef data="{data.person}" />
+# /template
+
+module.exports = viewVisit;

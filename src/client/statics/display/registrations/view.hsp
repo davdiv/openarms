@@ -1,0 +1,21 @@
+var detailedLine = require("../people/viewDetailedLine.hsp.js");
+var personRef = require("../peopleId/viewAny.hsp.js");
+
+# template viewFamily(data)
+{if data.people && data.people.length}
+    <table class="table">
+        <thead>
+            <tr><#detailedLine.titleLine /></tr>
+        </thead>
+        <tbody>
+            {foreach personIndex,personId in data.people}
+                <tr>
+                    <#personRef data="{personId}" template="{detailedLine}"/>
+                </tr>
+            {/foreach}
+        </tbody>
+    </table>
+{/if}
+# /template
+
+module.exports = viewFamily;

@@ -1,6 +1,6 @@
 var jsonStringify = JSON.stringify;
 var jsonParse = JSON.parse;
-var ValidationError = require("./validationError");
+var ValidationError = require("./validation/utils/validationError");
 var NotFoundError = require("./notFoundError");
 
 // so that the value is the object in the replacer:

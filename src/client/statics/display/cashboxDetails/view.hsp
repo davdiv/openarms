@@ -1,0 +1,78 @@
+var klass = require("hsp/klass");
+
+var formatCurrency = require("../../utils/formatCurrency");
+var viewDate = require("../dates/view.hsp.js");
+
+# template itemsHeader(title, image, total)
+    <div class="img-lg-{image} img-responsive block" style="margin-right:16px;"></div>
+    <div class="block" style="min-width: 150px;">
+        <h2>{title}</h2>
+        <table class="table">
+            <tr><th>Nombre</th><td>{total.number}</td></tr>
+            <tr><th>Montant</th><td>{formatCurrency(total.total)}</td></tr>
+        </table>
+    </div>
+# /template
+
+# template itemsTable(title, image, total, itemsArray)
+    <#itemsHeader title="{title}" image="{image}" total="{total}" />
+    {if total.number > 0}
+        <table class="table table-striped table-hover">
+            <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>{title}</th>
+                <th>Total</th>
+            </tr>
+            </thead>
+            <tbody>
+            {foreach item in itemsArray}
+                {if item.number > 0}
+                <tr>
+                    <td>{item.number}</td>
+                    <td>{formatCurrency(item.unitValue)}</td>
+                    <td>{formatCurrency(item.number * item.unitValue)}</td>
+                </tr>
+                {/if}
+            {/foreach}
+            </tbody>
+        </table>
+    {/if}
+# /template
+
+# template checksTable(title, image, total, itemsArray)
+    <#itemsHeader title="{title}" image="{image}" total="{total}" />
+    {if itemsArray && itemsArray.length}
+    <table class="table table-striped table-hover">
+    <thead>
+        <tr><th>Banque</th><th>Numéro</th><th>Date</th><th>Montant</th><th></th></tr>
+    </thead>
+    <tbody>                
+        {foreach index,item in itemsArray}
+            <tr>
+                <td>{item.checkBank}</td>
+                <td>{item.checkNumber}</td>
+                <td><#viewDate data="{item.checkDate}"/></td>
+                <td>{formatCurrency(item.total)}</td>
+            </tr>
+        {/foreach}
+    </tbody>
+    </table>
+    {/if}
+# /template
+
+# template cashboxDetailsTemplate(data)
+    <div class="row">
+    <div class="col-md-4">
+        <#itemsTable title="Billets" image="banknotes" total="{data.total.banknotes}" itemsArray="{data.banknotes}"/>
+    </div>
+    <div class="col-md-4">
+        <#itemsTable title="Pièces" image="coins" total="{data.total.coins}" itemsArray="{data.coins}"/>
+    </div>
+    <div class="col-md-4">
+        <#checksTable title="Chèques" image="checks" total="{data.total.checks}" itemsArray="{data.checks}"/>
+    </div>
+    </div>
+# /template
+
+module.exports = cashboxDetailsTemplate;

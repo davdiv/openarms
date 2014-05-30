@@ -1,0 +1,26 @@
+var klass = require("hsp/klass");
+var promise = require("noder-js/promise");
+var editable = require("../components/editable.hsp.js");
+var viewFamily = require("../display/registrations/view.hsp.js");
+var editFamily = require("../display/registrations/edit.hsp.js");
+
+# template iconTemplate(page)
+    <span class="glyphicon glyphicon-file"></span> {page.title}
+# /template
+
+var BaseClass = require("./utils/editable.hsp.js");
+
+module.exports = klass({
+    $extends : BaseClass,
+    viewerTemplate : viewFamily,
+    editorTemplate : editFamily,
+    iconTemplate : iconTemplate,
+    cache : require("../persistence/registrations"),
+    createData : function(query) {
+        var res = {};
+        if (query.person) {
+            res.people = [ query.person ];
+        }
+        return res;
+    }
+});

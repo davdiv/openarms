@@ -1,0 +1,5 @@
+# template viewSex(data)
+<div class="img-lg-portrait{data=='male'||data=='female'?'-'+data:''} img-responsive block" style="margin-right:16px;"></div>
+# /template
+
+module.exports = viewSex;

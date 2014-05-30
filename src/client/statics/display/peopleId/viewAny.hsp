@@ -1,0 +1,44 @@
+var klass = require("hsp/klass");
+var peopleMgr = require("../../persistence/people");
+var link = require("../people/viewLink.hsp.js");
+var resolvePromise = require("../../utils/resolvePromise");
+var isPromise = require("../../utils/isPromise");
+
+var Ctrl = klass({
+    attributes: {
+        data: {
+            type: "object",
+            binding: "1-way"
+        },
+        template: {
+            type: "object"
+        }
+    },
+    $init: function () {
+       if (!this.template) {
+           this.template = link;
+       }
+       this.onDataChange();
+    },
+    onDataChange: function () {
+        if (this.data) {
+            this.identity = peopleMgr.getItemContent(this.data);
+            resolvePromise(this,"identity","error");
+        }
+        this.minimalIdentity = {
+            id: this.data
+        };
+        // TODO, perhaps: add promise or error info to minimalIdentity
+        // to allow some templates to display info about it
+    }
+});
+
+# template personInfo using c:Ctrl
+    {if !c.identity || isPromise(c.identity)}
+        <#c.template data="{c.minimalIdentity}"/>
+    {else}
+        <#c.template data="{c.identity}"/>
+    {/if}
+# /template
+
+module.exports = personInfo;

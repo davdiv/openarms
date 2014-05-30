@@ -1,0 +1,24 @@
+var klass = require("hsp/klass");
+var displayCountry = require("./view.hsp.js");
+var countrySuggestions = require("./utils/countrySuggestions");
+var singleAutoComplete = require("../../widgets/singleAutoComplete.hsp.js");
+
+var Ctrl = klass({
+    attributes: {
+        value: {
+            type:"object",
+            binding: "2-way"
+        }
+    }
+});
+
+# template countryField using c:Ctrl
+    <#singleAutoComplete
+        value="{c.value}"
+        onComputeSuggestions="{countrySuggestions.onComputeSuggestions(event)}"
+        onEnter="{countrySuggestions.onEnter(event)}"
+        displaySuggestion="{displayCountry}"
+    />
+# /template
+
+module.exports = countryField;

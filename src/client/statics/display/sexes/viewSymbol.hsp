@@ -1,0 +1,9 @@
+# template viewSex(data)
+{if data=="male"||data=="female"}
+<span class="img-sm-symbol-{data}"></span>
+{else}
+<span class="glyphicon glyphicon-user"></span>
+{/if}
+# /template
+
+module.exports = viewSex;

@@ -1,0 +1,40 @@
+var viewDate = require("../dates/view.hsp.js");
+var computeAge = require("../dates/utils/age");
+var viewMaritalStatus = require("../maritalStatuses/view.hsp.js");
+var viewSex = require("../sexes/viewSymbol.hsp.js");
+var displayCountry = require("../countries/view.hsp.js");
+
+# template detailedLine(data)
+<td>
+{if data.id}
+<a href="/people/{data.id}"><#viewSex data="{data.sex}"/> {data.firstName}</a>
+{else}
+<#viewSex data="{data.sex}"/> {data.firstName}
+{/if}
+</td>
+<td>{data.lastName} <small>{data.familyName}</small></td>
+<td>{if data.maritalStatus}<#viewMaritalStatus data="{data.maritalStatus}"/>{/if}</td>
+<td>{if data.birthDate}{computeAge(data.birthDate)} ans <small>(<#viewDate data="{data.birthDate}"/>)</small>{/if}</td>
+<td>
+{if data.birthCity}
+    {data.birthCity} {if data.birthCountry}(<#displayCountry data="{data.birthCountry}"/>){/if}
+{else if data.birthCountry}
+    <#displayCountry data="{data.birthCountry}"/>
+{/if}
+</td>
+<td>{if data.nationalities}{foreach nationality in data.nationalities}<#displayCountry data="{nationality}"/>{if !nationality_islast}, {/if}{/foreach}{/if}</td>
+# /template
+
+# template titleLine
+<th><span class="glyphicon glyphicon-user"></span> Prénom</th>
+<th>Nom</th>
+<th>Etat marital</th>
+<th>Age</th>
+<th>Lieu de naissance</th>
+<th>Nationalité(s)</th>
+# /template
+
+detailedLine.titleLine = titleLine;
+detailedLine.columnsNumber = 6;
+
+module.exports = detailedLine;

@@ -1,8 +1,8 @@
 var klass = require("hsp/klass");
 var clone = require("../serialization").clone;
-var promiseUtils = require("../promiseUtils");
-var isPromise = promiseUtils.isPromise;
-var showError = require("./error/showError.hsp.js");
+var resolvePromise = require("../utils/resolvePromise");
+var isPromise = require("../utils/isPromise");
+var showError = require("../display/errors/view.hsp.js");
 
 var copy = function (original) {
     if (isPromise(original)) {
@@ -94,21 +94,21 @@ var EditableCtrl = klass({
         this.currentView = currentView;
     },
     $init: function () {
-        promiseUtils.resolvePromise(this, "savedData", "savedDataError");
-        promiseUtils.resolvePromise(this, "editedData", "editedDataError");
-        promiseUtils.resolvePromise(this, "savingData", "savingDataError");
+        resolvePromise(this, "savedData", "savedDataError");
+        resolvePromise(this, "editedData", "editedDataError");
+        resolvePromise(this, "savingData", "savingDataError");
         this.updateState();
     },
     onSavedDataChange: function () {
-        promiseUtils.resolvePromise(this, "savedData", "savedDataError");
+        resolvePromise(this, "savedData", "savedDataError");
         this.updateState();
     },
     onEditedDataChange: function () {
-        promiseUtils.resolvePromise(this, "editedData", "editedDataError");
+        resolvePromise(this, "editedData", "editedDataError");
         this.updateState();
     },
     onSavingDataChange: function () {
-        promiseUtils.resolvePromise(this, "savingData", "savingDataError");
+        resolvePromise(this, "savingData", "savingDataError");
         this.updateState();
     },
     onSavingDataErrorChange: function () {

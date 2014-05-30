@@ -1,0 +1,13 @@
+var countries = require("./utils/countriesList");
+
+var getFlagPath = function (data) {
+    return staticsRootDirectory + "images/flags/" + data + ".png";
+};
+
+# template displayCountry(data)
+    {let name = countries[data]}
+    {if !name}<span class="glyphicon glyphicon-exclamation-sign" title="Pays inconnu"></span> {data}{else}
+    <span class="img-sm" style="background-image:url({getFlagPath(data)});"></span> {name}{/if}
+# /template
+
+module.exports = displayCountry;

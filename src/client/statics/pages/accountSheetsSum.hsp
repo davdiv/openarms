@@ -1,0 +1,400 @@
+var klass = require("hsp/klass");
+var dateField = require("../display/dates/field.hsp.js");
+var viewDate = require("../display/dates/view.hsp.js");
+var formatCurrency = require("../utils/formatCurrency");
+var resolvePromise = require("../utils/resolvePromise");
+var isPromise = require("../utils/isPromise");
+var accountSheetsMgr = require("../persistence/accountSheets");
+var serialization = require("../serialization");
+var notMetaData = serialization.isNotMetaData;
+var forEach = require("../utils/forEach");
+var showError = require("../display/errors/view.hsp.js");
+var createCashboxDetails = require("../validation/cashboxDetails/create");
+var recomputeCashboxDetails = require("../validation/cashboxDetails/recompute");
+var addCashboxDetails = require("../validation/cashboxDetails/add");
+var viewCashboxDetails = require("../display/cashboxDetails/view.hsp.js");
+
+var isTagSelected = function (selectedTags, tag) {
+    return selectedTags ? !! selectedTags[tag] : false;
+};
+
+var sortByDate = function (l1, l2) {
+    return l1.date < l2.date ? 1 : -1;
+};
+
+var sortByEndDate = function (l1, l2) {
+    return l1.endDate < l2.endDate ? 1 : -1;
+};
+
+var sortByAmount = function (l1, l2) {
+    return l2.total - l1.total;
+};
+
+var add = function (object, amount) {
+    if (amount > 0) {
+        object.income += amount;
+    } else if (amount < 0) {
+        object.outcome -= amount;
+    } else {
+        return;
+    }
+    object.total += amount;
+    object.number++;
+};
+
+var includeIn = function(object, line) {
+    var item = line.item;
+    var amount = line.amount;
+    if (!amount) {
+        return;
+    }
+    var objectItem = object[item];
+    if (objectItem == null) {
+        objectItem = object[item] = {
+            item: item,
+            income: 0,
+            outcome: 0,
+            number: 0,
+            total: 0
+        };
+    }
+    add(objectItem, amount);
+};
+
+var objectValues = function (object) {
+    return Object.keys(object).filter(notMetaData).map(function (name) {
+        return object[name];
+    });
+};
+
+# template showSummary(controller)
+    {let results=controller.results}
+    <table class="table">
+    <tbody>
+        <tr>
+        <th>Désignation</th>
+        <th>Nombre</th>
+        <th>Sorties</th>
+        <th>Entrées</th>
+        <th>Total</th>
+        </tr>
+    {foreach item in results.items}
+        <tr>
+            <td>{item.item}</td>
+            <td>{item.number}</td>
+            <td>{formatCurrency(item.outcome)}</td>
+            <td>{formatCurrency(item.income)}</td>
+            <td>{formatCurrency(item.total)}</td>
+        </tr>
+    {/foreach}
+        <tr>
+            {let total=results.total}
+            <th>Total</th>
+            <th>{total.number}</th>
+            <th>{formatCurrency(total.outcome)}</th>
+            <th>{formatCurrency(total.income)}</th>
+            <th>{formatCurrency(total.total)}</th>
+        </tr>
+    </tbody>
+    </table>
+# /template
+
+# template showLineDetails(controller)
+    {let results=controller.results}
+    <table class="table">
+    <tbody>
+        <tr>
+        <th>Tags</th>
+        <th>Date</th>
+        <th>Désignation</th>
+        <th>Montant</th>
+        </tr>
+    {foreach line in results.lines}
+        <tr>
+            <td>
+                <a href="/accountSheets/{line.id}"><span class="glyphicon glyphicon-list-alt"></span></a>
+                {foreach tag in line.tags} <span class="badge">{tag}</span>{/foreach}
+            </td>
+            <td><#viewDate data="{line.date}"/></td>
+            <td>{line.item}</td>
+            <td>{formatCurrency(line.amount)}</td>
+        </tr>
+    {/foreach}
+        <tr>
+            <th colspan="3">Total ({results.lines.length} mouvements de caisse)</th>
+            <th>{formatCurrency(results.total.total)}</th>
+        </tr>
+    </tbody>
+    </table>
+# /template
+
+# template showSheetDetails(controller)
+    {let results=controller.results}
+    <table class="table">
+    <tbody>
+        <tr>
+        <th>Tags</th>
+        <th>Date de début</th>
+        <th>Date de fin</th>
+        <th>Somme</th>
+        <th>Différence</th>
+        <th>Montant réel</th>
+        </tr>
+    {foreach sheet in results.sheets}
+        <tr>
+            <td>
+                <a href="/accountSheets/{sheet.id}"><span class="glyphicon glyphicon-list-alt"></span></a>
+                {foreach tag in sheet.tags} <span class="badge">{tag}</span>{/foreach}
+            </td>
+            <td><#viewDate data="{sheet.beginDate}"/></td>
+            <td><#viewDate data="{sheet.endDate}"/></td>
+            <td>{formatCurrency(sheet.sumAmount)}</td>
+            <td>{formatCurrency(sheet.difference)}</td>
+            <td>{formatCurrency(sheet.realAmount)}</td>
+        </tr>
+    {/foreach}
+        <tr>
+            <th colspan="5">Total ({results.sheets.length} feuilles de compte)</th>
+            <th>{formatCurrency(results.total.total)}</th>
+        </tr>
+    </tbody>
+    </table>
+# /template
+
+# template displayResults(controller)
+    {let results = controller.results}
+    {if controller.filterTags || results.tags.length}
+    <h3><span class="glyphicon glyphicon-chevron-right"></span> Filtres</h3>
+    <div class="btn-group">
+        <button onclick="{controller.clearTags()}" class="btn btn-default {controller.filterTags ? '' : 'active'}">Aucun filtre</button>
+        {foreach tag in results.tags}
+            <button onclick="{controller.clickTag(tag)}" class="btn btn-default {isTagSelected(controller.filterTags, tag) ? 'active' : ''}">{tag}</button>
+        {/foreach}
+    </div>
+    {/if}
+    <h3><span class="glyphicon glyphicon-chevron-right"></span> Résumé</h3>
+        <#showSummary controller="{controller}"/>
+    <h3><span class="glyphicon glyphicon-chevron-right"></span> Feuilles de compte</h3>
+    <p><a href="#" onclick="{controller.toggleSheetDetails(event)}">{if controller.showSheetDetails}Masquer les détails{else}Afficher les détails{/if}</a></p>
+    {if controller.showSheetDetails}
+        <#showSheetDetails controller="{controller}"/>
+    {/if}
+    <h3><span class="glyphicon glyphicon-chevron-right"></span> Mouvements de caisse</h3>
+    <p><a href="#" onclick="{controller.toggleLineDetails(event)}">{if controller.showLineDetails}Masquer les détails{else}Afficher les détails{/if}</a></p>
+    {if controller.showLineDetails}
+        <#showLineDetails controller="{controller}"/>
+    {/if}
+    {if results.cashboxDetails}
+        <h3><span class="glyphicon glyphicon-chevron-right"></span> Contenu de la caisse</h3>
+        <p><a href="#" onclick="{controller.toggleCashboxDetails(event)}">{if controller.showCashboxDetails}Masquer les détails{else}Afficher les détails{/if}</a></p>
+        {if controller.showCashboxDetails}
+            <#viewCashboxDetails data="{results.cashboxDetails}"/>
+        {/if}
+    {/if}
+# /template
+
+# template displaySearch(controller)
+    {let query = controller.query}
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Date de début</label>
+            <div class="col-sm-3">
+                <#dateField value="{query.beginDate}"/>
+             </div>
+            <label class="col-sm-2 control-label">Date de fin</label>
+            <div class="col-sm-3">
+                <#dateField value="{query.endDate}"/>
+            </div>
+        </div>
+        <div class="block-container right">
+            <div class="block">
+                <button onclick="{controller.search()}" class="btn btn-primary">Rechercher</button>
+            </div>
+        </div>
+    </div>
+# /template
+
+# template template(controller)
+    <div class="container-fluid">
+        <h3><span class="glyphicon glyphicon-chevron-right"></span> Recherche</h3>
+        {if controller.results}
+            <p><a href="#" onclick="{controller.toggleSearch(event)}">{if controller.showSearch}Masquer la zone de recherche{else}Afficher la zone de recherche{/if}</a></p>
+        {/if}
+        {if !controller.results || controller.showSearch}
+            <#displaySearch controller="{controller}" />
+        {/if}
+    </div>
+    <div class="container-fluid">
+    {if controller.results}
+        {if isPromise(controller.results)}
+            {if controller.resultsError}
+                <#showError error="{controller.resultsError}" />
+            {else}
+                <span class="spinner"></span> Veuillez patienter...
+            {/if}
+        {else}
+            <#displayResults controller="{controller}"/>
+        {/if}
+    {/if}
+    </div>
+# /template
+
+module.exports = klass({
+    template : template,
+    init: function () {
+        this.query = {};
+        this.filterTags = null;
+        this.showSearch = false;
+        this.showLineDetails = false;
+        this.showSheetDetails = false;
+        this.showCashboxDetails = false;
+    },
+    toggleLineDetails: function (event) {
+        event.preventDefault();
+        this.showLineDetails = !this.showLineDetails;
+    },
+    toggleSheetDetails: function (event) {
+        event.preventDefault();
+        this.showSheetDetails = !this.showSheetDetails;
+    },
+    toggleCashboxDetails: function (event) {
+        event.preventDefault();
+        this.showCashboxDetails = !this.showCashboxDetails;
+    },
+    toggleSearch: function (event) {
+        event.preventDefault();
+        this.showSearch = !this.showSearch;
+    },
+    clearTags: function () {
+        this.filterTags = null;
+        this.results = this.computeResults(this.results.query, this.results.allSheets);
+    },
+    clickTag : function (tag) {
+        if (this.filterTags && this.filterTags[tag]) {
+            delete this.filterTags[tag];
+            if (Object.keys(this.filterTags).filter(notMetaData).length == 0) {
+                this.filterTags = null;
+            }
+        } else {
+            if (!this.filterTags) {
+                this.filterTags = {};
+            }
+            this.filterTags[tag] = true;
+        }
+        this.results = this.computeResults(this.results.query, this.results.allSheets);
+    },
+    computeResults : function (query, allSheets) {
+        var self = this;
+        var filterTags = this.filterTags ? Object.keys(this.filterTags).filter(notMetaData) : null;
+        var lines = [];
+        var sheets = [];
+        var tags = {};
+        var items = {};
+        var cashboxDetails = createCashboxDetails();
+        var total = {
+            income: 0,
+            outcome: 0,
+            number: 0,
+            total: 0
+        };
+        forEach(allSheets, function(sheet) {
+            var sheetTags = {};
+            forEach(sheet.tags, function (tag) {
+                tags[tag] = true;
+                sheetTags[tag] = true;
+            });
+            var filterOut = !!filterTags;
+            forEach(filterTags, function (filterTag) {
+                if (sheetTags[filterTag]) {
+                    filterOut = false;
+                }
+            });
+            if (filterOut) {
+                return;
+            }
+            if (cashboxDetails) {
+                if (sheet.realAmountDetails) {
+                    addCashboxDetails(cashboxDetails, sheet.realAmountDetails);
+                } else {
+                    cashboxDetails = null;
+                }
+            }
+            var beginDate = null;
+            var endDate = null;
+            forEach(sheet.days, function (day) {
+                if (!beginDate || day.date < beginDate) {
+                    beginDate = day.date;
+                }
+                if (!endDate || day.date > endDate) {
+                    endDate = day.date;
+                }
+                forEach(day.lines, function (line) {
+                    lines.push({
+                        amount: line.amount,
+                        item: line.item,
+                        date: day.date,
+                        id: sheet.id,
+                        tags: sheet.tags
+                    });
+                    includeIn(items, line);
+                    add(total, line.amount);
+                })
+            });
+            var difference = sheet.realAmount - sheet.sumAmount;
+            if (difference !== 0) {
+                // add the difference as a line
+                var line = {
+                    amount: difference,
+                    item: "Différence",
+                    date: endDate,
+                    id: sheet.id,
+                    tags: sheet.tags
+                };
+                lines.push(line);
+                includeIn(items, line);
+                add(total, difference)
+            }
+            sheets.push({
+                beginDate: beginDate,
+                endDate: endDate,
+                id: sheet.id,
+                realAmount: sheet.realAmount,
+                sumAmount: sheet.sumAmount,
+                difference: difference,
+                tags: sheet.tags
+            });
+        });
+        if (cashboxDetails) {
+            recomputeCashboxDetails(cashboxDetails);
+        }
+        lines.sort(sortByDate);
+        sheets.sort(sortByEndDate);
+        return {
+            query: query,
+            tags: Object.keys(tags),
+            allSheets: allSheets,
+            sheets: sheets,
+            lines: lines,
+            cashboxDetails: cashboxDetails,
+            items: objectValues(items).sort(sortByAmount),
+            total: total
+        }
+    },
+    search : function() {
+        var query = serialization.clone(this.query);
+        var dbQuery = {};
+        if (query.beginDate || query.endDate) {
+            var dateCriteria = dbQuery["current.days.date"] = {};
+            if (query.beginDate) {
+                dateCriteria["$gte"] = query.beginDate;
+            }
+            if (query.endDate) {
+                var endDate = new Date(query.endDate.getTime());
+                endDate.setDate(endDate.getDate()+1);
+                dateCriteria["$lt"] = endDate;
+            }
+        }
+        this.results = accountSheetsMgr.search(dbQuery).thenSync(this.computeResults.bind(this, query));
+        resolvePromise(this, "results","resultsError");
+    }
+});

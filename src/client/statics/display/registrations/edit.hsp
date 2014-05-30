@@ -1,0 +1,102 @@
+var klass = require("hsp/klass");
+var promise = require("noder-js/promise");
+var autoComplete = require("../../widgets/autoComplete.hsp.js");
+var personRef = require("../peopleId/viewAny.hsp.js");
+var personName = require("../people/viewName.hsp.js");
+var detailedLine = require("../people/viewDetailedLine.hsp.js");
+var peopleSuggestions = require("../peopleId/utils/peopleSuggestions");
+var pagejs = require("page");
+
+var Ctrl = klass({
+    attributes: {
+        data:{
+            type:"object",
+            binding: "1-way"
+        }
+    },
+    chooseSuggestion: function (event) {
+        var suggestion = event.suggestion;
+        event.preventDefault = true;
+        event.text = "";
+        if (!suggestion.person) {
+            pagejs(suggestion.url);
+        } else {
+            var data = this.data;
+            if (!data.people) {
+                data.people = [];
+            }
+            data.people.push(suggestion.person);
+        }
+    },
+    enter: function (event) {
+        var firstName = event.text;
+        event.text = "";
+        pagejs(this.buildNewPersonUrl);
+    },
+    buildNewPersonUrl: function (name) {
+        return "/people/new?firstName=" + encodeURIComponent(name) + "&registration=";
+    },
+    computeSuggestions: function (event) {
+        var text = event.text;
+        var self = this;
+        event.returnValue = promise.done.thenSync(peopleSuggestions.bind(null, text)).thenSync(function (people) {
+            var res = people.map(function (item) {
+                return {person: item};
+            });
+            res.unshift({
+                icon: "glyphicon glyphicon-plus",
+                label: "Nouvelle fiche pour " + text,
+                url: self.buildNewPersonUrl(text)
+            });
+            return res;
+        });
+    },
+    removePerson: function (index, personId) {
+        var people = this.data.people;
+        if (people[index] !== personId) {
+            // safety check
+            return;
+        }
+        people.splice(index,1);
+    }
+});
+
+# template displaySuggestion(data)
+    {if data.person}
+        <#personRef template="{personName}" data="{data.person}"/>
+    {else}
+        <span class="{data.icon}"></span> {data.label}
+    {/if}
+# /template
+
+# template editFamily using c:Ctrl
+    {let data = c.data}
+    <#autoComplete
+        class="form-control"
+        placeholder="Tapez ici le nom de chaque personne à ajouter"
+        onChooseSuggestion="{c.chooseSuggestion(event)}"
+        onComputeSuggestions="{c.computeSuggestions(event)}"
+        onEnter="{c.enter(event)}"
+        displaySuggestion="{displaySuggestion}"
+    />
+    {if data.people && data.people.length > 0}
+    <table class="table">
+        <thead>
+            <tr><#detailedLine.titleLine /><th></th></tr>
+        </thead>
+        <tbody>
+            {foreach personIndex,personId in data.people}
+                <tr>
+                    <#personRef data="{personId}" template="{detailedLine}"/>
+                    <td>
+                        <button class="btn btn-default btn-xs" onclick="{c.removePerson(personIndex,personId)}"><span class="glyphicon glyphicon-remove"></span></button>
+                    </td>
+                </tr>
+            {/foreach}
+        </tbody>
+    </table>
+    {/if}
+    <br>
+# /template
+
+module.exports = editFamily;

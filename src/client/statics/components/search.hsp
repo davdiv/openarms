@@ -1,8 +1,8 @@
 var autoComplete = require("../widgets/autoComplete.hsp.js");
 var promise = require("noder-js/promise");
-var peopleSuggestions = require("./personId/peopleSuggestions");
-var personRef = require("./personId/personRef.hsp.js");
-var personName = require("./person/name.hsp.js");
+var peopleSuggestions = require("../display/peopleId/utils/peopleSuggestions");
+var personRef = require("../display/peopleId/viewAny.hsp.js");
+var personName = require("../display/people/viewName.hsp.js");
 var page = require("page");
 var searchUrl = "/search?q=";
 

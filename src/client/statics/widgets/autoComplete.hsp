@@ -1,7 +1,7 @@
 var klass = require("hsp/klass");
 var hsp = require("hsp/rt");
-var promiseUtils = require("../promiseUtils");
-var isPromise = promiseUtils.isPromise;
+var resolvePromise = require("../utils/resolvePromise");
+var isPromise = require("../utils/isPromise");
 
 # template defaultDisplaySuggestion(data)
     {data}
@@ -50,7 +50,7 @@ var AutoCompleteController = klass({
         this.selectedSuggestion = -1;
     },
     onSuggestionsChange : function() {
-        promiseUtils.resolvePromise(this,"suggestions","suggestionsError");
+        resolvePromise(this,"suggestions","suggestionsError");
     },
     changeSelectedSuggestion : function (diff) {
         if (!this.open || !this.suggestions || !this.suggestions.length) {

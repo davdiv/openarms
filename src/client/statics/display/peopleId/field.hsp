@@ -1,0 +1,25 @@
+var klass = require("hsp/klass");
+var displayPersonLink = require("./viewAny.hsp.js");
+var displayPersonName = require("./viewName.hsp.js");
+var peopleSuggestions = require("./utils/peopleSuggestions");
+var singleAutoComplete = require("../../widgets/singleAutoComplete.hsp.js");
+
+var Ctrl = klass({
+    attributes: {
+        value: {
+            type:"object",
+            binding: "2-way"
+        }
+    }
+});
+
+# template personField using c:Ctrl
+    <#singleAutoComplete
+        value="{c.value}"
+        onComputeSuggestions="{peopleSuggestions.onComputeSuggestions(event)}"
+        displaySuggestion="{displayPersonName}"
+        displaySelection="{displayPersonLink}"
+    />
+# /template
+
+module.exports = personField;

@@ -7,8 +7,8 @@ var klass = require("hsp/klass");
             <a class="btn btn-default" href="/people/new"><span class="glyphicon glyphicon-user"></span> Nouvelle fiche</a>
             {" "}<a class="btn btn-default" href="/registrations/new"><span class="glyphicon glyphicon-file"></span> Nouveau foyer</a>
             {" "}<a class="btn btn-default" href="/visits/new"><span class="glyphicon glyphicon-shopping-cart"></span> Nouvelle visite</a>
-            {" "}<a class="btn btn-default" href="/account/sheets/new"><span class="glyphicon glyphicon-euro"></span> Nouvelle feuille de comptes</a>
-            {" "}<a class="btn btn-default" href="/account/sum"><span class="glyphicon glyphicon-euro"></span> Rechercher dans les comptes</a>
+            {" "}<a class="btn btn-default" href="/accountSheets/new"><span class="glyphicon glyphicon-euro"></span> Nouvelle feuille de comptes</a>
+            {" "}<a class="btn btn-default" href="/accountSheets/sum"><span class="glyphicon glyphicon-euro"></span> Rechercher dans les comptes</a>
             {" "}<a class="btn btn-default" href="/import"><span class="glyphicon glyphicon-import"></span> Importer des données</a>
         </p>
     </div>

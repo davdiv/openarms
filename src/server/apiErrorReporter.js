@@ -1,4 +1,4 @@
-var ValidationError = require("../common/validationError");
+var ValidationError = require("../common/validation/utils/validationError");
 var NotFoundError = require("../common/notFoundError");
 
 module.exports = function (err, req, res, next) {
