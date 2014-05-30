@@ -36,6 +36,12 @@ module.exports = function (grunt) {
                         cfg : {
                             files : [ "**/*.js", "!sqlite.js" ]
                         }
+                    }, {
+                        type : "JSMinify",
+                        cfg : {
+                            files : [ "sqlite.js" ],
+                            mangle : false
+                        }
                     }, "NoderMap", {
                         type : "Hash",
                         cfg : {
