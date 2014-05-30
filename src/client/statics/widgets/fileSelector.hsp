@@ -26,6 +26,9 @@ var Ctrl = klass({
         file: {
             type: "object",
             binding: "2-way"
+        },
+        onchange: {
+            type: "callback"
         }
     },
     onFileChange: function() {
@@ -35,15 +38,22 @@ var Ctrl = klass({
         var fileInput = event.target;
         var file = fileInput.files[0];
         this.file = readFile(file);
+        this.onchange({
+            file: this.file
+        });
     },
     removeClick: function (event) {
         event.preventDefault();
         this.file = null;
+        this.onchange({
+            file: null
+        });
     }
 });
 
 # template fileSelector using c:Ctrl
     {if c.file}
+        <p class="form-control-static">
         {if isPromise(c.file)}
             {if c.error}
                 <span class="glyphicon glyphicon-exclamation-sign"></span> Une erreur s'est produite
@@ -54,6 +64,7 @@ var Ctrl = klass({
             {c.file.name} ({c.file.size} o)
         {/if}
         <a href="#" onclick="{c.removeClick(event)}"><span class="glyphicon glyphicon-remove"></span></a>
+        </p>
     {else}
         <input type="file" onchange="{c.fileSelected(event)}">
     {/if}

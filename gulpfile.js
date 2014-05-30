@@ -68,10 +68,15 @@ gulp.task("dev-hsp-compile", function () {
 });
 
 gulp.task("dev-js-transpile", function () {
-    return gulp.src([ "src/client/statics/**/*.js", "src/common/**/*.js" ]).pipe(newer({
+    return gulp.src([ "src/client/statics/**/*.js", "src/common/**/*.js", "!**/*.hsp.js" ]).pipe(newer({
         dest : staticsDevDir
     })).pipe(hspTranspiler().on('error', gutil.log)).pipe(gulp.dest(staticsDevDir));
+});
 
+gulp.task("dev-js-notranspile", function () {
+    return gulp.src([ "src/client/statics/**/*.hsp.js" ]).pipe(newer({
+        dest : staticsDevDir
+    })).pipe(gulp.dest(staticsDevDir));
 });
 
 gulp.task("dev-statics", function () {
@@ -89,7 +94,8 @@ gulp.task("dev-statics-root", function () {
 gulp.task("dev-dep", [ "dev-dep-bootstrap", "dev-dep-page", "dev-dep-diacritics", "dev-dep-qs", "dev-dep-hsp",
     "dev-dep-noder-js", "dev-dep-sqlite" ]);
 
-gulp.task("dev-main", [ "dev-hsp-compile", "dev-js-transpile", "dev-statics", "dev-statics-root" ]);
+gulp.task("dev-main",
+    [ "dev-hsp-compile", "dev-js-transpile", "dev-js-notranspile", "dev-statics", "dev-statics-root" ]);
 
 gulp.task("dev", [ "dev-dep", "dev-main" ]);
 

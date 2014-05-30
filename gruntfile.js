@@ -18,7 +18,7 @@ module.exports = function (grunt) {
                         cfg : {
                             files : "index.html",
                             replacements : [ {
-                                find : "/statics-dev/noder-js/noder.js",
+                                find : /\/statics-dev\/noder-js\/noder.js/g,
                                 replace : "/statics/openarms-<%= pkg.version %>.js"
                             }, {
                                 find : /\/statics-dev\//g,

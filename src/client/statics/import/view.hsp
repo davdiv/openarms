@@ -1,0 +1,22 @@
+var klass = require("hsp/klass");
+var displayPerson = require("../display/people/viewLink.hsp.js");
+
+# template registrationsList(data)
+    <table class="table">
+        <tbody>
+    {foreach registration in data}
+        <tr>
+            <td>{registration.people.length}</td>
+            <td>
+                {foreach person in registration.people}
+                    <#displayPerson data="{person}" />
+                    {if !person_islast}, {/if}
+                {/foreach}
+            </td>
+        </tr>
+    {/foreach}
+        </tbody>
+    </table>
+# /template
+
+module.exports = registrationsList;

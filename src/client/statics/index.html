@@ -11,7 +11,8 @@
 <body>
 <div class="spinner modal-backdrop"></div>
 <script type="text/javascript">
-var staticsRootDirectory = "/statics-dev/";
+var staticsRootDirectory = location.protocol + "//" + location.host + "/statics-dev/";
+var mainScript = location.protocol + "//" + location.host + "/statics-dev/noder-js/noder.js";
 </script>
 <script type="text/javascript" src="/statics-dev/noder-js/noder.js">{
     main: "main.js",

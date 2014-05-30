@@ -1,6 +1,6 @@
 var sqlite = require("sqlite");
 
-var forEach = require("../utils/forEach");
+var forEach = require("../../utils/forEach");
 
 var checkNull = function (value) {
     return (value == "(null)" ? null : value);
@@ -79,7 +79,7 @@ var processPeople = function (dbPeople, dbRegistrationsMap) {
 };
 
 module.exports = function (file) {
-    var db = sqlite.open(file);
+    var db = sqlite.open(file.content);
     var dbRegistrations = db.exec("SELECT * FROM Beneficiaire").map(arrayToJson);
     var dbPeople = db.exec("SELECT * FROM Personne").map(arrayToJson);
     db.close();
