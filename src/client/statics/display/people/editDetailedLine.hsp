@@ -1,0 +1,24 @@
+var birthDateField = require("../dates/fieldWithAge.hsp.js");
+var computeAge = require("../dates/utils/age");
+var maritalStatusField = require("../maritalStatuses/fieldSmall.hsp.js");
+var sexField = require("../sexes/field.hsp.js");
+var countryField = require("../countries/field.hsp.js");
+var countriesField = require("../countries/fieldMulti.hsp.js");
+
+# template editDetailedLine(data)
+<td style="width:92px;"><#sexField value="{data.sex}"/></td>
+<td><input type="text" class="form-control input-sm" value="{data.firstName}"></td>
+<td>
+<div class="half left"><input type="text" class="form-control input-sm" value="{data.lastName}" title="Nom"></div>
+<div class="half right"><input type="text" class="form-control input-sm" value="{data.familyName}" title="Nom de naissance"></div>
+</td>
+<td style="width:160px;"><#maritalStatusField value="{data.maritalStatus}"/></td>
+<td style="width:150px;"><#birthDateField value="{data.birthDate}"/></td>
+<td>
+<div class="half left"><input type="text" class="form-control input-sm" value="{data.birthCity}" title="Ville de naissance"></div>
+<div class="half right" title="Pays de naissance"><#countryField value="{data.birthCountry}"/></div>
+</td>
+<td><#countriesField values="{data.nationalities}"/></td>
+# /template
+
+module.exports = editDetailedLine;

@@ -7,6 +7,8 @@ var isPromise = require("../../utils/isPromise");
 var Ctrl = klass({
     attributes: {
         data: {
+            // in fact, it can be either a string (person id)
+            // or an object (directly containing the data)
             type: "object",
             binding: "1-way"
         },
@@ -22,7 +24,11 @@ var Ctrl = klass({
     },
     onDataChange: function () {
         if (this.data) {
-            this.identity = peopleMgr.getItemContent(this.data);
+            if (typeof this.data == "object") {
+                this.identity = this.data;
+            } else {
+                this.identity = peopleMgr.getItemContent(this.data);
+            }
             resolvePromise(this,"identity","error");
         }
         this.minimalIdentity = {

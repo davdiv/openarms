@@ -4,8 +4,12 @@ var autoComplete = require("../../widgets/autoComplete.hsp.js");
 var personRef = require("../peopleId/viewAny.hsp.js");
 var personName = require("../people/viewName.hsp.js");
 var detailedLine = require("../people/viewDetailedLine.hsp.js");
+var editDetailedLine = require("../people/editDetailedLine.hsp.js");
 var peopleSuggestions = require("../peopleId/utils/peopleSuggestions");
-var pagejs = require("page");
+
+var isObject = function (entry) {
+    return typeof entry == "object";
+};
 
 var Ctrl = klass({
     attributes: {
@@ -18,37 +22,27 @@ var Ctrl = klass({
         var suggestion = event.suggestion;
         event.preventDefault = true;
         event.text = "";
-        if (!suggestion.person) {
-            pagejs(suggestion.url);
-        } else {
-            var data = this.data;
-            if (!data.people) {
-                data.people = [];
-            }
-            data.people.push(suggestion.person);
+        var data = this.data;
+        if (!data.people) {
+            data.people = [];
         }
+        data.people.push(suggestion);
     },
     enter: function (event) {
-        var firstName = event.text;
-        event.text = "";
-        pagejs(this.buildNewPersonUrl);
+        event.suggestion = this.newPerson(event.text);
+        this.chooseSuggestion(event);
     },
-    buildNewPersonUrl: function (name) {
-        return "/people/new?firstName=" + encodeURIComponent(name) + "&registration=";
+    newPerson: function (text) {
+        return {
+            firstName: text
+        };
     },
     computeSuggestions: function (event) {
         var text = event.text;
         var self = this;
         event.returnValue = promise.done.thenSync(peopleSuggestions.bind(null, text)).thenSync(function (people) {
-            var res = people.map(function (item) {
-                return {person: item};
-            });
-            res.unshift({
-                icon: "glyphicon glyphicon-plus",
-                label: "Nouvelle fiche pour " + text,
-                url: self.buildNewPersonUrl(text)
-            });
-            return res;
+            people.unshift(self.newPerson(text));
+            return people;
         });
     },
     removePerson: function (index, personId) {
@@ -62,10 +56,10 @@ var Ctrl = klass({
 });
 
 # template displaySuggestion(data)
-    {if data.person}
-        <#personRef template="{personName}" data="{data.person}"/>
+    {if isObject(data)}
+        <span class="glyphicon glyphicon-plus"></span> Nouvelle fiche
     {else}
-        <span class="{data.icon}"></span> {data.label}
+        <#personRef template="{personName}" data="{data}"/>
     {/if}
 # /template
 
@@ -73,7 +67,7 @@ var Ctrl = klass({
     {let data = c.data}
     <#autoComplete
         class="form-control"
-        placeholder="Tapez ici le nom de chaque personne à ajouter"
+        placeholder="Tapez ici le prénom de chaque personne à ajouter"
         onChooseSuggestion="{c.chooseSuggestion(event)}"
         onComputeSuggestions="{c.computeSuggestions(event)}"
         onEnter="{c.enter(event)}"
@@ -87,9 +81,13 @@ var Ctrl = klass({
         <tbody>
             {foreach personIndex,personId in data.people}
                 <tr>
-                    <#personRef data="{personId}" template="{detailedLine}"/>
+                    {if isObject(personId)}
+                        <#editDetailedLine data="{personId}"/>
+                    {else}
+                        <#personRef data="{personId}" template="{detailedLine}"/>
+                    {/if}
                     <td>
-                        <button class="btn btn-default btn-xs" onclick="{c.removePerson(personIndex,personId)}"><span class="glyphicon glyphicon-remove"></span></button>
+                        <button class="btn btn-default btn-sm" onclick="{c.removePerson(personIndex,personId)}"><span class="glyphicon glyphicon-remove"></span></button>
                     </td>
                 </tr>
             {/foreach}

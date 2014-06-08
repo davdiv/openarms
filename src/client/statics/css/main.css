@@ -118,3 +118,17 @@
 	display: inline-block;
 	margin: 5px;
 }
+
+.half {
+	width:50%;
+	display:inline-block;
+	vertical-align:middle;
+}
+
+.half.left {
+	padding-right: 8px;
+}
+
+.half.right {
+	padding-left: 8px;
+}

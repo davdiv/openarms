@@ -1,0 +1,91 @@
+var hsp = require("hsp/rt");
+var klass = require("hsp/klass");
+
+var Ctrl = klass({
+    attributes: {
+        value: {
+            type: "object",
+            binding: "2-way"
+        },
+        suggestions: {
+            type: "object"
+        },
+        displaySuggestion : {
+            type : "object"
+        }
+    },
+    preventDefault : function(event) {
+        event.preventDefault();
+    },
+    toggleDropdown : function() {
+        this.open = !this.open;
+        this.highlightedSuggestion = this.suggestions.indexOf(this.value);
+        this.rootElt.getElementsByTagName("button")[0].focus();
+    },
+    onSuggestionMouseOver: function (index) {
+        this.highlightedSuggestion = index;
+    },
+    chooseSuggestion: function (suggestion, event) {
+        event.preventDefault();
+        this.open = false;
+        this.value = suggestion;
+    },
+    changeHighlightedSuggestion : function (diff) {
+        var newValue = this.highlightedSuggestion + diff;
+        if (newValue < -1) {
+            newValue = -1;
+        } else if (newValue >= this.suggestions.length) {
+            newValue = this.suggestions.length - 1;
+        }
+        this.highlightedSuggestion = newValue;
+    },
+    keydown : function (event) {
+        if (event.keyCode == 9) {
+            // tab, let's close the dropdown right now, before the focus changes
+            this.open = false;
+            hsp.refresh(); // make it happen immediately
+        } else if (event.keyCode == 13 && this.open) {
+            // enter
+            if (this.highlightedSuggestion != -1) {
+                this.chooseSuggestion(this.suggestions[this.highlightedSuggestion], event);
+            }
+        } else if (event.keyCode == 38 || event.keyCode == 40) {
+            event.preventDefault();
+            if (this.open) {
+                this.changeHighlightedSuggestion(event.keyCode - 39);
+            } else {
+                this.toggleDropdown();
+            }
+        }
+    },
+    onBlur: function() {
+        this.open = false;
+    },
+    $refresh: function () {
+        this.rootElt = this.$getElement(0);
+    }
+});
+
+# template select using c:Ctrl
+    <div class="dropdown {c.open ? 'open':''}">
+    <div class="input-group input-group-sm">
+        <span onclick="{c.toggleDropdown()}" class="form-control">
+            {if c.value}<#c.displaySuggestion data="{c.value}" />{/if}
+        </span>
+        <span class="input-group-btn">
+            <button onclick="{c.toggleDropdown()}" onblur="{c.onBlur()}" onkeydown="{c.keydown(event)}" class="{c.open ? 'active':''} btn btn-default" type="button"><span class="glyphicon glyphicon-chevron-down"></span></button>
+        </span>
+    </div>
+    {if c.open}
+        <ul class="dropdown-menu" onmousedown="{c.preventDefault(event)}" onclick="{c.preventDefault(event)}">
+            {foreach index,suggestion in c.suggestions}
+                <li class="{index == c.highlightedSuggestion ? 'active' : ''}">
+                    <a href="#" onmouseover="{c.onSuggestionMouseOver(index)}" onclick="{c.chooseSuggestion(suggestion, event)}"><#c.displaySuggestion data="{suggestion}"/></a>
+                </li>
+            {/foreach}
+        </ul>
+    {/if}
+    </div>
+# /template
+
+module.exports = select;

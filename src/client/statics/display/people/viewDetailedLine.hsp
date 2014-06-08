@@ -7,9 +7,16 @@ var displayCountry = require("../countries/view.hsp.js");
 # template detailedLine(data)
 <td>
 {if data.id}
-<a href="/people/{data.id}"><#viewSex data="{data.sex}"/> {data.firstName}</a>
+<a href="/people/{data.id}"><#viewSex data="{data.sex}"/></a>
 {else}
-<#viewSex data="{data.sex}"/> {data.firstName}
+<#viewSex data="{data.sex}"/>
+{/if}
+</td>
+<td>
+{if data.id}
+<a href="/people/{data.id}">{data.firstName}</a>
+{else}
+{data.firstName}
 {/if}
 </td>
 <td>{data.lastName} <small>{data.familyName}</small></td>
@@ -26,7 +33,8 @@ var displayCountry = require("../countries/view.hsp.js");
 # /template
 
 # template titleLine
-<th><span class="glyphicon glyphicon-user"></span> Prénom</th>
+<th><span class="glyphicon glyphicon-user"></span></th>
+<th>Prénom</th>
 <th>Nom</th>
 <th>Etat marital</th>
 <th>Age</th>
@@ -35,6 +43,6 @@ var displayCountry = require("../countries/view.hsp.js");
 # /template
 
 detailedLine.titleLine = titleLine;
-detailedLine.columnsNumber = 6;
+detailedLine.columnsNumber = 7;
 
 module.exports = detailedLine;

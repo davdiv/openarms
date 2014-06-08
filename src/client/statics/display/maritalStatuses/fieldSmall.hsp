@@ -1,0 +1,20 @@
+var klass = require("hsp/klass");
+var select = require("../../widgets/select.hsp.js");
+var maritalStatuses = require("../../maritalStatuses");
+var maritalStatusKeys = Object.keys(maritalStatuses).filter(require("../../serialization").isNotMetaData);
+var viewMaritalStatus = require("./view.hsp.js");
+
+var Ctrl = klass({
+    attributes: {
+        value: {
+            binding: "2-way",
+            type: "object"
+        }
+    }
+});
+
+# template maritalStatusField using c:Ctrl
+    <#select value="{c.value}" displaySuggestion="{viewMaritalStatus}" suggestions="{maritalStatusKeys}" />
+# /template
+
+module.exports = maritalStatusField;
