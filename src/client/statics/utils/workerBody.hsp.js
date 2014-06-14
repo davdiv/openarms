@@ -12,7 +12,7 @@ module.exports = (function (staticsRootDirectory, mainScript) {
                 });
             };
         };
-        noder.asyncRequire(data.module).thenSync(function (workerModule) {
+        noder.asyncRequire(data.module).spreadSync(function (workerModule) {
             return workerModule.apply(null, data.arguments);
         }).thenSync(createReport("resolve"), createReport("reject"));
     };

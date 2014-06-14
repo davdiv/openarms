@@ -18,7 +18,8 @@ var server = module.exports = function (method, action, data) {
     return request(url, {
         method : method,
         data : data
-    }).thenSync(function (response) {
+    }).thenSync(function (xhr) {
+        var response = xhr.responseText;
         return serialization.parse(response);
     }, function (error) {
         var httpRequest = error.args ? error.args[1] : null;

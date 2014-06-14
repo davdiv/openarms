@@ -44,7 +44,7 @@
     "minimist": "0.0.8",
     "mongodb": "1.4.3",
     "node-sqlite-purejs": "0.0.2",
-    "noder-js": "1.3.0",
+    "noder-js": "1.4.0",
     "page": "1.3.7",
     "q": "1.0.1",
     "qs": "0.6.6",
