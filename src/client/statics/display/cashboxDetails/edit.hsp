@@ -1,3 +1,4 @@
+<script>
 var klass = require("hsp/klass");
 
 var formatCurrency = require("../../utils/formatCurrency");
@@ -30,8 +31,9 @@ var Ctrl = klass({
         this.onchange();
     }
 });
+</script>
 
-# template itemsHeader(title, image, total)
+<template id="itemsHeader" args="title, image, total">
     <div class="img-lg-{image} img-responsive block" style="margin-right:16px;"></div>
     <div class="block" style="min-width: 150px;">
         <h2>{title}</h2>
@@ -40,16 +42,16 @@ var Ctrl = klass({
             <tr><th>Montant</th><td>{formatCurrency(total.total)}</td></tr>
         </table>
     </div>
-# /template
+</template>
 
-# template itemsTable(title, image, total, itemsArray, controller)
+<template id="itemsTable" args="title, image, total, itemsArray, controller">
     <#itemsHeader title="{title}" image="{image}" total="{total}" />
     {foreach item in itemsArray}
         <#cashCountField number="{item.number}" unitValue="{item.unitValue}" onchange="{controller.onchange()}"/>
     {/foreach}
-# /template
+</template>
 
-# template checksTable(title, image, total, itemsArray, controller)
+<template id="checksTable" args="title, image, total, itemsArray, controller">
     <#itemsHeader title="{title}" image="{image}" total="{total}" />
     <table class="table table-striped table-hover">
     <thead>
@@ -80,9 +82,9 @@ var Ctrl = klass({
         </tr>
     </tfoot>
     </table>
-# /template
+</template>
 
-# template cashboxDetailsTemplate using controller:Ctrl
+<template id="cashboxDetailsTemplate" ctrl="Ctrl as controller">
     <div class="row">
     <div class="col-md-4">
         <#itemsTable title="Billets" image="banknotes" total="{controller.data.total.banknotes}" itemsArray="{controller.data.banknotes}" controller="{controller}"/>
@@ -94,6 +96,8 @@ var Ctrl = klass({
         <#checksTable title="Chèques" image="checks" total="{controller.data.total.checks}" itemsArray="{controller.data.checks}" controller="{controller}"/>
     </div>
     </div>
-# /template
+</template>
 
+<script>
 module.exports = cashboxDetailsTemplate;
+</script>

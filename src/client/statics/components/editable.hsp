@@ -1,3 +1,4 @@
+<script>
 var klass = require("hsp/klass");
 var clone = require("../serialization").clone;
 var resolvePromise = require("../utils/resolvePromise");
@@ -140,12 +141,13 @@ var EditableCtrl = klass({
 var isValidData = function (data) {
     return data && !isPromise(data);
 };
+</script>
 
-# template tab(c, view, title)
-    <li class="{'active':c.currentView == view}"><a href="#" onclick="{c.setCurrentView(view,event)}">{title}</a></li>
-# /template
+<template id="tab" args="c, view, title">
+    <li class="{c.currentView == view?'active':''}"><a href="#" onclick="{c.setCurrentView(view,event)}">{title}</a></li>
+</template>
 
-# template showTabs(c)
+<template id="showTabs" args="c">
     <ul class="nav nav-tabs">
         {if c.savedData}
             <#tab c="{c}" view="saved" title="Version enregistrée"/>
@@ -154,9 +156,9 @@ var isValidData = function (data) {
         <#tab c="{c}" view="preview" title="Aperçu"/>
     </ul>
     <br>
-# /template
+</template>
 
-# template showIcons(c)
+<template id="showIcons" args="c">
     <div class="btn-group pull-right">
         {if c.displayEdit}
             <button type="button" class="btn btn-default" title="Modifier" onclick="{c.edit()}"><span class="glyphicon glyphicon-edit"></span></button>
@@ -171,9 +173,9 @@ var isValidData = function (data) {
             <button type="button" class="btn btn-default" title="Annuler les modifications" onclick="{c.cancel()}"><span class="glyphicon glyphicon-remove"></span></button>
         {/if}
     </div>
-# /template
+</template>
 
-# template showSavingStatus(c)
+<template id="showSavingStatus" args="c">
     {if isPromise(c.savingData)}
         {if c.savingDataError}
             <#showError error="{c.savingDataError}" />
@@ -181,17 +183,17 @@ var isValidData = function (data) {
             <div><span class="spinner"></span> Enregistrement...<br><br></div>
         {/if}
     {/if}
-# /template
+</template>
 
-# template showPromise(c, error)
+<template id="showPromise" args="c, error">
     {if error}
         <#showError error="{error}" class="{c.editedData?'':'space-right'}" />
     {else}
         <span class="spinner"></span> Chargement...<br>
     {/if}
-# /template
+</template>
 
-# template showContent(c)
+<template id="showContent" args="c">
     {if c.currentView == "saved"}
         {if isValidData(c.savedData)}
             <#c.viewer data="{c.savedData}" />
@@ -210,9 +212,9 @@ var isValidData = function (data) {
             <#showPromise c="{c}" error="{c.editedDataError}"/>
         {/if}
     {/if}
-# /template
+</template>
 
-# template showButtons(c)
+<template id="showButtons" args="c">
     <div class="block-container right">
         <div class="block">
         {if c.displaySave}
@@ -224,9 +226,9 @@ var isValidData = function (data) {
         {/if}
         </div>
     </div>
-# /template
+</template>
 
-# template editable using c:EditableCtrl
+<template id="editable" ctrl="EditableCtrl as c">
     <#showIcons c="{c}"/>
     {if c.editedData}
         <#showTabs c="{c}" />
@@ -235,7 +237,8 @@ var isValidData = function (data) {
     {if c.currentView != "saved"}
         <#showButtons c="{c}"/>
     {/if}
-# /template
+</template>
 
+<script>
 module.exports = editable;
-
+</script>

@@ -1,3 +1,4 @@
+<script>
 var klass = require("hsp/klass");
 var optionButton = require("../widgets/optionButton.hsp.js");
 var fileSelector = require("../widgets/fileSelector.hsp.js");
@@ -8,8 +9,9 @@ var resolvePromise = require("../utils/resolvePromise");
 var formatsList = require("../import/formatsList");
 var displayImportData = require("../import/view.hsp.js");
 var showError = require("../display/errors/view.hsp.js");
+</script>
 
-# template template(controller)
+<template id="template" args="controller">
     <div class="container-fluid">
       <h3><span class="glyphicon glyphicon-chevron-right"></span> Importer des données</h3>
       <div class="form-horizontal">
@@ -53,12 +55,13 @@ var showError = require("../display/errors/view.hsp.js");
           <#displayImportData data="{controller.importData}"/>
       {/if}
     </div>
-# /template
+</template>
 
-# template iconTemplate(page)
+<template id="iconTemplate" args="page">
     <span class="glyphicon glyphicon-import"></span> {page.title}
-# /template
+</template>
 
+<script>
 module.exports = klass({
     template : template,
     iconTemplate : iconTemplate,
@@ -74,3 +77,4 @@ module.exports = klass({
         }
     }
 });
+</script>

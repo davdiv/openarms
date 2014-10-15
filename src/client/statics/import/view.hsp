@@ -1,7 +1,9 @@
+<script>
 var klass = require("hsp/klass");
 var displayPerson = require("../display/people/viewLink.hsp.js");
+</script>
 
-# template registrationsList(data)
+<template id="registrationsList" args="data">
     <table class="table">
         <tbody>
     {foreach registration in data}
@@ -17,6 +19,9 @@ var displayPerson = require("../display/people/viewLink.hsp.js");
     {/foreach}
         </tbody>
     </table>
-# /template
+</template>
 
+<script>
 module.exports = registrationsList;
+</script>
+

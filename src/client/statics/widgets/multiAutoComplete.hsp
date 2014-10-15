@@ -1,10 +1,13 @@
+<script>
 var klass = require("hsp/klass");
 var autoComplete = require("./autoComplete.hsp.js");
+</script>
 
-# template defaultDisplaySuggestion(data)
+<template id="defaultDisplaySuggestion" args="data">
     {data}
-# /template
+</template>
 
+<script>
 var Ctrl = klass({
     attributes: {
         values: {
@@ -85,8 +88,9 @@ var Ctrl = klass({
         event.text = forwardedEvent.text;
     }
 });
+</script>
 
-# template multiAutoComplete using c:Ctrl
+<template id="multiAutoComplete" ctrl="Ctrl as c">
     <span class="multi-auto-complete form-control input-sm {c.class}">
         {if c.values}
             {foreach index,value in c.values}
@@ -104,7 +108,8 @@ var Ctrl = klass({
             displaySuggestion="{c.displaySuggestion}"
         />
     </span>
-# /template
+</template>
 
-
+<script>
 module.exports = multiAutoComplete;
+</script>

@@ -1,14 +1,17 @@
+<script>
 var klass = require("hsp/klass");
 var editable = require("../components/editable.hsp.js");
 var viewVisit = require("../display/visits/view.hsp.js");
 var editVisit = require("../display/visits/edit.hsp.js");
 var RestCache = require("../persistence/utils/restCache");
 var today = require("../utils/today");
+</script>
 
-# template iconTemplate(page)
+<template id="iconTemplate" args="page">
     <span class="glyphicon glyphicon-shopping-cart"></span> {page.title}
-# /template
+</template>
 
+<script>
 var BaseClass = require("./utils/editable.hsp.js");
 
 module.exports = klass({
@@ -24,3 +27,4 @@ module.exports = klass({
         return res;
     }
 });
+</script>

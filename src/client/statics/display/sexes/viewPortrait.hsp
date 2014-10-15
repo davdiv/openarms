@@ -1,5 +1,7 @@
-# template viewSex(data)
+<template id="viewSex" args="data">
 <div class="img-lg-portrait{data=='male'||data=='female'?'-'+data:''} img-responsive block" style="margin-right:16px;"></div>
-# /template
+</template>
 
+<script>
 module.exports = viewSex;
+</script>

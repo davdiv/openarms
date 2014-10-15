@@ -1,3 +1,4 @@
+<script>
 var klass = require("hsp/klass");
 var NotFoundError = require("../../notFoundError");
 var ValidationError = require("../../validation/utils/validationError");
@@ -38,18 +39,19 @@ var Ctrl = klass({
         this.showDetails = !this.showDetails;
     }
 });
+</script>
 
-# template toggleDetails(c)
+<template id="toggleDetails" args="c">
     <a href="#" onclick="{c.toggleDetails(event)}">{if c.showDetails}Masquer{else}Afficher{/if} les détails</a>
-# /template
+</template>
 
-# template showError using c:Ctrl
+<template id="showError" ctrl="Ctrl as c">
 <div class="alert alert-danger {c.class}">
 <#c.template c="{c}"/>
 </div>
-# /template
+</template>
 
-# template showValidationError(c)
+<template id="showValidationError" args="c">
 {let errors = c.error.errors}
 {errors.length} erreurs se sont produites. Veuillez les corriger avant de réessayer.
 <ul>
@@ -57,25 +59,27 @@ var Ctrl = klass({
 <li>{if error.path.length > 0}<small>{error.path.join(".")}:</small> {/if}{validationErrorsList[error.id] || "Erreur inconnue"}</li>
 {/foreach}
 </ul><br>
-# /template
+</template>
 
-# template showServerConnectionError(c)
+<template id="showServerConnectionError" args="c">
 La connexion au serveur a échoué.
-# /template
+</template>
 
-# template showServerUnknownError(c)
+<template id="showServerUnknownError" args="c">
 Le serveur a renvoyé une erreur non reconnue ({c.error.status}).
 <#toggleDetails c="{c}" />
 {if c.showDetails}<br><br><pre>{c.error.responseText}</pre>{/if}
-# /template
+</template>
 
-# template showNotFoundError(c)
+<template id="showNotFoundError" args="c">
 Le document demandé n'a pas pu être trouvé.
-# /template
+</template>
 
-# template showDefaultError(c)
+<template id="showDefaultError" args="c">
 Erreur inconnue<br>
 {c.error}
-# /template
+</template>
 
+<script>
 module.exports = showError;
+</script>

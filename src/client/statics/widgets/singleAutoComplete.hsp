@@ -1,3 +1,4 @@
+<script>
 var klass = require("hsp/klass");
 var multiAutoComplete = require("./multiAutoComplete.hsp.js");
 
@@ -79,8 +80,9 @@ var Ctrl = klass({
         event.text = forwardedEvent.text;
     }
 });
+</script>
 
-# template singleAutoComplete using c:Ctrl
+<template id="singleAutoComplete" ctrl="Ctrl as c">
 <#multiAutoComplete
     values="{c.values}"
     displaySuggestion="{c.displaySuggestion}"
@@ -91,6 +93,8 @@ var Ctrl = klass({
     onEnter="{c.enter(event)}"
     class="{c.class}"
   />
-# /template
+</template>
 
+<script>
 module.exports = singleAutoComplete;
+</script>

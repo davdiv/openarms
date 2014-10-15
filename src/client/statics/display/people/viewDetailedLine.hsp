@@ -1,10 +1,12 @@
+<script>
 var viewDate = require("../dates/view.hsp.js");
 var computeAge = require("../dates/utils/age");
 var viewMaritalStatus = require("../maritalStatuses/view.hsp.js");
 var viewSex = require("../sexes/viewSymbol.hsp.js");
 var displayCountry = require("../countries/view.hsp.js");
+</script>
 
-# template detailedLine(data)
+<template id="detailedLine" args="data">
 <td>
 {if data.id}
 <a href="/people/{data.id}"><#viewSex data="{data.sex}"/></a>
@@ -30,9 +32,9 @@ var displayCountry = require("../countries/view.hsp.js");
 {/if}
 </td>
 <td>{if data.nationalities}{foreach nationality in data.nationalities}<#displayCountry data="{nationality}"/>{if !nationality_islast}, {/if}{/foreach}{/if}</td>
-# /template
+</template>
 
-# template titleLine
+<template id="titleLine">
 <th><span class="glyphicon glyphicon-user"></span></th>
 <th>Prénom</th>
 <th>Nom</th>
@@ -40,9 +42,11 @@ var displayCountry = require("../countries/view.hsp.js");
 <th>Age</th>
 <th>Lieu de naissance</th>
 <th>Nationalité(s)</th>
-# /template
+</template>
 
+<script>
 detailedLine.titleLine = titleLine;
 detailedLine.columnsNumber = 7;
 
 module.exports = detailedLine;
+</script>

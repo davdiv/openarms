@@ -1,3 +1,4 @@
+<script>
 var klass = require("hsp/klass");
 
 var Ctrl = klass({
@@ -27,8 +28,9 @@ var Ctrl = klass({
         }
     }
 });
+</script>
 
-# template optionButton using c:Ctrl
+<template id="optionButton" ctrl="Ctrl as c">
     <button title="{c.content ? c.title : ''}" onclick="{c.onClick()}" type="button" class="btn btn-default { c.value === c.key ? 'active' : ''}">
         {if c.content}
             <#c.content />
@@ -36,6 +38,8 @@ var Ctrl = klass({
             {c.title}
         {/if}
     </button>
-# /template
+</template>
 
+<script>
 module.exports = optionButton;
+</script>

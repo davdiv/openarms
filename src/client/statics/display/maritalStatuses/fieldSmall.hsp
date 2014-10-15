@@ -1,3 +1,4 @@
+<script>
 var klass = require("hsp/klass");
 var select = require("../../widgets/select.hsp.js");
 var maritalStatuses = require("../../maritalStatuses");
@@ -12,9 +13,12 @@ var Ctrl = klass({
         }
     }
 });
+</script>
 
-# template maritalStatusField using c:Ctrl
+<template id="maritalStatusField" ctrl="Ctrl as c">
     <#select value="{c.value}" displaySuggestion="{viewMaritalStatus}" suggestions="{maritalStatusKeys}" />
-# /template
+</template>
 
+<script>
 module.exports = maritalStatusField;
+</script>

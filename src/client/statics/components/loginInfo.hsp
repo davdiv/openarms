@@ -1,3 +1,4 @@
+<script>
 var menu = require("../widgets/menu.hsp.js");
 var login = require("../login");
 
@@ -5,8 +6,9 @@ var logout = function (event) {
     event.preventDefault();
     login.logout();
 };
+</script>
 
-# template loginInfo
+<template id="loginInfo">
     {let loginModule = login}
     {let loginData = loginModule.data}
     <ul class="nav navbar-nav navbar-right">
@@ -21,6 +23,8 @@ var logout = function (event) {
             <li><a href="/login"><span class="glyphicon glyphicon-user"></span> Se connecter</a></li>
         {/if}
     </ul>
-# /template
+</template>
 
+<script>
 module.exports = loginInfo;
+</script>

@@ -1,3 +1,4 @@
+<script>
 var klass = require("hsp/klass");
 var sexField = require("../sexes/field.hsp.js");
 var multiCountryField = require("../countries/fieldMulti.hsp.js");
@@ -35,8 +36,9 @@ var Ctrl = klass({
        }
    }
 });
+</script>
 
-# template editIdentityCard using c:Ctrl
+<template id="editIdentityCard" ctrl="Ctrl as c">
 {let data = c.data}
 <div class="form-horizontal">
 
@@ -137,6 +139,8 @@ var Ctrl = klass({
 </div>
 
 </div>
-# /template
+</template>
 
+<script>
 module.exports = editIdentityCard;
+</script>

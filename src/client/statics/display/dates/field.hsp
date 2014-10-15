@@ -1,3 +1,4 @@
+<script>
 var klass = require("hsp/klass");
 var parseDate = require("./utils/parse");
 var formatDate = require("./utils/format");
@@ -33,9 +34,12 @@ var DateFieldController = klass({
 		}
 	}
 });
+</script>
 
-# template dateField using c:DateFieldController
+<template id="dateField" ctrl="DateFieldController as c">
 <input type="text" value="{c.internalValue}" onblur="{c.blur()}" class="form-control input-sm"/>
-# /template
+</template>
 
+<script>
 module.exports = dateField;
+</script>

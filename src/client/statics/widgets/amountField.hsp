@@ -1,3 +1,4 @@
+<script>
 var klass = require("hsp/klass");
 var formatCurrency = require("../utils/formatCurrency");
 
@@ -25,9 +26,12 @@ var AmountFieldController = klass({
         this.stringValue = formatCurrency(this.value);
     }
 });
+</script>
 
-# template amountField using c:AmountFieldController
+<template id="amountField" ctrl="AmountFieldController as c">
 <input type="text" value="{c.stringValue}" onblur="{c.blur()}" class="form-control input-sm"/>
-# /template
+</template>
 
+<script>
 module.exports = amountField;
+</script>

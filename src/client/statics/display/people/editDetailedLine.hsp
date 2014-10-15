@@ -1,11 +1,13 @@
+<script>
 var birthDateField = require("../dates/fieldWithAge.hsp.js");
 var computeAge = require("../dates/utils/age");
 var maritalStatusField = require("../maritalStatuses/fieldSmall.hsp.js");
 var sexField = require("../sexes/field.hsp.js");
 var countryField = require("../countries/field.hsp.js");
 var countriesField = require("../countries/fieldMulti.hsp.js");
+</script>
 
-# template editDetailedLine(data)
+<template id="editDetailedLine" args="data">
 <td style="width:92px;"><#sexField value="{data.sex}"/></td>
 <td><input type="text" class="form-control input-sm" value="{data.firstName}"></td>
 <td>
@@ -19,6 +21,8 @@ var countriesField = require("../countries/fieldMulti.hsp.js");
 <div class="half right" title="Pays de naissance"><#countryField value="{data.birthCountry}"/></div>
 </td>
 <td><#countriesField values="{data.nationalities}"/></td>
-# /template
+</template>
 
+<script>
 module.exports = editDetailedLine;
+</script>

@@ -1,3 +1,4 @@
+<script>
 var klass = require("hsp/klass");
 
 var MenuController = klass({
@@ -17,9 +18,10 @@ var MenuController = klass({
 		this.open = !this.open;
 	}
 });
+</script>
 
-# template menu using c:MenuController
-	<li class="{'dropdown','open':c.open}">
+<template id="menu" ctrl="MenuController as c">
+	<li class="dropdown {c.open?'open':''}">
 		<a href="#" class="dropdown-toggle" onclick="{c.toggle()}">
 			<#c.title /> <b class="caret"></b>
 		</a>
@@ -27,6 +29,8 @@ var MenuController = klass({
 			<#c.content />
 		</ul>
 	</li>
-# /template
+</template>
 
+<script>
 module.exports = menu;
+</script>

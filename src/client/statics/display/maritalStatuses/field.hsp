@@ -1,3 +1,4 @@
+<script>
 var klass = require("hsp/klass");
 var optionButton = require("../../widgets/optionButton.hsp.js");
 var maritalStatuses = require("../../maritalStatuses");
@@ -11,8 +12,9 @@ var Ctrl = klass({
         }
     }
 });
+</script>
 
-# template maritalStatusField using c:Ctrl
+<template id="maritalStatusField" ctrl="Ctrl as c">
     <div class="btn-group btn-group-sm">
         {foreach key in maritalStatusKeys}
             <#optionButton key="{key}" value="{c.value}">
@@ -20,6 +22,8 @@ var Ctrl = klass({
             </#optionButton>
         {/foreach}
     </div>
-# /template
+</template>
 
+<script>
 module.exports = maritalStatusField;
+</script>

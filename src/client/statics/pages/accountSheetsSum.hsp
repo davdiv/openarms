@@ -1,3 +1,4 @@
+<script>
 var klass = require("hsp/klass");
 var dateField = require("../display/dates/field.hsp.js");
 var viewDate = require("../display/dates/view.hsp.js");
@@ -66,8 +67,9 @@ var objectValues = function (object) {
         return object[name];
     });
 };
+</script>
 
-# template showSummary(controller)
+<template id="showSummary" args="controller">
     {let results=controller.results}
     <table class="table">
     <tbody>
@@ -97,9 +99,9 @@ var objectValues = function (object) {
         </tr>
     </tbody>
     </table>
-# /template
+</template>
 
-# template showLineDetails(controller)
+<template id="showLineDetails" args="controller">
     {let results=controller.results}
     <table class="table">
     <tbody>
@@ -126,9 +128,9 @@ var objectValues = function (object) {
         </tr>
     </tbody>
     </table>
-# /template
+</template>
 
-# template showSheetDetails(controller)
+<template id="showSheetDetails" args="controller">
     {let results=controller.results}
     <table class="table">
     <tbody>
@@ -159,9 +161,9 @@ var objectValues = function (object) {
         </tr>
     </tbody>
     </table>
-# /template
+</template>
 
-# template displayResults(controller)
+<template id="displayResults" args="controller">
     {let results = controller.results}
     {if controller.filterTags || results.tags.length}
     <h3><span class="glyphicon glyphicon-chevron-right"></span> Filtres</h3>
@@ -191,9 +193,9 @@ var objectValues = function (object) {
             <#viewCashboxDetails data="{results.cashboxDetails}"/>
         {/if}
     {/if}
-# /template
+</template>
 
-# template displaySearch(controller)
+<template id="displaySearch" args="controller">
     {let query = controller.query}
     <div class="form-horizontal">
         <div class="form-group">
@@ -212,9 +214,9 @@ var objectValues = function (object) {
             </div>
         </div>
     </div>
-# /template
+</template>
 
-# template template(controller)
+<template id="template" args="controller">
     <div class="container-fluid">
         <h3><span class="glyphicon glyphicon-chevron-right"></span> Recherche</h3>
         {if controller.results}
@@ -237,8 +239,9 @@ var objectValues = function (object) {
         {/if}
     {/if}
     </div>
-# /template
+</template>
 
+<script>
 module.exports = klass({
     template : template,
     init: function () {
@@ -398,3 +401,4 @@ module.exports = klass({
         resolvePromise(this, "results","resultsError");
     }
 });
+</script>

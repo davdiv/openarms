@@ -1,3 +1,4 @@
+<script>
 var klass = require("hsp/klass");
 var dateField = require("../dates/field.hsp.js");
 var viewDate = require("../dates/view.hsp.js");
@@ -58,8 +59,9 @@ var Ctrl = klass({
         recompute(this.data);
     }
 })
+</script>
 
-# template displayDay(c, day, index)
+<template id="displayDay" args="c, day, index">
     <div class="panel panel-default">
       <div class="panel-heading">
           <h3 class="panel-title"><#viewDate data="{day.date}"/>&nbsp; <a href="#" class="close" onclick="{c.removeDay(index,event)}">&times;</a></h3>
@@ -122,9 +124,9 @@ var Ctrl = klass({
         </div>
       </div>
     </div>
-# /template
+</template>
 
-# template editAccountSheet using c:Ctrl
+<template id="editAccountSheet" ctrl="Ctrl as c">
     {let data = c.data}
     {if data.days}
         {foreach index,day in data.days}
@@ -204,6 +206,8 @@ var Ctrl = klass({
         </div>
       </div>
     </div>
-# /template
+</template>
 
+<script>
 module.exports = editAccountSheet;
+</script>

@@ -1,3 +1,4 @@
+<script>
 var klass = require("hsp/klass");
 var search = require("./search.hsp.js");
 var pages = require("./pages.hsp.js");
@@ -16,8 +17,9 @@ var NavBarCtrl = klass({
         this.expanded = !this.expanded;
     }
 });
+</script>
 
-# template navBar using c:NavBarCtrl
+<template id="navBar" ctrl="NavBarCtrl as c">
 <div class="navbar navbar-default navbar-static-top">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -35,6 +37,8 @@ var NavBarCtrl = klass({
         </div>
     </div>
 </div>
-# /template
+</template>
 
+<script>
 module.exports = navBar;
+</script>

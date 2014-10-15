@@ -1,13 +1,16 @@
+<script>
 var klass = require("hsp/klass");
 var editable = require("../components/editable.hsp.js");
 var viewer = require("../display/accountSheets/view.hsp.js");
 var editor = require("../display/accountSheets/edit.hsp.js");
 var today = require("../utils/today");
+</script>
 
-# template iconTemplate(page)
+<template id="iconTemplate" args="page">
 <span class="glyphicon glyphicon-euro"></span> {page.title}
-# /template
+</template>
 
+<script>
 var BaseClass = require("./utils/editable.hsp.js");
 
 module.exports = klass({
@@ -25,3 +28,4 @@ module.exports = klass({
         };
     }
 });
+</script>

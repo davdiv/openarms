@@ -1,3 +1,4 @@
+<script>
 var hsp = require("hsp/rt");
 var klass = require("hsp/klass");
 
@@ -65,8 +66,9 @@ var Ctrl = klass({
         this.rootElt = this.$getElement(0);
     }
 });
+</script>
 
-# template select using c:Ctrl
+<template id="select" ctrl="Ctrl as c">
     <div class="dropdown {c.open ? 'open':''}">
     <div class="input-group input-group-sm">
         <span onclick="{c.toggleDropdown()}" class="form-control">
@@ -86,6 +88,8 @@ var Ctrl = klass({
         </ul>
     {/if}
     </div>
-# /template
+</template>
 
+<script>
 module.exports = select;
+</script>

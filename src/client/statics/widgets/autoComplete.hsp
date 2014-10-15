@@ -1,12 +1,15 @@
+<script>
 var klass = require("hsp/klass");
 var hsp = require("hsp/rt");
 var resolvePromise = require("../utils/resolvePromise");
 var isPromise = require("../utils/isPromise");
+</script>
 
-# template defaultDisplaySuggestion(data)
+<template id="defaultDisplaySuggestion" args="data">
     {data}
-# /template
+</template>
 
+<script>
 var AutoCompleteController = klass({
     attributes : {
         "class" : {
@@ -133,9 +136,10 @@ var AutoCompleteController = klass({
         this.selectedSuggestion = index;
     }
 });
+</script>
 
-# template autoComplete using c:AutoCompleteController
-    <div class="{'dropdown','open':c.open}">
+<template id="autoComplete" ctrl="AutoCompleteController as c">
+    <div class="dropdown {c.open?'open':''}">
         <input
             type="text"
             class="{c.class}"
@@ -157,7 +161,7 @@ var AutoCompleteController = klass({
                 <li class="disabled"><a href="#">Pas de suggestion</a></li>
             {else}
                 {foreach index,suggestion in c.suggestions}
-                    <li class="{'active':index == c.selectedSuggestion}">
+                    <li class="{index == c.selectedSuggestion?'active':''}">
                         <a href="#" onmouseover="{c.onSuggestionMouseOver(index)}" onclick="{c.chooseSuggestion(suggestion, event)}"><#c.displaySuggestion data="{suggestion}"/></a>
                     </li>
                 {/foreach}
@@ -165,6 +169,8 @@ var AutoCompleteController = klass({
         </ul>
     {/if}
     </div>
-# /template
+</template>
 
+<script>
 module.exports = autoComplete;
+</script>

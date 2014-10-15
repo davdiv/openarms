@@ -1,3 +1,4 @@
+<script>
 var dateField = require("./field.hsp.js");
 var klass = require("hsp/klass");
 var computeAge = require("./utils/age");
@@ -14,12 +15,15 @@ var BirthDateFieldController = klass({
 		}
 	}
 });
+</script>
 
-# template birthDateField using c:BirthDateFieldController
-	<div class="{'form-inline','input-group','input-group-sm','has-error':c.error}">
+<template id="birthDateField" ctrl="BirthDateFieldController as c">
+	<div class="form-inline input-group input-group-sm {c.error?'has-error':''}">
 		<#dateField value="{c.value}" error="{c.error}"/>
 		<span class="input-group-addon" style="min-width:40px;">{displayAge(c.value)}</span>
 	</div>
-# /template
+</template>
 
+<script>
 module.exports = birthDateField;
+</script>

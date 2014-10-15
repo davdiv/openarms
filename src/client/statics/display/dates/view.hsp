@@ -1,7 +1,11 @@
+<script>
 var formatDate = require("./utils/format");
+</script>
 
-# template viewDate(data)
+<template id="viewDate" args="data">
 {formatDate(data)}
-# /template
+</template>
 
+<script>
 module.exports = viewDate;
+</script>

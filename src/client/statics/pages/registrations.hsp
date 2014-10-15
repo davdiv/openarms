@@ -1,13 +1,16 @@
+<script>
 var klass = require("hsp/klass");
 var promise = require("noder-js/promise");
 var editable = require("../components/editable.hsp.js");
 var viewFamily = require("../display/registrations/view.hsp.js");
 var editFamily = require("../display/registrations/edit.hsp.js");
+</script>
 
-# template iconTemplate(page)
+<template id="iconTemplate" args="page">
     <span class="glyphicon glyphicon-file"></span> {page.title}
-# /template
+</template>
 
+<script>
 var BaseClass = require("./utils/editable.hsp.js");
 
 module.exports = klass({
@@ -24,3 +27,4 @@ module.exports = klass({
         return res;
     }
 });
+</script>

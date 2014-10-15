@@ -1,3 +1,4 @@
+<script>
 var autoComplete = require("../widgets/autoComplete.hsp.js");
 var promise = require("noder-js/promise");
 var peopleSuggestions = require("../display/peopleId/utils/peopleSuggestions");
@@ -37,22 +38,24 @@ var enter = function (event) {
     page(searchUrl + encodeURIComponent(event.text));
     event.text = "";
 };
+</script>
 
-# template displayLine(data)
+<template id="displayLine" args="data">
     {if data.person}
         <#personRef template="{personName}" data="{data.person}"/>
     {else}
         <span class="{data.icon}"></span> {data.label}
     {/if}
-# /template
+</template>
 
-# template search
+<template id="search">
     <div class="navbar-form navbar-left">
         <div class="form-group">
             <#autoComplete class="form-control" onComputeSuggestions="{computeSuggestions(event)}" onChooseSuggestion="{chooseSuggestion(event)}" onEnter="{enter(event)}" displaySuggestion="{displayLine}"/>
         </div>
     </div>
-# /template
+</template>
 
-
+<script>
 module.exports = search;
+</script>

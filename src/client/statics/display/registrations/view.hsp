@@ -1,7 +1,9 @@
+<script>
 var detailedLine = require("../people/viewDetailedLine.hsp.js");
 var personRef = require("../peopleId/viewAny.hsp.js");
+</script>
 
-# template viewFamily(data)
+<template id="viewFamily" args="data">
 {if data.people && data.people.length}
     <table class="table">
         <thead>
@@ -16,6 +18,8 @@ var personRef = require("../peopleId/viewAny.hsp.js");
         </tbody>
     </table>
 {/if}
-# /template
+</template>
 
+<script>
 module.exports = viewFamily;
+</script>

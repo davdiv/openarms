@@ -1,6 +1,8 @@
+<script>
 var klass = require("hsp/klass");
+</script>
 
-# template template()
+<template id="template">
     <div class="container-fluid">
         <h4>Bienvenue dans Openarms!</h4>
         <p>
@@ -12,13 +14,15 @@ var klass = require("hsp/klass");
             {" "}<a class="btn btn-default" href="/import"><span class="glyphicon glyphicon-import"></span> Importer des données</a>
         </p>
     </div>
-# /template
+</template>
 
-# template iconTemplate(page)
+<template id="iconTemplate" args="page">
     <span class="glyphicon glyphicon-home"></span> {page.title}
-# /template
+</template>
 
+<script>
 module.exports = klass({
     template : template,
     iconTemplate : iconTemplate
 });
+</script>

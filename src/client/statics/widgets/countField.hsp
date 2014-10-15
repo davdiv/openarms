@@ -1,3 +1,4 @@
+<script>
 var klass = require("hsp/klass");
 var hsp = require("hsp/rt");
 
@@ -55,8 +56,9 @@ var CountFieldController = klass({
     }
 
 });
+</script>
 
-# template countField using c:CountFieldController
+<template id="countField" ctrl="CountFieldController as c">
 <div class="input-group input-group-sm">
 <input type="text" value="{c.stringValue}" onblur="{c.blur()}" onkeydown="{c.fieldKeyDown(event)}" class="form-control" style="text-align:right;"/>
 <div class="input-group-btn" onmousedown="{c.preventDefault(event)}">
@@ -64,7 +66,8 @@ var CountFieldController = klass({
 <button type="button" class="btn btn-default" onclick="{c.clickSign(event,1)}" tabindex="-1"><span class="glyphicon glyphicon-plus"></span></button>
 </div>
 </div>
-# /template
+</template>
 
-
+<script>
 module.exports = countField;
+</script>

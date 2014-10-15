@@ -1,8 +1,12 @@
+<script>
 var personRef = require("./viewAny.hsp.js");
 var personName = require("../people/viewName.hsp.js");
+</script>
 
-# template personRefName(data)
+<template id="personRefName" args="data">
     <#personRef template="{personName}" data="{data}"/>
-# /template
+</template>
 
+<script>
 module.exports = personRefName;
+</script>

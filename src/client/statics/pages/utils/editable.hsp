@@ -1,9 +1,11 @@
+<script>
 var klass = require("hsp/klass");
 var promise = require("noder-js/promise");
 var editable = require("../../components/editable.hsp.js");
 var isPromise = require("../../utils/isPromise");
+</script>
 
-# template template(controller)
+<template id="template" args="controller">
     <div class="container-fluid">
         <#editable
             onSave="{controller.onUserSave(event)}"
@@ -20,8 +22,9 @@ var isPromise = require("../../utils/isPromise");
     {if controller.actionTemplate && controller.savedData && !isPromise(controller.savedData)}
         <#controller.actionTemplate controller="{controller}"/>
     {/if}
-# /template
+</template>
 
+<script>
 module.exports = klass({
     template: template,
     viewerTemplate: null,
@@ -109,3 +112,4 @@ module.exports = klass({
         return willClose;
     }
 });
+</script>

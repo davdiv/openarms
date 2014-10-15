@@ -1,3 +1,4 @@
+<script>
 var viewDate = require("../dates/view.hsp.js");
 var computeAge = require("../dates/utils/age");
 var viewMaritalStatus = require("../maritalStatuses/view.hsp.js");
@@ -8,8 +9,9 @@ var contactDetailProtocol = {
     "phone": "tel:",
     "email":"mailto:"
 };
+</script>
 
-# template identityCard(data)
+<template id="identityCard" args="data">
 <#viewSex data="{data.sex}"/>
 <div class="block">
 <h3>{data.firstName} {data.lastName} <small>{data.familyName}</small></h3>
@@ -39,6 +41,8 @@ Coordonnées:
 
 </p>
 </div>
-# /template
+</template>
 
+<script>
 module.exports = identityCard;
+</script>

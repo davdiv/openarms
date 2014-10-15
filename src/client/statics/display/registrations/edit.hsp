@@ -1,3 +1,4 @@
+<script>
 var klass = require("hsp/klass");
 var promise = require("noder-js/promise");
 var autoComplete = require("../../widgets/autoComplete.hsp.js");
@@ -54,16 +55,17 @@ var Ctrl = klass({
         people.splice(index,1);
     }
 });
+</script>
 
-# template displaySuggestion(data)
+<template id="displaySuggestion" args="data">
     {if isObject(data)}
         <span class="glyphicon glyphicon-plus"></span> Nouvelle fiche
     {else}
         <#personRef template="{personName}" data="{data}"/>
     {/if}
-# /template
+</template>
 
-# template editFamily using c:Ctrl
+<template id="editFamily" ctrl="Ctrl as c">
     {let data = c.data}
     <#autoComplete
         class="form-control"
@@ -95,6 +97,8 @@ var Ctrl = klass({
     </table>
     {/if}
     <br>
-# /template
+</template>
 
+<script>
 module.exports = editFamily;
+</script>

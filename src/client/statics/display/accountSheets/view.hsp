@@ -1,10 +1,12 @@
+<script>
 var klass = require("hsp/klass");
 var formatCurrency = require("../../utils/formatCurrency");
 var viewDate = require("../dates/view.hsp.js");
 var personRef = require("../peopleId/viewAny.hsp.js");
 var viewCashboxDetails = require("../cashboxDetails/view.hsp.js");
+</script>
 
-# template displayDay(day)
+<template id="displayDay" args="day">
     <tbody>
     <tr>
         <th>
@@ -30,9 +32,9 @@ var viewCashboxDetails = require("../cashboxDetails/view.hsp.js");
     {/foreach}
     {/if}
     </tbody>
-# /template
+</template>
 
-# template viewAccountSheet(data)
+<template id="viewAccountSheet" args="data">
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">Feuille de comptes</h3>
@@ -74,6 +76,8 @@ var viewCashboxDetails = require("../cashboxDetails/view.hsp.js");
         </div>
     {/if}
 
-# /template
+</template>
 
+<script>
 module.exports = viewAccountSheet;
+</script>

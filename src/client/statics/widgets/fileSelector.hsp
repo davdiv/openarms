@@ -1,3 +1,4 @@
+<script>
 var klass = require("hsp/klass");
 var showError = require("../display/errors/view.hsp.js");
 var promise = require("noder-js/promise");
@@ -51,8 +52,9 @@ var Ctrl = klass({
         });
     }
 });
+</script>
 
-# template fileSelector using c:Ctrl
+<template id="fileSelector" ctrl="Ctrl as c">
     {if c.file}
         <p class="form-control-static">
         {if isPromise(c.file)}
@@ -69,6 +71,8 @@ var Ctrl = klass({
     {else}
         <input type="file" onchange="{c.fileSelected(event)}">
     {/if}
-# /template
+</template>
 
+<script>
 module.exports = fileSelector;
+</script>

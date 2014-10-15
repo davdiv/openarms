@@ -1,12 +1,14 @@
+<script>
 var klass = require("hsp/klass");
 var titleImage = require("../widgets/titleImage.hsp.js");
 var login = require("../login");
+</script>
 
-# template iconTemplate(page)
+<template id="iconTemplate" args="page">
     <span class="glyphicon glyphicon-lock"></span> {page.title}
-# /template
+</template>
 
-# template template(controller)
+<template id="template" args="controller">
     {let c=controller, loginModule = login}
     <#titleImage image="img-lg-lock" title="Authentification"/>
     <div class="container">
@@ -29,8 +31,9 @@ var login = require("../login");
             </div>
         </div>
     </div>
-# /template
+</template>
 
+<script>
 module.exports = klass({
     template : template,
     iconTemplate : iconTemplate,
@@ -50,3 +53,4 @@ module.exports = klass({
         }).thenSync(this.page.$dispose.bind(this.page));
     }
 });
+</script>

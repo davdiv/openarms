@@ -1,7 +1,11 @@
+<script>
 var maritalStatuses = require("../../maritalStatuses");
+</script>
 
-# template viewMaritalStatus(data)
+<template id="viewMaritalStatus" args="data">
 {maritalStatuses[data]}
-# /template
+</template>
 
+<script>
 module.exports = viewMaritalStatus;
+</script>

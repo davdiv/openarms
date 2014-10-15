@@ -1,8 +1,10 @@
+<script>
 var name = require("./viewName.hsp.js");
 var identityCard = require("./viewIdentityCard.hsp.js");
 var popover = require("../../widgets/popover.hsp.js");
+</script>
 
-# template link(data)
+<template id="link" args="data">
 <#popover popoverWidth="{500}">
     <@visibleArea>
         {if data.id}
@@ -17,6 +19,8 @@ var popover = require("../../widgets/popover.hsp.js");
         </div>
     </@hidingArea>
 </#popover>
-# /template
+</template>
 
+<script>
 module.exports = link;
+</script>

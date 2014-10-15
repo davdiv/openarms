@@ -1,3 +1,4 @@
+<script>
 var klass = require("hsp/klass");
 var displayCountry = require("./view.hsp.js");
 var countrySuggestions = require("./utils/countrySuggestions");
@@ -11,14 +12,17 @@ var Ctrl = klass({
         }
     }
 });
+</script>
 
-# template countryField using c:Ctrl
+<template id="countryField" ctrl="Ctrl as c">
     <#singleAutoComplete
         value="{c.value}"
         onComputeSuggestions="{countrySuggestions.onComputeSuggestions(event)}"
         onEnter="{countrySuggestions.onEnter(event)}"
         displaySuggestion="{displayCountry}"
     />
-# /template
+</template>
 
+<script>
 module.exports = countryField;
+</script>

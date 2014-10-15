@@ -1,3 +1,4 @@
+<script>
 var klass = require("hsp/klass");
 var displayPersonLink = require("./viewAny.hsp.js");
 var displayPersonName = require("./viewName.hsp.js");
@@ -12,14 +13,17 @@ var Ctrl = klass({
         }
     }
 });
+</script>
 
-# template peopleField using c:Ctrl
+<template id="peopleField" ctrl="Ctrl as c">
     <#multiAutoComplete
         values="{c.values}"
         onComputeSuggestions="{peopleSuggestions.onComputeSuggestions(event)}"
         displaySuggestion="{displayPersonName}"
         displaySelection="{displayPersonLink}"
     />
-# /template
+</template>
 
+<script>
 module.exports = peopleField;
+</script>

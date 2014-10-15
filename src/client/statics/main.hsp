@@ -1,11 +1,15 @@
+<script>
 var navBar = require("./components/navBar.hsp.js");
+</script>
 
-# template main(pageMgr)
+<template id="main" args="pageMgr">
     {let activePage = pageMgr.activePage}
     <#navBar pageMgr="{pageMgr}"/>
     {if activePage && !activePage.processing}
         <#activePage.controller.template page="{activePage}" controller="{activePage.controller}" />
     {/if}
-# /template
+</template>
 
+<script>
 module.exports = main;
+</script>

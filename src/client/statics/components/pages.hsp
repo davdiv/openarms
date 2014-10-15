@@ -1,11 +1,13 @@
+<script>
 var klass = require("hsp/klass");
 
 var closePage = function (event, page) {
     event.preventDefault();
     page.close();
 };
+</script>
 
-# template pages(pageMgr)
+<template id="pages" args="pageMgr">
     <ul class="nav navbar-nav">
     {foreach page in pageMgr.pages}
         <li class="{page === pageMgr.activePage ? 'active' : ''}">
@@ -22,7 +24,8 @@ var closePage = function (event, page) {
         </li>
     {/foreach}
     </ul>
-# /template
+</template>
 
-
+<script>
 module.exports = pages;
+</script>

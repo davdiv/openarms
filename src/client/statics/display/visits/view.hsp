@@ -1,7 +1,11 @@
+<script>
 var personRef = require("../peopleId/viewAny.hsp.js");
+</script>
 
-# template viewVisit(data)
+<template id="viewVisit" args="data">
     <#personRef data="{data.person}" />
-# /template
+</template>
 
+<script>
 module.exports = viewVisit;
+</script>

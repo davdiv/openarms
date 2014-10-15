@@ -1,16 +1,19 @@
+<script>
 var klass = require("hsp/klass");
+</script>
 
-# template template(page)
+<template id="template" args="page">
     <div class="container-fluid">
         Votre recherche: {page.title}<br>
         <a href="/people/new?lastName={page.encodedQuery}">Nouvelle fiche pour {page.title}</a>
     </div>
-# /template
+</template>
 
-# template iconTemplate(page)
+<template id="iconTemplate" args="page">
     <span class="glyphicon glyphicon-search"></span> {page.title}
-# /template
+</template>
 
+<script>
 module.exports = klass({
     template : template,
     iconTemplate : iconTemplate,
@@ -19,3 +22,4 @@ module.exports = klass({
         page.encodedQuery = encodeURIComponent(page.query.q);
     }
 });
+</script>
