@@ -6,7 +6,7 @@ var validationErrorsList = require("./utils/validationErrorsList");
 var server = require("../../persistence/utils/server");
 
 var Ctrl = klass({
-    attributes:{
+    $attributes:{
         "class": {
             type:"object",
             binding:"1-way"

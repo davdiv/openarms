@@ -6,7 +6,7 @@ var maritalStatusKeys = Object.keys(maritalStatuses).filter(require("../../seria
 var viewMaritalStatus = require("./view.hsp.js");
 
 var Ctrl = klass({
-    attributes: {
+    $attributes: {
         value: {
             binding: "2-way",
             type: "object"

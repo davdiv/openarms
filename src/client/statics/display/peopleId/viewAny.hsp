@@ -6,7 +6,7 @@ var resolvePromise = require("../../utils/resolvePromise");
 var isPromise = require("../../utils/isPromise");
 
 var Ctrl = klass({
-    attributes: {
+    $attributes: {
         data: {
             // in fact, it can be either a string (person id)
             // or an object (directly containing the data)

@@ -5,7 +5,7 @@ var countrySuggestions = require("./utils/countrySuggestions");
 var singleAutoComplete = require("../../widgets/singleAutoComplete.hsp.js");
 
 var Ctrl = klass({
-    attributes: {
+    $attributes: {
         value: {
             type:"object",
             binding: "2-way"

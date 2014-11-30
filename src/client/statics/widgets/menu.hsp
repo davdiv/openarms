@@ -2,7 +2,7 @@
 var klass = require("hsp/klass");
 
 var MenuController = klass({
-	attributes: {
+	$attributes: {
 		title: {
 			type: "template"
 		},

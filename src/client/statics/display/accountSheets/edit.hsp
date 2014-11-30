@@ -15,7 +15,7 @@ var editCashboxDetails = require("../cashboxDetails/edit.hsp.js");
 var createCashboxDetails = require("../../validation/cashboxDetails/create");
 
 var Ctrl = klass({
-    attributes : {
+    $attributes : {
         data : {
             type : "object",
             binding : "1-way"

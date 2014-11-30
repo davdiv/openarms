@@ -3,7 +3,7 @@ var klass = require("hsp/klass");
 var formatCurrency = require("../utils/formatCurrency");
 
 var AmountFieldController = klass({
-    attributes: {
+    $attributes: {
         value: {
             binding: "2-way",
             type: "float"

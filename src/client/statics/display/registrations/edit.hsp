@@ -13,7 +13,7 @@ var isObject = function (entry) {
 };
 
 var Ctrl = klass({
-    attributes: {
+    $attributes: {
         data:{
             type:"object",
             binding: "1-way"

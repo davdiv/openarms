@@ -5,7 +5,7 @@ var maritalStatuses = require("../../maritalStatuses");
 var maritalStatusKeys = Object.keys(maritalStatuses).filter(require("../../serialization").isNotMetaData);
 
 var Ctrl = klass({
-    attributes: {
+    $attributes: {
         value: {
             binding: "2-way",
             type: "object"

@@ -4,7 +4,7 @@ var optionButton = require("../../widgets/optionButton.hsp.js");
 var viewSex = require("./viewSymbol.hsp.js");
 
 var SexFieldController = klass({
-    attributes: {
+    $attributes: {
         value: {
             binding: "2-way",
             type: "object"

@@ -8,7 +8,7 @@ var displayAge = function (date) {
 };
 
 var BirthDateFieldController = klass({
-	attributes: {
+	$attributes: {
 		value: {
 			type:"object",
 			binding: "2-way"

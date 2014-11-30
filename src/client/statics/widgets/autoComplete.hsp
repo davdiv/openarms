@@ -11,7 +11,7 @@ var isPromise = require("../utils/isPromise");
 
 <script>
 var AutoCompleteController = klass({
-    attributes : {
+    $attributes : {
         "class" : {
             binding : "1-way",
             type : "string"

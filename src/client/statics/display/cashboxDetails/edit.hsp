@@ -7,7 +7,7 @@ var dateField = require("../dates/field.hsp.js");
 var amountField = require("../../widgets/amountField.hsp.js");
 
 var Ctrl = klass({
-    attributes: {
+    $attributes: {
         data: {
             type: "object",
             binding: "1-way"

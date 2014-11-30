@@ -6,7 +6,7 @@ var peopleSuggestions = require("./utils/peopleSuggestions");
 var multiAutoComplete = require("../../widgets/multiAutoComplete.hsp.js");
 
 var Ctrl = klass({
-    attributes: {
+    $attributes: {
         values: {
             type:"object",
             binding: "2-way"

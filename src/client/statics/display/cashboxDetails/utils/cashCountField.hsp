@@ -4,7 +4,7 @@ var hsp = require("hsp/rt");
 var formatCurrency = require("../../../utils/formatCurrency");
 
 var CountFieldController = klass({
-    attributes : {
+    $attributes : {
         unitValue : {
             binding : "1-way",
             type : "float"

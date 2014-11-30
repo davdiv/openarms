@@ -4,7 +4,7 @@ var parseDate = require("./utils/parse");
 var formatDate = require("./utils/format");
 
 var DateFieldController = klass({
-	attributes: {
+	$attributes: {
 		value: {
 			binding: "2-way",
 			type: "object"

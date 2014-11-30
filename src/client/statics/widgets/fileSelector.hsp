@@ -24,7 +24,7 @@ var readFile = function (file) {
 };
 
 var Ctrl = klass({
-    attributes: {
+    $attributes: {
         file: {
             type: "object",
             binding: "2-way"

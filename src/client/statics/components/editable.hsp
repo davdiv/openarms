@@ -15,7 +15,7 @@ var copy = function (original) {
 };
 
 var EditableCtrl = klass({
-    attributes: {
+    $attributes: {
         savedData: {
             type: "object",
             binding: "2-way"

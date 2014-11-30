@@ -8,7 +8,7 @@ var NavBarCtrl = klass({
     $constructor : function () {
         this.expanded = false;
     },
-    attributes : {
+    $attributes : {
         pageMgr : {
             type : "object"
         }

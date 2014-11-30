@@ -9,7 +9,7 @@ var autoComplete = require("./autoComplete.hsp.js");
 
 <script>
 var Ctrl = klass({
-    attributes: {
+    $attributes: {
         values: {
             type: "object",
             binding: "2-way"

@@ -3,7 +3,7 @@ var klass = require("hsp/klass");
 var hsp = require("hsp/rt");
 
 var CountFieldController = klass({
-    attributes : {
+    $attributes : {
         value : {
             binding : "2-way",
             type : "int"

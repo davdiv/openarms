@@ -9,7 +9,7 @@ var amountField = require("../../widgets/amountField.hsp.js");
 var formatCurrency = require("../../utils/formatCurrency");
 
 var Ctrl = klass({
-    attributes: {
+    $attributes: {
         data: {
             type: "object",
             binding: "1-way"

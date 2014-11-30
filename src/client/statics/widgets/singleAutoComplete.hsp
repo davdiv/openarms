@@ -3,7 +3,7 @@ var klass = require("hsp/klass");
 var multiAutoComplete = require("./multiAutoComplete.hsp.js");
 
 var Ctrl = klass({
-    attributes: {
+    $attributes: {
         value: {
             type: "object",
             binding:"2-way"
