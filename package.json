@@ -13,6 +13,7 @@
   },
   "bin": "openarms",
   "scripts": {
+    "preinstall": "bash preinstall.sh",
     "prepublish": "gulp prepublish",
     "start": "node openarms"
   },
@@ -39,7 +40,7 @@
     "gulp-replace": "0.3.0",
     "gulp-util": "2.2.14",
     "gulp-wrap": "0.3.0",
-    "hashspace": "0.0.6",
+    "hashspace": "",
     "minimist": "0.0.8",
     "mongodb": "1.4.3",
     "node-sqlite-purejs": "0.0.2",
