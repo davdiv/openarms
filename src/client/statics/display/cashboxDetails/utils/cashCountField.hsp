@@ -22,17 +22,17 @@ var CountFieldController = klass({
         }
     },
     $init : function () {
-        this.onNumberChange();
+        this.$onNumberChange();
     },
-    onUnitValueChange : function () {
+    $onUnitValueChange : function () {
         this.update();
     },
-    onNumberChange : function () {
+    $onNumberChange : function () {
         // change from the data model
         this.stringNumber = this.number + "";
         this.update();
     },
-    onStringNumberChange : function () {
+    $onStringNumberChange : function () {
         // change from the user when typing
         this.number = parseInt(this.stringNumber, 10);
         this.update();

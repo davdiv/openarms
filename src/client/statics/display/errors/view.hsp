@@ -17,9 +17,9 @@ var Ctrl = klass({
         }
     },
     $init: function () {
-        this.onErrorChange();
+        this.$onErrorChange();
     },
-    onErrorChange : function () {
+    $onErrorChange : function () {
         var error = this.error;
         if (error instanceof server.ConnectionError) {
             this.template = showServerConnectionError;

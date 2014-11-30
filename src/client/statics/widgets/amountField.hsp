@@ -13,12 +13,12 @@ var AmountFieldController = klass({
         }
     },
     $init: function() {
-        this.onValueChange();
+        this.$onValueChange();
     },
-    onValueChange : function () {
+    $onValueChange : function () {
         this.stringValue = formatCurrency(this.value);
     },
-    onStringValueChange : function() {
+    $onStringValueChange : function() {
         this.value = parseFloat(this.stringValue) || 0;
         this.onchange();
     },

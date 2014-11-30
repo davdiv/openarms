@@ -21,9 +21,9 @@ var Ctrl = klass({
        if (!this.template) {
            this.template = link;
        }
-       this.onDataChange();
+       this.$onDataChange();
     },
-    onDataChange: function () {
+    $onDataChange: function () {
         if (this.data) {
             if (typeof this.data == "object") {
                 this.identity = this.data;

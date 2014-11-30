@@ -15,13 +15,13 @@ var DateFieldController = klass({
 		}
 	},
 	$init: function() {
-	  this.onValueChange();
+	  this.$onValueChange();
 	},
-	onValueChange : function () {
+	$onValueChange : function () {
 		this.internalValue = formatDate(this.value);
 		this.updateError();
 	},
-	onInternalValueChange : function() {
+	$onInternalValueChange : function() {
 		this.value = parseDate(this.internalValue);
 		this.updateError();
 	},

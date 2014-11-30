@@ -52,7 +52,7 @@ var AutoCompleteController = klass({
         this.suggestions = null;
         this.selectedSuggestion = -1;
     },
-    onSuggestionsChange : function() {
+    $onSuggestionsChange : function() {
         resolvePromise(this,"suggestions","suggestionsError");
     },
     changeSelectedSuggestion : function (diff) {

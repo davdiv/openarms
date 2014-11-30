@@ -100,22 +100,22 @@ var EditableCtrl = klass({
         resolvePromise(this, "savingData", "savingDataError");
         this.updateState();
     },
-    onSavedDataChange: function () {
+    $onSavedDataChange: function () {
         resolvePromise(this, "savedData", "savedDataError");
         this.updateState();
     },
-    onEditedDataChange: function () {
+    $onEditedDataChange: function () {
         resolvePromise(this, "editedData", "editedDataError");
         this.updateState();
     },
-    onSavingDataChange: function () {
+    $onSavingDataChange: function () {
         resolvePromise(this, "savingData", "savingDataError");
         this.updateState();
     },
-    onSavingDataErrorChange: function () {
+    $onSavingDataErrorChange: function () {
         this.updateState();
     },
-    onCurrentViewChange: function () {
+    $onCurrentViewChange: function () {
         this.updateState();
     },
     updateState : function () {

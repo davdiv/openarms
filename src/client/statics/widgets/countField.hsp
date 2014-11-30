@@ -13,13 +13,13 @@ var CountFieldController = klass({
         }
     },
     $init : function () {
-        this.onValueChange();
+        this.$onValueChange();
     },
-    onValueChange : function () {
+    $onValueChange : function () {
         // change from the data model
         this.stringValue = this.value + "";
     },
-    onStringValueChange : function () {
+    $onStringValueChange : function () {
         // change from the user when typing
         this.value = parseInt(this.stringValue, 10) || 0;
         this.onchange();

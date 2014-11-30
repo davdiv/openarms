@@ -33,7 +33,7 @@ var Ctrl = klass({
             type: "callback"
         }
     },
-    onFileChange: function() {
+    $onFileChange: function() {
         resolvePromise(this, "file", "error");
     },
     fileSelected: function (event) {
