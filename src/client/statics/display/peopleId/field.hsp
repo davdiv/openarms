@@ -18,7 +18,7 @@ var Ctrl = klass({
 <template id="personField" ctrl="Ctrl as c">
     <#singleAutoComplete
         value="{c.value}"
-        onComputeSuggestions="{peopleSuggestions.onComputeSuggestions(event)}"
+        onComputeSuggestions="{peopleSuggestions.onComputeSuggestions($event)}"
         displaySuggestion="{displayPersonName}"
         displaySelection="{displayPersonLink}"
     />

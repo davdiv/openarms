@@ -64,7 +64,7 @@ var Ctrl = klass({
 <template id="displayDay" args="c, day, index">
     <div class="panel panel-default">
       <div class="panel-heading">
-          <h3 class="panel-title"><#viewDate data="{day.date}"/>&nbsp; <a href="#" class="close" onclick="{c.removeDay(index,event)}">&times;</a></h3>
+          <h3 class="panel-title"><#viewDate data="{day.date}"/>&nbsp; <a href="#" class="close" onclick="{c.removeDay(index,$event)}">&times;</a></h3>
       </div>
       <div class="panel-body form-horizontal">
         <div class="form-group">
@@ -102,7 +102,7 @@ var Ctrl = klass({
                 <#autoComplete
                     class="form-control input-sm"
                     value="{line.item}"
-                    onComputeSuggestions="{computeLineSuggestions(event)}"
+                    onComputeSuggestions="{computeLineSuggestions($event)}"
                 />
             </div>
             <div class="col-sm-2">
@@ -142,7 +142,7 @@ var Ctrl = klass({
     {if data.realAmountDetails}
     <div class="panel panel-default">
         <div class="panel-heading">
-          <h3 class="panel-title">Montant réel: {formatCurrency(data.realAmount)} <a href="#" class="close" onclick="{c.removeRealAmountDetails(event)}">&times;</a></h3>
+          <h3 class="panel-title">Montant réel: {formatCurrency(data.realAmount)} <a href="#" class="close" onclick="{c.removeRealAmountDetails($event)}">&times;</a></h3>
         </div>
         <div class="panel-body">
             <#editCashboxDetails data="{data.realAmountDetails}" onchange="{c.recompute()}"/>
@@ -192,8 +192,8 @@ var Ctrl = klass({
             <div class="col-sm-5">
                 <#multiAutoComplete
                     values="{data.tags}"
-                    onComputeSuggestions="{tagSuggestions.onComputeSuggestions(event)}"
-                    onEnter="{tagSuggestions.onEnter(event)}"
+                    onComputeSuggestions="{tagSuggestions.onComputeSuggestions($event)}"
+                    onEnter="{tagSuggestions.onEnter($event)}"
                 />
             </div>
         </div>

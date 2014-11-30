@@ -17,8 +17,8 @@ var Ctrl = klass({
 <template id="countryField" ctrl="Ctrl as c">
     <#singleAutoComplete
         value="{c.value}"
-        onComputeSuggestions="{countrySuggestions.onComputeSuggestions(event)}"
-        onEnter="{countrySuggestions.onEnter(event)}"
+        onComputeSuggestions="{countrySuggestions.onComputeSuggestions($event)}"
+        onEnter="{countrySuggestions.onEnter($event)}"
         displaySuggestion="{displayCountry}"
     />
 </template>

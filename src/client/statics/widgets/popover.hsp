@@ -61,7 +61,7 @@ var Ctrl = klass({
 </script>
 
 <template id="popover" ctrl="Ctrl as c">
-<span style="display:inline-block;position:relative;vertical-align:middle;" onmouseenter="{c.mouseEnter(event)}" onmouseleave="{c.mouseLeave(event)}">
+<span style="display:inline-block;position:relative;vertical-align:middle;" onmouseenter="{c.mouseEnter($event)}" onmouseleave="{c.mouseLeave($event)}">
     <#c.visibleArea />
     {if c.open}
         <div class="popover bottom" style="display:block;top:{c.topPosition}px;left:{c.leftPosition}px;width:{c.popoverWidth}px;max-width:{c.popoverWidth}px;">

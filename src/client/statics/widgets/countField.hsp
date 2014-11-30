@@ -60,10 +60,10 @@ var CountFieldController = klass({
 
 <template id="countField" ctrl="CountFieldController as c">
 <div class="input-group input-group-sm">
-<input type="text" value="{c.stringValue}" onblur="{c.blur()}" onkeydown="{c.fieldKeyDown(event)}" class="form-control" style="text-align:right;"/>
-<div class="input-group-btn" onmousedown="{c.preventDefault(event)}">
-<button type="button" class="btn btn-default" onclick="{c.clickSign(event,-1)}" tabindex="-1"><span class="glyphicon glyphicon-minus"></span></button>
-<button type="button" class="btn btn-default" onclick="{c.clickSign(event,1)}" tabindex="-1"><span class="glyphicon glyphicon-plus"></span></button>
+<input type="text" value="{c.stringValue}" onblur="{c.blur()}" onkeydown="{c.fieldKeyDown($event)}" class="form-control" style="text-align:right;"/>
+<div class="input-group-btn" onmousedown="{c.preventDefault($event)}">
+<button type="button" class="btn btn-default" onclick="{c.clickSign($event,-1)}" tabindex="-1"><span class="glyphicon glyphicon-minus"></span></button>
+<button type="button" class="btn btn-default" onclick="{c.clickSign($event,1)}" tabindex="-1"><span class="glyphicon glyphicon-plus"></span></button>
 </div>
 </div>
 </template>

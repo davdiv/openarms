@@ -97,14 +97,14 @@ var Ctrl = klass({
                 <span>
                     <#c.displaySelection data="{value}"/>
                     &nbsp;
-                    <a href="#" onclick="{c.removeSuggestion(event,index)}"><span class="glyphicon glyphicon-remove"></span></a>
+                    <a href="#" onclick="{c.removeSuggestion($event,index)}"><span class="glyphicon glyphicon-remove"></span></a>
                 </span>
             {/foreach}
         {/if}
         <#autoComplete
-            onComputeSuggestions="{c.onComputeSuggestions(event)}"
-            onChooseSuggestion="{c.chooseSuggestion(event)}"
-            onEnter="{c.enter(event)}"
+            onComputeSuggestions="{c.onComputeSuggestions($event)}"
+            onChooseSuggestion="{c.chooseSuggestion($event)}"
+            onEnter="{c.enter($event)}"
             displaySuggestion="{c.displaySuggestion}"
         />
     </span>

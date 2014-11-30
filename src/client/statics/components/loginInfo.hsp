@@ -16,7 +16,7 @@ var logout = function (event) {
             <#menu>
                 <@title><span class="glyphicon glyphicon-user"></span> {loginData.userDisplayName}</@title>
                 <@content>
-                    <li><a href="#" onclick="{logout(event)}">Se déconnecter</a></li>
+                    <li><a href="#" onclick="{logout($event)}">Se déconnecter</a></li>
                 </@content>
             </#menu>
         {else}

@@ -75,14 +75,14 @@ var Ctrl = klass({
             {if c.value}<#c.displaySuggestion data="{c.value}" />{/if}
         </span>
         <span class="input-group-btn">
-            <button onclick="{c.toggleDropdown()}" onblur="{c.onBlur()}" onkeydown="{c.keydown(event)}" class="{c.open ? 'active':''} btn btn-default" type="button"><span class="glyphicon glyphicon-chevron-down"></span></button>
+            <button onclick="{c.toggleDropdown()}" onblur="{c.onBlur()}" onkeydown="{c.keydown($event)}" class="{c.open ? 'active':''} btn btn-default" type="button"><span class="glyphicon glyphicon-chevron-down"></span></button>
         </span>
     </div>
     {if c.open}
-        <ul class="dropdown-menu" onmousedown="{c.preventDefault(event)}" onclick="{c.preventDefault(event)}">
+        <ul class="dropdown-menu" onmousedown="{c.preventDefault($event)}" onclick="{c.preventDefault($event)}">
             {foreach index,suggestion in c.suggestions}
                 <li class="{index == c.highlightedSuggestion ? 'active' : ''}">
-                    <a href="#" onmouseover="{c.onSuggestionMouseOver(index)}" onclick="{c.chooseSuggestion(suggestion, event)}"><#c.displaySuggestion data="{suggestion}"/></a>
+                    <a href="#" onmouseover="{c.onSuggestionMouseOver(index)}" onclick="{c.chooseSuggestion(suggestion, $event)}"><#c.displaySuggestion data="{suggestion}"/></a>
                 </li>
             {/foreach}
         </ul>

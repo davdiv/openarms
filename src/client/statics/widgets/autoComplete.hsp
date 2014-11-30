@@ -145,12 +145,12 @@ var AutoCompleteController = klass({
             class="{c.class}"
             value="{c.value}"
             placeholder="{c.placeholder}"
-            oninput="{c.onType(event)}"
-            onkeydown="{c.onKeyDown(event)}"
-            onfocus="{c.onFocus(event)}"
-            onblur="{c.onBlur(event)}"/>
+            oninput="{c.onType($event)}"
+            onkeydown="{c.onKeyDown($event)}"
+            onfocus="{c.onFocus($event)}"
+            onblur="{c.onBlur($event)}"/>
     {if c.open}
-        <ul class="dropdown-menu" onmousedown="{c.preventDefault(event)}" onclick="{c.preventDefault(event)}">
+        <ul class="dropdown-menu" onmousedown="{c.preventDefault($event)}" onclick="{c.preventDefault($event)}">
             {if isPromise(c.suggestions)}
                 {if c.suggestionsError}
                     <li class="disabled"><a href="#">{c.suggestionsError}</a></li>
@@ -162,7 +162,7 @@ var AutoCompleteController = klass({
             {else}
                 {foreach index,suggestion in c.suggestions}
                     <li class="{index == c.selectedSuggestion?'active':''}">
-                        <a href="#" onmouseover="{c.onSuggestionMouseOver(index)}" onclick="{c.chooseSuggestion(suggestion, event)}"><#c.displaySuggestion data="{suggestion}"/></a>
+                        <a href="#" onmouseover="{c.onSuggestionMouseOver(index)}" onclick="{c.chooseSuggestion(suggestion, $event)}"><#c.displaySuggestion data="{suggestion}"/></a>
                     </li>
                 {/foreach}
             {/if}

@@ -8,9 +8,9 @@ var isPromise = require("../../utils/isPromise");
 <template id="template" args="controller">
     <div class="container-fluid">
         <#editable
-            onSave="{controller.onUserSave(event)}"
-            onRefresh="{controller.onUserRefresh(event)}"
-            onCancel="{controller.onUserCancel(event)}"
+            onSave="{controller.onUserSave($event)}"
+            onRefresh="{controller.onUserRefresh($event)}"
+            onCancel="{controller.onUserCancel($event)}"
             savedData="{controller.savedData}"
             editedData="{controller.editedData}"
             savingData="{controller.savingData}"

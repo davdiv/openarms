@@ -35,7 +35,7 @@ var showError = require("../display/errors/view.hsp.js");
             <label class="col-sm-3 control-label">Fichier de données</label>
             <div class="col-sm-9">
                 {if controller.format}
-                    <#fileSelector file="{controller.file}" onchange="{controller.fileChanged(event)}"/>
+                    <#fileSelector file="{controller.file}" onchange="{controller.fileChanged($event)}"/>
                 {/if}
                 {if !controller.file}
                     <p class="help-block">

@@ -87,10 +87,10 @@ var Ctrl = klass({
     values="{c.values}"
     displaySuggestion="{c.displaySuggestion}"
     displaySelection="{c.displaySelection}"
-    onComputeSuggestions="{c.onComputeSuggestions(event)}"
-    onChooseSuggestion="{c.chooseSuggestion(event)}"
-    onRemoveSuggestion="{c.removeSuggestion(event)}"
-    onEnter="{c.enter(event)}"
+    onComputeSuggestions="{c.onComputeSuggestions($event)}"
+    onChooseSuggestion="{c.chooseSuggestion($event)}"
+    onRemoveSuggestion="{c.removeSuggestion($event)}"
+    onEnter="{c.enter($event)}"
     class="{c.class}"
   />
 </template>

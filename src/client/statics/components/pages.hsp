@@ -19,7 +19,7 @@ var closePage = function (event, page) {
             {else}
                 {page.title}
             {/if}
-            &nbsp;<a class="close" onclick="{closePage(event, page)}">&times;</a>
+            &nbsp;<a class="close" onclick="{closePage($event, page)}">&times;</a>
             </a>
         </li>
     {/foreach}

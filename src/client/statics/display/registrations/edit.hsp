@@ -70,9 +70,9 @@ var Ctrl = klass({
     <#autoComplete
         class="form-control"
         placeholder="Tapez ici le prénom de chaque personne à ajouter"
-        onChooseSuggestion="{c.chooseSuggestion(event)}"
-        onComputeSuggestions="{c.computeSuggestions(event)}"
-        onEnter="{c.enter(event)}"
+        onChooseSuggestion="{c.chooseSuggestion($event)}"
+        onComputeSuggestions="{c.computeSuggestions($event)}"
+        onEnter="{c.enter($event)}"
         displaySuggestion="{displaySuggestion}"
     />
     {if data.people && data.people.length > 0}

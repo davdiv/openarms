@@ -66,10 +66,10 @@ var Ctrl = klass({
         {else}
             {c.file.name} ({formatSize(c.file.size)})
         {/if}
-        <a href="#" onclick="{c.removeClick(event)}"><span class="glyphicon glyphicon-remove"></span></a>
+        <a href="#" onclick="{c.removeClick($event)}"><span class="glyphicon glyphicon-remove"></span></a>
         </p>
     {else}
-        <input type="file" onchange="{c.fileSelected(event)}">
+        <input type="file" onchange="{c.fileSelected($event)}">
     {/if}
 </template>
 

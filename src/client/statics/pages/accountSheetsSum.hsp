@@ -177,18 +177,18 @@ var objectValues = function (object) {
     <h3><span class="glyphicon glyphicon-chevron-right"></span> Résumé</h3>
         <#showSummary controller="{controller}"/>
     <h3><span class="glyphicon glyphicon-chevron-right"></span> Feuilles de compte</h3>
-    <p><a href="#" onclick="{controller.toggleSheetDetails(event)}">{if controller.showSheetDetails}Masquer les détails{else}Afficher les détails{/if}</a></p>
+    <p><a href="#" onclick="{controller.toggleSheetDetails($event)}">{if controller.showSheetDetails}Masquer les détails{else}Afficher les détails{/if}</a></p>
     {if controller.showSheetDetails}
         <#showSheetDetails controller="{controller}"/>
     {/if}
     <h3><span class="glyphicon glyphicon-chevron-right"></span> Mouvements de caisse</h3>
-    <p><a href="#" onclick="{controller.toggleLineDetails(event)}">{if controller.showLineDetails}Masquer les détails{else}Afficher les détails{/if}</a></p>
+    <p><a href="#" onclick="{controller.toggleLineDetails($event)}">{if controller.showLineDetails}Masquer les détails{else}Afficher les détails{/if}</a></p>
     {if controller.showLineDetails}
         <#showLineDetails controller="{controller}"/>
     {/if}
     {if results.cashboxDetails}
         <h3><span class="glyphicon glyphicon-chevron-right"></span> Contenu de la caisse</h3>
-        <p><a href="#" onclick="{controller.toggleCashboxDetails(event)}">{if controller.showCashboxDetails}Masquer les détails{else}Afficher les détails{/if}</a></p>
+        <p><a href="#" onclick="{controller.toggleCashboxDetails($event)}">{if controller.showCashboxDetails}Masquer les détails{else}Afficher les détails{/if}</a></p>
         {if controller.showCashboxDetails}
             <#viewCashboxDetails data="{results.cashboxDetails}"/>
         {/if}
@@ -220,7 +220,7 @@ var objectValues = function (object) {
     <div class="container-fluid">
         <h3><span class="glyphicon glyphicon-chevron-right"></span> Recherche</h3>
         {if controller.results}
-            <p><a href="#" onclick="{controller.toggleSearch(event)}">{if controller.showSearch}Masquer la zone de recherche{else}Afficher la zone de recherche{/if}</a></p>
+            <p><a href="#" onclick="{controller.toggleSearch($event)}">{if controller.showSearch}Masquer la zone de recherche{else}Afficher la zone de recherche{/if}</a></p>
         {/if}
         {if !controller.results || controller.showSearch}
             <#displaySearch controller="{controller}" />

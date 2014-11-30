@@ -144,7 +144,7 @@ var isValidData = function (data) {
 </script>
 
 <template id="tab" args="c, view, title">
-    <li class="{c.currentView == view?'active':''}"><a href="#" onclick="{c.setCurrentView(view,event)}">{title}</a></li>
+    <li class="{c.currentView == view?'active':''}"><a href="#" onclick="{c.setCurrentView(view,$event)}">{title}</a></li>
 </template>
 
 <template id="showTabs" args="c">

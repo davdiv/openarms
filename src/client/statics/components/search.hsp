@@ -51,7 +51,7 @@ var enter = function (event) {
 <template id="search">
     <div class="navbar-form navbar-left">
         <div class="form-group">
-            <#autoComplete class="form-control" onComputeSuggestions="{computeSuggestions(event)}" onChooseSuggestion="{chooseSuggestion(event)}" onEnter="{enter(event)}" displaySuggestion="{displayLine}"/>
+            <#autoComplete class="form-control" onComputeSuggestions="{computeSuggestions($event)}" onChooseSuggestion="{chooseSuggestion($event)}" onEnter="{enter($event)}" displaySuggestion="{displayLine}"/>
         </div>
     </div>
 </template>

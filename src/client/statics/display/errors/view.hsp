@@ -42,7 +42,7 @@ var Ctrl = klass({
 </script>
 
 <template id="toggleDetails" args="c">
-    <a href="#" onclick="{c.toggleDetails(event)}">{if c.showDetails}Masquer{else}Afficher{/if} les détails</a>
+    <a href="#" onclick="{c.toggleDetails($event)}">{if c.showDetails}Masquer{else}Afficher{/if} les détails</a>
 </template>
 
 <template id="showError" ctrl="Ctrl as c">
