@@ -14,6 +14,44 @@ var createCashboxDetails = require("../validation/cashboxDetails/create");
 var recomputeCashboxDetails = require("../validation/cashboxDetails/recompute");
 var addCashboxDetails = require("../validation/cashboxDetails/add");
 var viewCashboxDetails = require("../display/cashboxDetails/view.hsp.js");
+var formatDate = require("../display/dates/utils/format");
+var formatNumber = function (value) {
+    return formatCurrency(value).replace(/\./,",").replace(/ €$/,"");
+};
+var exportFile = require("../exportFile");
+var tsvFile = require("../tsvFile");
+
+var sheetsColumns = [ {
+    title : "Tags",
+    getValue : function (sheet) {
+        return sheet.tags ? sheet.tags.join(", ") : "";
+    }
+}, {
+    title : "Date de début",
+    getValue : function (sheet) {
+        return formatDate(sheet.beginDate);
+    }
+}, {
+    title : "Date de fin",
+    getValue : function (sheet) {
+        return formatDate(sheet.endDate);
+    }
+}, {
+    title : "Somme",
+    getValue : function (sheet) {
+        return formatNumber(sheet.sumAmount);
+    }
+}, {
+    title : "Différence",
+    getValue : function (sheet) {
+        return formatNumber(sheet.difference);
+    }
+}, {
+    title : "Montant réel",
+    getValue : function (sheet) {
+        return formatNumber(sheet.realAmount);
+    }
+} ];
 
 var isTagSelected = function (selectedTags, tag) {
     return selectedTags ? !! selectedTags[tag] : false;
@@ -177,7 +215,7 @@ var objectValues = function (object) {
     <h3><span class="glyphicon glyphicon-chevron-right"></span> Résumé</h3>
         <#showSummary controller="{controller}"/>
     <h3><span class="glyphicon glyphicon-chevron-right"></span> Feuilles de compte</h3>
-    <p><a href="#" onclick="{controller.toggleSheetDetails($event)}">{if controller.showSheetDetails}Masquer les détails{else}Afficher les détails{/if}</a></p>
+    <p><a href="#" onclick="{controller.toggleSheetDetails($event)}">{if controller.showSheetDetails}Masquer les détails{else}Afficher les détails{/if}</a> <button title="Exporter les détails au format TSV" class="btn btn-default btn-sm" onclick="{controller.saveAccountSheets()}"><span class="glyphicon glyphicon-save"></span></button></p>
     {if controller.showSheetDetails}
         <#showSheetDetails controller="{controller}"/>
     {/if}
@@ -267,6 +305,9 @@ module.exports = klass({
     toggleSearch: function (event) {
         event.preventDefault();
         this.showSearch = !this.showSearch;
+    },
+    saveAccountSheets: function () {
+        exportFile([tsvFile(sheetsColumns, this.results.sheets)], "Comptes.tsv", {type: "text/tab-separated-values"});
     },
     clearTags: function () {
         this.filterTags = null;
