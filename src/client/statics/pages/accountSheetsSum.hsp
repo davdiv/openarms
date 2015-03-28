@@ -107,20 +107,25 @@ var objectValues = function (object) {
 };
 </script>
 
-<template id="showSummary" args="controller">
-    {let results=controller.results}
+<template id="showSummary" args="items, total, simplifyConfig">
     <table class="table">
     <tbody>
         <tr>
         <th>Désignation</th>
+        {if simplifyConfig}
+        <th>Catégorie</th>
+        {/if}
         <th>Nombre</th>
         <th>Sorties</th>
         <th>Entrées</th>
         <th>Total</th>
         </tr>
-    {foreach item in results.items}
+    {foreach item in items}
         <tr>
             <td>{item.item}</td>
+            {if simplifyConfig}
+              <td><input type="text" value="{simplifyConfig[item.item]}" class="form-control input-sm"/></td>
+            {/if}
             <td>{item.number}</td>
             <td>{formatCurrency(item.outcome)}</td>
             <td>{formatCurrency(item.income)}</td>
@@ -128,8 +133,10 @@ var objectValues = function (object) {
         </tr>
     {/foreach}
         <tr>
-            {let total=results.total}
             <th>Total</th>
+            {if simplifyConfig}
+              <th></th>
+            {/if}
             <th>{total.number}</th>
             <th>{formatCurrency(total.outcome)}</th>
             <th>{formatCurrency(total.income)}</th>
@@ -212,8 +219,10 @@ var objectValues = function (object) {
         {/foreach}
     </div>
     {/if}
+    <h3><span class="glyphicon glyphicon-chevron-right"></span> Résumé simplifié</h3>
+        <#showSummary items="{results.simplifiedItems}" total="{results.total}"/>
     <h3><span class="glyphicon glyphicon-chevron-right"></span> Résumé</h3>
-        <#showSummary controller="{controller}"/>
+        <#showSummary items="{results.items}" total="{results.total}" simplifyConfig="{controller.simplifiedSummaryConfig}"/>
     <h3><span class="glyphicon glyphicon-chevron-right"></span> Feuilles de compte</h3>
     <p><a href="#" onclick="{controller.toggleSheetDetails($event)}">{if controller.showSheetDetails}Masquer les détails{else}Afficher les détails{/if}</a> <button title="Exporter les détails au format TSV" class="btn btn-default btn-sm" onclick="{controller.saveAccountSheets()}"><span class="glyphicon glyphicon-save"></span></button></p>
     {if controller.showSheetDetails}
@@ -284,6 +293,7 @@ module.exports = klass({
     template : template,
     init: function () {
         this.query = {};
+        this.simplifiedSummaryConfig = {};
         this.filterTags = null;
         this.showSearch = false;
         this.showLineDetails = false;
@@ -413,6 +423,7 @@ module.exports = klass({
         }
         lines.sort(sortByDate);
         sheets.sort(sortByEndDate);
+        var itemsArray = objectValues(items).sort(sortByAmount);
         return {
             query: query,
             tags: Object.keys(tags),
@@ -420,9 +431,34 @@ module.exports = klass({
             sheets: sheets,
             lines: lines,
             cashboxDetails: cashboxDetails,
-            items: objectValues(items).sort(sortByAmount),
+            items: itemsArray,
+            simplifiedItems : this.computeSimplifiedItems(this.simplifiedSummaryConfig, itemsArray),
             total: total
         }
+    },
+    computeSimplifiedItems : function(config, items) {
+        var simplifiedItems = {};
+        items.forEach(function (curItem) {
+            var groupName = config[curItem.item];
+            if (!groupName) {
+                groupName = "Autre";
+            }
+            var group = simplifiedItems[groupName];
+            if (!group) {
+                group = simplifiedItems[groupName] = {
+                    item: groupName,
+                    income: 0,
+                    outcome: 0,
+                    number: 0,
+                    total: 0
+                };
+            }
+            group.income += curItem.income;
+            group.outcome += curItem.outcome;
+            group.number += curItem.number;
+            group.total += curItem.total;
+        });
+        return objectValues(simplifiedItems).sort(sortByAmount);
     },
     search : function() {
         var query = serialization.clone(this.query);
