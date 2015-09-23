@@ -107,6 +107,35 @@ var objectValues = function (object) {
 };
 </script>
 
+<template id="showByWeek" args="weeks, items">
+    <table class="table">
+    <tbody>
+        <tr>
+        <th>Semaine</th>
+        <th>Date</th>
+        {if items.length > 1}
+        {foreach item in items}
+            <th>{item.item}</th>
+        {/foreach}
+        {/if}
+        <th>Total</th>
+        </tr>
+    {foreach week in weeks}
+        <tr>
+            <td>{week.number}</td>
+            <td><#viewDate data="{week.date}"/></td>
+            {if items.length > 1}
+            {foreach item in items}
+                <td>{formatCurrency(week.groups[item.item] || 0)}</td>
+            {/foreach}
+            {/if}
+            <td>{formatCurrency(week.amount)}</td>
+        </tr>
+    {/foreach}
+    </tbody>
+    </table>
+</template>
+
 <template id="showSummary" args="items, total, simplifyConfig">
     <table class="table">
     <tbody>
@@ -223,6 +252,11 @@ var objectValues = function (object) {
         <#showSummary items="{results.simplifiedItems}" total="{results.total}"/>
     <h3><span class="glyphicon glyphicon-chevron-right"></span> Résumé</h3>
         <#showSummary items="{results.items}" total="{results.total}" simplifyConfig="{controller.simplifiedSummaryConfig}"/>
+    <h3><span class="glyphicon glyphicon-chevron-right"></span> Détails par semaine</h3>
+    <p><a href="#" onclick="{controller.toggleWeekDetails($event)}">{if controller.showWeekDetails}Masquer les détails{else}Afficher les détails{/if}</a> <button title="Exporter les détails au format TSV" class="btn btn-default btn-sm" onclick="{controller.saveWeeks()}"><span class="glyphicon glyphicon-save"></span></button></p>
+    {if controller.showWeekDetails}
+        <#showByWeek weeks="{results.weeks}" items="{results.simplifiedItems}"/>
+    {/if}
     <h3><span class="glyphicon glyphicon-chevron-right"></span> Feuilles de compte</h3>
     <p><a href="#" onclick="{controller.toggleSheetDetails($event)}">{if controller.showSheetDetails}Masquer les détails{else}Afficher les détails{/if}</a> <button title="Exporter les détails au format TSV" class="btn btn-default btn-sm" onclick="{controller.saveAccountSheets()}"><span class="glyphicon glyphicon-save"></span></button></p>
     {if controller.showSheetDetails}
@@ -299,6 +333,11 @@ module.exports = klass({
         this.showLineDetails = false;
         this.showSheetDetails = false;
         this.showCashboxDetails = false;
+        this.showWeekDetails = false;
+    },
+    toggleWeekDetails: function (event) {
+        event.preventDefault();
+        this.showWeekDetails = !this.showWeekDetails;
     },
     toggleLineDetails: function (event) {
         event.preventDefault();
@@ -318,6 +357,38 @@ module.exports = klass({
     },
     saveAccountSheets: function () {
         exportFile([tsvFile(sheetsColumns, this.results.sheets)], "Comptes.tsv", {type: "text/tab-separated-values"});
+    },
+    saveWeeks: function () {
+        var weeksColumns = [
+            {
+               title : "Semaine",
+               getValue : function (week) {
+                   return week.number;
+               }
+            }, {
+               title : "Date",
+               getValue : function (week) {
+                   return formatDate(week.date);
+               }
+            }
+        ];
+        if (this.results.simplifiedItems.length > 1) {
+            this.results.simplifiedItems.forEach(function (item) {
+                weeksColumns.push({
+                   title : item.item,
+                   getValue : function (week) {
+                       return formatNumber(week.groups[item.item] || 0);
+                   }
+                });
+            });
+        }
+        weeksColumns.push({
+           title : "Total",
+           getValue : function (week) {
+               return formatNumber(week.amount);
+           }
+        });
+        exportFile([tsvFile(weeksColumns, this.results.weeks)], "Comptes.tsv", {type: "text/tab-separated-values"});
     },
     clearTags: function () {
         this.filterTags = null;
@@ -433,8 +504,51 @@ module.exports = klass({
             cashboxDetails: cashboxDetails,
             items: itemsArray,
             simplifiedItems : this.computeSimplifiedItems(this.simplifiedSummaryConfig, itemsArray),
+            weeks: this.computeByWeek(lines, this.simplifiedSummaryConfig),
             total: total
         }
+    },
+    computeByWeek : function (lines, groupsConfig) {
+        var weeksArray = [];
+        var lastWeek = null;
+        var millisecondsInDay = 1000 * 60 * 60 * 24;
+
+        var getWeek = function (date) {
+            var daysDiff = Math.round(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) / millisecondsInDay);
+            var weekNumber = Math.floor((daysDiff - date.getDay()) / 7);
+            if (!lastWeek || lastWeek.number !== weekNumber) {
+                while (lastWeek && lastWeek.number - 1 > weekNumber) {
+                    lastWeek = {
+                        number: lastWeek.number - 1,
+                        date: new Date(lastWeek.date.getFullYear(), lastWeek.date.getMonth(), lastWeek.date.getDate() - 7),
+                        groups: {},
+                        amount: 0
+                    };
+                    weeksArray.push(lastWeek);
+                }
+                lastWeek = {
+                    number: weekNumber,
+                    // Take the last day of the week:
+                    date: new Date(date.getFullYear(), date.getMonth(), date.getDate() + 6 - date.getDay()),
+                    groups: {},
+                    amount: 0
+                };
+                weeksArray.push(lastWeek);
+            }
+            return lastWeek;
+        };
+
+        lines.forEach(function(line) {
+            var week = getWeek(line.date);
+            week.amount += line.amount;
+            var groupName = groupsConfig[line.item];
+            if (!groupName) {
+                groupName = "Autre";
+            }
+            var curGroupValue = week.groups[groupName] || 0;
+            week.groups[groupName] = curGroupValue + line.amount;
+        });
+        return weeksArray;
     },
     computeSimplifiedItems : function(config, items) {
         var simplifiedItems = {};
