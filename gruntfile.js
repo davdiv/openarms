@@ -56,7 +56,7 @@ module.exports = function (grunt) {
                     }, {
                         type : "CopyUnpackaged",
                         cfg : {
-                            files : [ "images/**", "css/**", "bootstrap/**" ]
+                            files : [ "images/**", "css/**", "bootstrap/**", "vis/**" ]
                         }
                     }, {
                         type : "CopyUnpackaged",

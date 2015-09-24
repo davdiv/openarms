@@ -1,0 +1,45 @@
+<script>
+var klass = require("hsp/klass");
+var vis = require("vis");
+
+var GraphController = klass({
+	$attributes: {
+		items: {
+            type: "object",
+            binding: "1-way"
+		},
+        groups: {
+            type: "object",
+            binding: "1-way"
+        },
+        options: {
+            type: "object",
+            binding: "1-way"
+        }
+	},
+    $refresh: function () {
+        if (!this.visChart) {
+            var divElt = this.$getElement(0);
+            this.visChart = new vis.Graph2d(divElt, this.items, this.groups, this.options);
+        } else {
+            this.visChart.setItems(this.items);
+            this.visChart.setGroups(this.groups);
+            this.visChart.setOptions(this.options);
+        }
+    },
+    $dispose: function () {
+        if (this.visChart) {
+            this.visChart.destroy();
+            this.visChart = null;
+        }
+    }
+});
+</script>
+
+<template id="graph" ctrl="GraphController as c">
+	<div></div>
+</template>
+
+<script>
+module.exports = graph;
+</script>

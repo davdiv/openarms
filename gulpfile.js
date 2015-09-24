@@ -28,6 +28,15 @@ gulp.task("dev-dep-diacritics", function () {
         rename("diacritics.js")).pipe(gulp.dest(staticsDevDir));
 });
 
+gulp.task("dev-dep-vis", function () {
+    return gulp.src("node_modules/vis/dist/vis.js").pipe(newer(staticsDevDir + "/vis.js")).pipe(rename("vis.js")).pipe(
+        gulp.dest(staticsDevDir));
+});
+
+gulp.task("dev-dep-vis-css", function () {
+    return gulp.src(["node_modules/vis/dist/**", "!node_modules/vis/**/*.js", "!node_modules/vis/**/*.map", "!node_modules/vis/vis.css"]).pipe(newer(staticsDevDir + "/vis")).pipe(gulp.dest(staticsDevDir + "/vis"));
+});
+
 gulp.task("dev-dep-qs", function () {
     return gulp.src("node_modules/qs/index.js").pipe(newer(staticsDevDir + "/qs.js")).pipe(rename("qs.js")).pipe(
         gulp.dest(staticsDevDir));
@@ -92,7 +101,7 @@ gulp.task("dev-statics-root", function () {
 });
 
 gulp.task("dev-dep", [ "dev-dep-bootstrap", "dev-dep-page", "dev-dep-diacritics", "dev-dep-qs", "dev-dep-hsp",
-    "dev-dep-noder-js", "dev-dep-sqlite" ]);
+    "dev-dep-noder-js", "dev-dep-sqlite", "dev-dep-vis", "dev-dep-vis-css" ]);
 
 gulp.task("dev-main",
     [ "dev-hsp-compile", "dev-js-transpile", "dev-js-notranspile", "dev-statics", "dev-statics-root" ]);
