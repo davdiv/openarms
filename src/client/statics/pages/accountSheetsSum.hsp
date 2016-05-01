@@ -109,6 +109,33 @@ var objectValues = function (object) {
 };
 </script>
 
+<template id="showByMonth" args="months, items">
+    <table class="table">
+    <tbody>
+        <tr>
+        <th>Mois</th>
+        {if items.length > 1}
+        {foreach item in items}
+            <th>{item.item}</th>
+        {/foreach}
+        {/if}
+        <th>Total</th>
+        </tr>
+    {foreach month in months}
+        <tr>
+            <td>{month.key}</td>
+            {if items.length > 1}
+            {foreach item in items}
+                <td>{formatCurrency(month.groups[item.item] || 0)}</td>
+            {/foreach}
+            {/if}
+            <td>{formatCurrency(month.amount)}</td>
+        </tr>
+    {/foreach}
+    </tbody>
+    </table>
+</template>
+
 <template id="showByWeek" args="weeks, items">
     <table class="table">
     <tbody>
@@ -264,6 +291,11 @@ var objectValues = function (object) {
     {if controller.showWeekDetails}
         <#showByWeek weeks="{results.weeks}" items="{results.simplifiedItems}"/>
     {/if}
+    <h3><span class="glyphicon glyphicon-chevron-right"></span> Détails par mois</h3>
+    <p><a href="#" onclick="{controller.toggleMonthDetails($event)}">{if controller.showMonthDetails}Masquer les détails{else}Afficher les détails{/if}</a> <button title="Exporter les détails au format TSV" class="btn btn-default btn-sm" onclick="{controller.saveMonths()}"><span class="glyphicon glyphicon-save"></span></button></p>
+    {if controller.showMonthDetails}
+        <#showByMonth months="{results.months}" items="{results.simplifiedItems}"/>
+    {/if}
     <h3><span class="glyphicon glyphicon-chevron-right"></span> Feuilles de compte</h3>
     <p><a href="#" onclick="{controller.toggleSheetDetails($event)}">{if controller.showSheetDetails}Masquer les détails{else}Afficher les détails{/if}</a> <button title="Exporter les détails au format TSV" class="btn btn-default btn-sm" onclick="{controller.saveAccountSheets()}"><span class="glyphicon glyphicon-save"></span></button></p>
     {if controller.showSheetDetails}
@@ -341,6 +373,7 @@ module.exports = klass({
         this.showSheetDetails = false;
         this.showCashboxDetails = false;
         this.showWeekDetails = false;
+        this.showMonthDetails = false;
         this.showWeekGraph = false;
     },
     toggleWeekGraph: function (event) {
@@ -350,6 +383,10 @@ module.exports = klass({
     toggleWeekDetails: function (event) {
         event.preventDefault();
         this.showWeekDetails = !this.showWeekDetails;
+    },
+    toggleMonthDetails: function (event) {
+        event.preventDefault();
+        this.showMonthDetails = !this.showMonthDetails;
     },
     toggleLineDetails: function (event) {
         event.preventDefault();
@@ -401,6 +438,33 @@ module.exports = klass({
            }
         });
         exportFile([tsvFile(weeksColumns, this.results.weeks)], "Comptes.tsv", {type: "text/tab-separated-values"});
+    },
+    saveMonths: function () {
+        var monthsColumns = [
+            {
+               title : "Mois",
+               getValue : function (month) {
+                   return month.key;
+               }
+            }
+        ];
+        if (this.results.simplifiedItems.length > 1) {
+            this.results.simplifiedItems.forEach(function (item) {
+                monthsColumns.push({
+                   title : item.item,
+                   getValue : function (month) {
+                       return formatNumber(month.groups[item.item] || 0);
+                   }
+                });
+            });
+        }
+        monthsColumns.push({
+           title : "Total",
+           getValue : function (month) {
+               return formatNumber(month.amount);
+           }
+        });
+        exportFile([tsvFile(monthsColumns, this.results.months)], "Comptes.tsv", {type: "text/tab-separated-values"});
     },
     clearTags: function () {
         this.filterTags = null;
@@ -519,6 +583,7 @@ module.exports = klass({
             items: itemsArray,
             simplifiedItems : simplifiedItems,
             weeks: weeks,
+            months: this.computeByMonth(lines, this.simplifiedSummaryConfig),
             weekGraph: this.buildWeekGraph(weeks, simplifiedItems),
             total: total
         }
@@ -592,6 +657,37 @@ module.exports = klass({
             week.groups[groupName] = curGroupValue + line.amount;
         });
         return weeksArray;
+    },
+    computeByMonth : function (lines, groupsConfig) {
+        var monthsArray = [];
+        var lastMonth = null;
+        var millisecondsInDay = 1000 * 60 * 60 * 24;
+
+        var getMonth = function (date) {
+            var month = date.getMonth() + 1;
+            var monthKey = [month < 10 ? "0" : "", month, "/", date.getFullYear()].join("");
+            if (!lastMonth || lastMonth.key !== monthKey) {
+                lastMonth = {
+                    key: monthKey,
+                    groups: {},
+                    amount: 0
+                };
+                monthsArray.push(lastMonth);
+            }
+            return lastMonth;
+        };
+
+        lines.forEach(function(line) {
+            var month = getMonth(line.date);
+            month.amount += line.amount;
+            var groupName = groupsConfig[line.item];
+            if (!groupName) {
+                groupName = "Autre";
+            }
+            var curGroupValue = month.groups[groupName] || 0;
+            month.groups[groupName] = curGroupValue + line.amount;
+        });
+        return monthsArray;
     },
     computeSimplifiedItems : function(config, items) {
         var simplifiedItems = {};
