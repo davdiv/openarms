@@ -22,6 +22,21 @@ var formatNumber = function (value) {
 };
 var exportFile = require("../exportFile");
 var tsvFile = require("../tsvFile");
+var defaultCategories = require("../defaultCategories");
+
+var detailsRegExp = /^(.+)\s+\(.+\)\s*$/
+var readFromGroupsConfig = function (groupsConfig, item) {
+    var res = groupsConfig[item];
+    if (!res) {
+        var match = detailsRegExp.exec(item);
+        if (match) {
+            res = match[1];
+        } else {
+            res = "Autre";
+        }
+    }
+    return res;
+};
 
 var sheetsColumns = [ {
     title : "Tags",
@@ -165,12 +180,12 @@ var objectValues = function (object) {
     </table>
 </template>
 
-<template id="showSummary" args="items, total, simplifyConfig">
+<template id="showSummary" args="items, total, groupsConfig">
     <table class="table">
     <tbody>
         <tr>
         <th>Désignation</th>
-        {if simplifyConfig}
+        {if groupsConfig}
         <th>Catégorie</th>
         {/if}
         <th>Nombre</th>
@@ -181,8 +196,8 @@ var objectValues = function (object) {
     {foreach item in items}
         <tr>
             <td>{item.item}</td>
-            {if simplifyConfig}
-              <td><input type="text" value="{simplifyConfig[item.item]}" class="form-control input-sm"/></td>
+            {if groupsConfig}
+              <td><input type="text" value="{groupsConfig[item.item]}" placeholder="{readFromGroupsConfig(groupsConfig, item.item)}" class="form-control input-sm"/></td>
             {/if}
             <td>{item.number}</td>
             <td>{formatCurrency(item.outcome)}</td>
@@ -192,7 +207,7 @@ var objectValues = function (object) {
     {/foreach}
         <tr>
             <th>Total</th>
-            {if simplifyConfig}
+            {if groupsConfig}
               <th></th>
             {/if}
             <th>{total.number}</th>
@@ -285,7 +300,7 @@ var objectValues = function (object) {
     <h3><span class="glyphicon glyphicon-chevron-right"></span> Résumé simplifié</h3>
         <#showSummary items="{results.simplifiedItems}" total="{results.total}"/>
     <h3><span class="glyphicon glyphicon-chevron-right"></span> Résumé</h3>
-        <#showSummary items="{results.items}" total="{results.total}" simplifyConfig="{controller.simplifiedSummaryConfig}"/>
+        <#showSummary items="{results.items}" total="{results.total}" groupsConfig="{controller.simplifiedSummaryConfig}"/>
     <h3><span class="glyphicon glyphicon-chevron-right"></span> Détails par semaine</h3>
     <p><a href="#" onclick="{controller.toggleWeekDetails($event)}">{if controller.showWeekDetails}Masquer les détails{else}Afficher les détails{/if}</a> <button title="Exporter les détails au format TSV" class="btn btn-default btn-sm" onclick="{controller.saveWeeks()}"><span class="glyphicon glyphicon-save"></span></button></p>
     {if controller.showWeekDetails}
@@ -366,7 +381,7 @@ module.exports = klass({
     template : template,
     init: function () {
         this.query = {};
-        this.simplifiedSummaryConfig = {};
+        this.simplifiedSummaryConfig = defaultCategories();
         this.filterTags = null;
         this.showSearch = false;
         this.showLineDetails = false;
@@ -649,10 +664,7 @@ module.exports = klass({
         lines.forEach(function(line) {
             var week = getWeek(line.date);
             week.amount += line.amount;
-            var groupName = groupsConfig[line.item];
-            if (!groupName) {
-                groupName = "Autre";
-            }
+            var groupName = readFromGroupsConfig(groupsConfig, line.item);
             var curGroupValue = week.groups[groupName] || 0;
             week.groups[groupName] = curGroupValue + line.amount;
         });
@@ -680,22 +692,16 @@ module.exports = klass({
         lines.forEach(function(line) {
             var month = getMonth(line.date);
             month.amount += line.amount;
-            var groupName = groupsConfig[line.item];
-            if (!groupName) {
-                groupName = "Autre";
-            }
+            var groupName = readFromGroupsConfig(groupsConfig, line.item);
             var curGroupValue = month.groups[groupName] || 0;
             month.groups[groupName] = curGroupValue + line.amount;
         });
         return monthsArray;
     },
-    computeSimplifiedItems : function(config, items) {
+    computeSimplifiedItems : function(groupsConfig, items) {
         var simplifiedItems = {};
         items.forEach(function (curItem) {
-            var groupName = config[curItem.item];
-            if (!groupName) {
-                groupName = "Autre";
-            }
+            var groupName = readFromGroupsConfig(groupsConfig, curItem.item);
             var group = simplifiedItems[groupName];
             if (!group) {
                 group = simplifiedItems[groupName] = {

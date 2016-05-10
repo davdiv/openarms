@@ -1,0 +1,33 @@
+module.exports = function() {
+    return {
+        "Colis alimentaires + lait": "Alimentaire",
+        "Epicerie": "Alimentaire",
+        "Frais": "Alimentaire",
+        "Légumes": "Alimentaire",
+        "Viande": "Alimentaire",
+        "Fruits et légumes": "Alimentaire",
+        "Viennoiseries": "Alimentaire",
+        "Légumes + frais": "Alimentaire",
+        "Frais, viennoiseries, fruits": "Alimentaire",
+        "Frais, légumes, viennoiseries": "Alimentaire",
+        "Lait": "Alimentaire",
+        "Frais + lait": "Alimentaire",
+        "Viennoiseries + fruits": "Alimentaire",
+        "Légumes + chocolat": "Alimentaire",
+        "Fruits": "Alimentaire",
+        "Fruits, légumes": "Alimentaire",
+        "Pain": "Alimentaire",
+        "Vêtements": "Vêtements",
+        "Vêtements bébé et matériel puériculture": "Vêtements",
+        "Pacome": "Vêtements",
+        "Cosmétique": "Vêtements",
+        "Lit parapluie bébé": "Vêtements",
+        "Dessus de lit": "Vêtements",
+        "Matelas": "Vêtements",
+        "Tabouret": "Vêtements",
+        "Déco": "Meubles",
+        "Différence": "Différence",
+        "Autoroute + essence": "Achats",
+        "Autoroute": "Achats"
+    }
+};
