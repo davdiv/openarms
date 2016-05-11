@@ -22,7 +22,12 @@ var formatNumber = function (value) {
 };
 var exportFile = require("../exportFile");
 var tsvFile = require("../tsvFile");
+var createAccountingEntries = require("../createAccountingEntries");
 var defaultCategories = require("../defaultCategories");
+var defaultAccountingEntriesConfig = require("../defaultAccountingEntriesConfig");
+var multiAutoComplete = require("../widgets/multiAutoComplete.hsp.js");
+var regExpField = require("../widgets/regExpField.hsp.js");
+var tagSuggestions = require("../display/accountSheets/utils/tagSuggestions");
 
 var detailsRegExp = /^(.+)\s+\(.+\)\s*$/
 var readFromGroupsConfig = function (groupsConfig, item) {
@@ -123,6 +128,117 @@ var objectValues = function (object) {
     });
 };
 </script>
+
+<template id="accountingEntriesConfig" args="config">
+    <div class="form-horizontal">
+        <div class="row form-group">
+            <label class="col-sm-3 control-label">Exercice comptable</label>
+            <div class="col-sm-5">
+                <input type="text" value="{config.accountingYear}" class="form-control input-sm"/>
+            </div>
+        </div>
+        <div class="row form-group">
+            <label class="col-sm-3 control-label">Catégories ajustables (si différence de montant)</label>
+            <div class="col-sm-5">
+                <#multiAutoComplete
+                    values="{config.changeableCategories}"
+                    onEnter="{tagSuggestions.onEnter($event)}"
+                />
+            </div>
+        </div>
+        <div class="row form-group">
+            <label class="col-sm-3 control-label">Catégories regroupables</label>
+            <div class="col-sm-5">
+                <#multiAutoComplete
+                    values="{config.groupableCategories}"
+                    onEnter="{tagSuggestions.onEnter($event)}"
+                />
+            </div>
+        </div>
+        <div class="row form-group">
+            <label class="col-sm-3 control-label">Tags utilisés</label>
+            <div class="col-sm-5">
+                <#multiAutoComplete
+                    values="{config.relevantTags}"
+                    onComputeSuggestions="{tagSuggestions.onComputeSuggestions($event)}"
+                    onEnter="{tagSuggestions.onEnter($event)}"
+                />
+            </div>
+        </div>
+        <div class="row form-group">
+            <label class="col-sm-3 control-label">Libellé pour les opérations regroupées</label>
+            <div class="col-sm-5">
+                <input type="text" value="{config.groupLabel}" class="form-control input-sm"/>
+            </div>
+        </div>
+        <div class="row form-group">
+            <label class="col-sm-3 control-label">Journal</label>
+            <div class="col-sm-5">
+                <input type="text" value="{config.journal}" class="form-control input-sm"/>
+            </div>
+        </div>
+        {foreach category in Object.keys(config.categoriesAccounts)}
+            <div class="row form-group">
+                <label class="col-sm-3 control-label">Numéro de compte général pour la catégorie <em>{category}</em></label>
+                <div class="col-sm-5">
+                    <input type="text" value="{config.categoriesAccounts[category]}" class="form-control input-sm"/>
+                </div>
+            </div>
+        {/foreach}
+        {foreach tag in config.relevantTags}
+            <div class="row form-group">
+                <label class="col-sm-3 control-label">Numéro de compte analytique pour le tag <em>{tag}</em></label>
+                <div class="col-sm-5">
+                    <input type="text" value="{config.tagsAnalyticAccounts[tag]}" class="form-control input-sm"/>
+                </div>
+            </div>
+        {/foreach}
+        <div class="row form-group">
+            <label class="col-sm-3 control-label">Numéro de compte général pour la caisse</label>
+            <div class="col-sm-5">
+                <input type="text" value="{config.cashboxAccount}" class="form-control input-sm"/>
+            </div>
+        </div>
+        <div class="row form-group">
+            <label class="col-sm-3 control-label">Numéro de compte général pour le compte bancaire</label>
+            <div class="col-sm-5">
+                <input type="text" value="{config.bankAccount}" class="form-control input-sm"/>
+            </div>
+        </div>
+        <div class="row form-group">
+            <label class="col-sm-3 control-label">Libellé pour les dépôts non détaillés</label>
+            <div class="col-sm-5">
+                <input type="text" value="{config.generalDepositLabel}" class="form-control input-sm"/>
+            </div>
+        </div>
+        <div class="row form-group">
+            <label class="col-sm-3 control-label">Libellé pour les dépôts de chèques</label>
+            <div class="col-sm-5">
+                <input type="text" value="{config.checksDepositLabel}" class="form-control input-sm"/>
+            </div>
+        </div>
+        <div class="row form-group">
+            <label class="col-sm-3 control-label">Libellé pour les dépôts de pièces</label>
+            <div class="col-sm-5">
+                <input type="text" value="{config.coinsDepositLabel}" class="form-control input-sm"/>
+            </div>
+        </div>
+        <div class="row form-group">
+            <label class="col-sm-3 control-label">Libellé pour les dépôts de billets</label>
+            <div class="col-sm-5">
+                <input type="text" value="{config.banknotesDepositLabel}" class="form-control input-sm"/>
+            </div>
+        </div>
+        <div class="row form-group">
+            <label class="col-sm-3 control-label">Expression régulière pour les tags de dépôt</label>
+            <div class="col-sm-5">
+                <#regExpField
+                    value="{config.depositTagRegExp}"
+                />
+            </div>
+        </div>
+    </div>
+</template>
 
 <template id="showByMonth" args="months, items">
     <table class="table">
@@ -284,6 +400,11 @@ var objectValues = function (object) {
 <template id="displayResults" args="controller">
     {let results = controller.results}
     {if controller.filterTags || results.tags.length}
+    <h3><span class="glyphicon glyphicon-chevron-right"></span> Ecritures comptables</h3>
+    <p><a href="#" onclick="{controller.toggleAccountingEntriesConfig($event)}">{if controller.showAccountingEntriesConfig}Masquer les détails{else}Afficher les détails{/if}</a> <button title="Exporter les écritures comptables" class="btn btn-default btn-sm" onclick="{controller.exportAccountingEntries()}"><span class="glyphicon glyphicon-save"></span></button></p>
+    {if controller.showAccountingEntriesConfig}
+        <#accountingEntriesConfig config="{controller.accountingEntriesConfig}"/>
+    {/if}
     <h3><span class="glyphicon glyphicon-chevron-right"></span> Filtres</h3>
     <div class="btn-group">
         <button onclick="{controller.clearTags()}" class="btn btn-default {controller.filterTags ? '' : 'active'}">Aucun filtre</button>
@@ -382,7 +503,9 @@ module.exports = klass({
     init: function () {
         this.query = {};
         this.simplifiedSummaryConfig = defaultCategories();
+        this.accountingEntriesConfig = defaultAccountingEntriesConfig();
         this.filterTags = null;
+        this.showAccountingEntriesConfig = false;
         this.showSearch = false;
         this.showLineDetails = false;
         this.showSheetDetails = false;
@@ -390,6 +513,10 @@ module.exports = klass({
         this.showWeekDetails = false;
         this.showMonthDetails = false;
         this.showWeekGraph = false;
+    },
+    toggleAccountingEntriesConfig: function (event) {
+        event.preventDefault();
+        this.showAccountingEntriesConfig = !this.showAccountingEntriesConfig;
     },
     toggleWeekGraph: function (event) {
         event.preventDefault();
@@ -735,6 +862,9 @@ module.exports = klass({
         }
         this.results = accountSheetsMgr.search(dbQuery).thenSync(this.computeResults.bind(this, query));
         resolvePromise(this, "results","resultsError");
+    },
+    exportAccountingEntries : function () {
+        exportFile([createAccountingEntries(this.results.allSheets, readFromGroupsConfig.bind(null, this.simplifiedSummaryConfig), this.accountingEntriesConfig)], "Ecritures comptables.txt", {type: "text/plain"});
     }
 });
 </script>
