@@ -5,6 +5,12 @@ var formatCurrency = require("../../utils/formatCurrency");
 var cashCountField = require("./utils/cashCountField.hsp.js");
 var dateField = require("../dates/field.hsp.js");
 var amountField = require("../../widgets/amountField.hsp.js");
+var server = require("../../persistence/utils/server");
+
+var ticketParseRegExp = /\r?\n-+\r?\n([\s\S]*)\r?\n-+\r?\n/;
+var splitLineRegExp = /\r?\n/;
+var lineRegExp = /^\s*([0-9.]+)\s+([0-9.]+)\s+([0-9.]+)\s*$/;
+var nonAllowedCharsRegExp = /[^:\r\n0-9a-zA-Z\(\)\.\s-]/g;
 
 var Ctrl = klass({
     $attributes: {
@@ -29,6 +35,39 @@ var Ctrl = klass({
     removeCheck: function(index) {
         this.data.checks.splice(index,1);
         this.onchange();
+    },
+    clear: function (array) {
+        array.forEach(function (item) {
+            item.number = 0;
+        });
+        this.onchange();
+    },
+    retrieveTicket: function (type, array) {
+        var self = this;
+        server("GET", "tickets/" + type + "/latest").then(function(ticket) {
+            var ticketString = ticket.data.replace(nonAllowedCharsRegExp, "");
+            console.log(ticketString);
+            var dataMatch = ticketParseRegExp.exec(ticketString);
+            var lines = dataMatch[1].split(splitLineRegExp);
+            var values = Object.create(null);
+            lines.forEach(function (line) {
+                var lineMatch = lineRegExp.exec(line);
+                var value = Number(lineMatch[1]);
+                var count = Number(lineMatch[2]);
+                var total = Number(lineMatch[3]);
+                if (Math.abs(total - value * count) > 0.005) {
+                    throw new Error("Incohérence: " + value + " x " + count + " = " + total);
+                }
+                values[value] = count;
+            });
+            array.forEach(function (item) {
+                item.number = values[item.unitValue] || 0;
+            });
+            self.onchange();
+        }).then(null, function (error) {
+            console.log(error);
+            alert("Erreur: " + (error.responseText || error.description || error));
+        });
     }
 });
 </script>
@@ -46,6 +85,10 @@ var Ctrl = klass({
 
 <template id="itemsTable" args="title, image, total, itemsArray, controller">
     <#itemsHeader title="{title}" image="{image}" total="{total}" />
+    <div>
+        <button class="btn btn-link" onclick="{controller.retrieveTicket(image, itemsArray)}">Ticket</button>
+        <button class="btn btn-link" onclick="{controller.clear(itemsArray)}">Effacer</button>
+    </div>
     {foreach item in itemsArray}
         <#cashCountField number="{item.number}" unitValue="{item.unitValue}" onchange="{controller.onchange()}"/>
     {/foreach}

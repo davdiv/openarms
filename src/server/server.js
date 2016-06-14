@@ -10,6 +10,7 @@ var CollectionBase = require("./collections/utils/collectionBase");
 var PeopleCollection = require("./collections/people");
 var RegistrationsCollection = require("./collections/registrations");
 var AccountSheetsCollection = require("./collections/accountSheets");
+var ticketsHandler = require("./tickets");
 
 var startServer = function (options, db) {
     var defer = q.defer();
@@ -32,11 +33,16 @@ var startServer = function (options, db) {
 
     app.use(express.static(staticsRoot));
 
+    var tickets = ticketsHandler(db.collection("tickets"));
+
     app.use("/api/people", new RestRouter(new PeopleCollection(db.collection("people"))));
     app.use("/api/registrations", new RestRouter(new RegistrationsCollection(db.collection("registrations"))));
     app.use("/api/visits", new RestRouter(new CollectionBase(db.collection("visits"))));
     app.use("/api/account/sheets", new RestRouter(new AccountSheetsCollection(db.collection("accountSheets"))));
+    app.get("/api/tickets/:printer/latest", tickets.latest);
     app.use("/api", apiErrorReporter);
+
+    app.post("/tickets/print/:printer", tickets.print);
 
     var server = app.listen(options.port);
     server.on("listening", function () {
