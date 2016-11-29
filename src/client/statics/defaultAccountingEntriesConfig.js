@@ -3,7 +3,7 @@ module.exports = function() {
         changeableCategories:  ["Alimentaire", "Vêtements", "Meubles"],
         groupableCategories:  ["Alimentaire", "Vêtements", "Meubles"],
         depositTagRegExp: /^([0-9]{4}-[0-9]{2}-[0-9]{2}.*|[0-9]+)$/,
-        relevantTags:  [ "Grasse", "Vallauris", "Vallauris Ameublement" ],
+        relevantTags:  [ "Grasse", "Vallauris", "Vallauris Ameublement", "Vallauris café/librairie" ],
         groupLabel: "${category} ${tags} ${mm}/${yyyy}",
         cashboxAccount: "53000000",
         bankAccount: "51210000",
@@ -21,7 +21,8 @@ module.exports = function() {
         tagsAnalyticAccounts: {
             "Vallauris": "1",
             "Grasse": "2",
-            "Vallauris Ameublement": "3"
+            "Vallauris Ameublement": "3",
+            "Vallauris café/librairie": "4"
         },
         accountingYear: (new Date().getFullYear() - 1),
         journal: "OD"

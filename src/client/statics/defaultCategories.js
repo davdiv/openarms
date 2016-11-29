@@ -1,5 +1,7 @@
 module.exports = function() {
     return {
+        "Alimentaire": "Alimentaire",
+        "Don": "Don",
         "Colis alimentaires + lait": "Alimentaire",
         "Epicerie": "Alimentaire",
         "Frais": "Alimentaire",

@@ -1,6 +1,6 @@
 var SimpleSuggestions = require("../../../utils/simpleSuggestions");
 
-var instance = new SimpleSuggestions([ "Grasse", "Vallauris", "Vallauris Ameublement" ]);
+var instance = new SimpleSuggestions([ "Grasse", "Vallauris", "Vallauris Ameublement", "Vallauris café/librairie" ]);
 
 module.exports = {
     onComputeSuggestions : instance.onComputeSuggestions,
