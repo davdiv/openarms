@@ -1,12 +1,15 @@
 #!/bin/bash
 
-if ! [ -d node_modules/hashspace ] ; then
-	git clone --depth 1 https://github.com/divdavem/hashspace.git node_modules/hashspace &&
+if ! [ -d hashspace ] ; then
+	git clone --depth 1 https://github.com/divdavem/hashspace.git hashspace &&
 	(
-		cd node_modules/hashspace &&
+		cd hashspace &&
 		npm install grunt-cli &&
 		npm_config_production=false npm install &&
 		./node_modules/.bin/grunt package
 	)
-fi
+fi &&
 
+if ! [ -e node_modules/hashspace ] ; then
+	ln -s ../hashspace node_modules/hashspace
+fi
