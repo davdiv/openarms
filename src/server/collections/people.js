@@ -1,16 +1,14 @@
-var klass = require("hashspace/hsp/klass");
 var CollectionBase = require("./utils/collectionBase");
 var validate = require("../../common/validation/people");
 
-module.exports = klass({
-    $extends : CollectionBase,
+module.exports = class extends CollectionBase {
 
-    processToDB : function (doc) {
+    processToDB(doc) {
         validate(doc);
         return CollectionBase.processToDB.call(this, doc);
-    },
+    }
 
-    suggestions : function (query) {
+    suggestions(query) {
         var regExp = new RegExp(query, "i");
         return this.search({
             $or : [ {
@@ -25,4 +23,4 @@ module.exports = klass({
             sort : [ [ "current.firstName", "asc" ], [ "current.lastName", "asc" ] ]
         });
     }
-});
+};

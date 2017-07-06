@@ -1,6 +1,3 @@
-var q = require("q");
-var mongodb = require("mongodb");
-
 var parse = function(argv) {
     var minimist = require("minimist");
     return minimist(argv, {
@@ -12,27 +9,32 @@ var parse = function(argv) {
         },
         "default" : {
             "port" : parseInt(process.env.PORT, 10) || 8080,
-            "db-url" : process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || mongodb.Db.DEFAULT_URL,
+            "db-url" : process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost:27017/test',
             "db-empty" : process.env.OPENARMS_DB_EMPTY == "empty"
         }
     });
 };
 
-var execute = function(options) {
+var execute = async function(options) {
     if (options.version) {
         console.log(require("../../package.json").version);
-        return q(0);
+        return 0;
     } else if (options.help) {
         var packageJson = require("../../package.json");
         console.log(packageJson.name + ": " + packageJson.description);
-        return q(0);
+        return 0;
     } else {
         var server = require("./server");
-        return server(options);
+        await server(options);
     }
 };
 
-module.exports = function(argv) {
-    var options = parse(argv);
-    return execute(options);
+module.exports = async function(argv) {
+    try {
+      var options = parse(argv);
+      return await execute(options);
+    } catch (e) {
+      console.error(e.stack || e);
+      return 1;
+    }
 };

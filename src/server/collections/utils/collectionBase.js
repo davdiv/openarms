@@ -1,43 +1,40 @@
-var klass = require("hashspace/hsp/klass");
 var ObjectID = require("mongodb").ObjectID;
-var Q = require("q");
 var NotFoundError = require("../../../common/notFoundError");
 
-module.exports = klass({
-    $constructor : function (collection) {
+module.exports = class {
+    $constructor(collection) {
         this.collection = collection;
-    },
+    }
 
-    processFromDB : function (doc) {
+    processFromDB(doc) {
         var res = doc.current;
         res.id = doc._id.toString();
         return res;
-    },
+    }
 
-    processToDB : function (doc) {
+    processToDB(doc) {
         delete doc.id;
         return {
             current : doc
         };
-    },
+    }
 
-    insert : function (doc) {
+    async insert(doc) {
         var self = this;
         var processedDoc = self.processToDB(doc);
         processedDoc.current.lastChangeTimestamp = new Date();
-        return Q.ninvoke(this.collection, "insert", [ processedDoc ]).then(function (array) {
-            return self.processFromDB(array[0]);
-        });
-    },
+        const array = await this.collection.insert(processedDoc);
+        return self.processFromDB(array[0]);
+    }
 
-    save : function (doc) {
+    save(doc) {
         var self = this;
         var id = new ObjectID(doc.id);
         var processedDoc = self.processToDB(doc);
         var current = processedDoc.current;
         var lastChangeTimestamp = current.lastChangeTimestamp;
         current.lastChangeTimestamp = new Date();
-        return Q.ninvoke(this.collection, "update", {
+        return this.collection.update({
             _id : id,
             'current.lastChangeTimestamp' : lastChangeTimestamp
         }, {
@@ -50,14 +47,14 @@ module.exports = klass({
                     current : doc
                 });
             } else {
-                return Q.reject("Modification concurrente.");
+                return Promise.reject("Modification concurrente.");
             }
         });
-    },
+    }
 
-    get : function (id) {
+    get(id) {
         var self = this;
-        return Q.ninvoke(self.collection, "findOne", {
+        return self.collection.findOne({
             _id : new ObjectID(id),
         }, {
             fields : {
@@ -67,25 +64,25 @@ module.exports = klass({
             if (res) {
                 return self.processFromDB(res);
             } else {
-                return Q.reject(new NotFoundError());
+                return Promise.reject(new NotFoundError());
             }
         });
-    },
+    }
 
-    search : function (query, options) {
+    search(query, options) {
         var self = this;
         query = query || {};
         options = options || {};
-        return Q.ninvoke(self.collection.find(query, {
+        return self.collection.find(query, {
             "current" : 1
-        }, options), "toArray").then(function (array) {
+        }, options).toArray().then(function (array) {
             return array.map(self.processFromDB, self);
         });
-    },
+    }
 
-    suggestions : function (query) {
+    suggestions(query) {
         throw new Error("Not implemented.");
 
     }
 
-});
+};

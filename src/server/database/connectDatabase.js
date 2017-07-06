@@ -1,10 +1,7 @@
-var Q = require('q');
 var mongodb = require("mongodb");
 
 module.exports = function(dbUrl) {
-    return Q.ninvoke(mongodb.Db, 'connect', dbUrl, {
-        db : {
-            w : 1
-        }
+    return mongodb.MongoClient.connect(dbUrl, {
+        w : 1
     });
 };

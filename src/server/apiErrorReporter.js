@@ -3,9 +3,9 @@ var NotFoundError = require("../common/notFoundError");
 
 module.exports = function (err, req, res, next) {
     if (err instanceof ValidationError) {
-        res.json(400, err);
+        res.status(400).json(err);
     } else if (err instanceof NotFoundError) {
-        res.json(404, err);
+        res.status(404).json(err);
     } else {
         next(err);
     }

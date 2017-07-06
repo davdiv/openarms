@@ -1,4 +1,3 @@
-var Q = require('q');
 var connectDatabase = require("./connectDatabase");
 var emptyDatabase = require("./emptyDatabase");
 
@@ -22,7 +21,7 @@ module.exports = function (config) {
             console.log('Erasing the content of the database');
             return emptyDatabase(db).then(initialize);
         }
-        return Q.ninvoke(db.collection('general'), 'findOne', {}).then(
+        return db.collection('general').findOne({}).then(
             function (version) {
                 if (!version) {
                     return initialize();
@@ -39,7 +38,7 @@ module.exports = function (config) {
 
     function initialize () {
         console.log('Initializing the database');
-        return Q.ninvoke(db.collection('general'), 'insert', {
+        return db.collection('general').insert({
             _id : 0,
             application : versionCheck.application,
             dbVersion : versionCheck.dbVersion,
@@ -52,7 +51,7 @@ module.exports = function (config) {
     }
 
     function createRegistrationsPeopleIndex () {
-        return Q.ninvoke(db.collection("registrations"), "ensureIndex", {
+        return db.collection("registrations").ensureIndex({
             "current.people" : 1
         }, {
             unique : true,
