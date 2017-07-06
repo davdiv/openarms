@@ -20,7 +20,7 @@ module.exports = function (dbCollection) {
                         console.log("Error while saving ticket from ", printer, err);
                         return next(err);
                     }
-                    res.send(200, "OK");
+                    res.status(200).send("OK");
                     console.log("Saved ticket from ", printer);
                 });
             });
@@ -36,12 +36,12 @@ module.exports = function (dbCollection) {
                     return next(err);
                 }
                 if (result) {
-                    res.send(200, {
+                    res.status(200).send({
                         date: result.date,
                         data: result.data.toString("ascii")
                     });
                 } else {
-                    res.send(404);
+                    res.status(404).send();
                 }
             });
         }

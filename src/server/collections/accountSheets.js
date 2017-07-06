@@ -7,6 +7,6 @@ module.exports = class extends CollectionBase {
     processToDB (doc) {
         validate(doc);
         recompute(doc);
-        return CollectionBase.processToDB.call(this, doc);
+        return super.processToDB(doc);
     }
 };

@@ -9,21 +9,21 @@ var RestRouter = function (dbCollection) {
 
     router.post("/", bodyParser, function (req, res, next) {
         dbCollection.insert(req.body).then(function (doc) {
-            res.send(200, doc);
+            res.status(200).send(doc);
         }).then(null, next);
     });
 
     router.post("/search", bodyParser, function (req, res, next) {
         var body = req.body || {};
         dbCollection.search(body.query, body.options).then(function (array) {
-            res.send(200, array);
+            res.status(200).send(array);
         }).then(null, next);
     });
 
     router.get("/suggestions", function (req, res, next) {
         var query = req.query.q;
         dbCollection.suggestions(query).then(function (array) {
-            res.send(200, array);
+            res.status(200).send(array);
         }).then(null, next);
     });
 
@@ -32,9 +32,9 @@ var RestRouter = function (dbCollection) {
             res.set("ETag", '"' + doc.lastChangeTimestamp.getTime() + '"');
             res.set("Last-Modified", doc.lastChangeTimestamp.toUTCString());
             if (res.fresh) {
-                res.send(304);
+                res.status(304).send();
             } else {
-                res.send(200, doc);
+                res.status(200).send(doc);
             }
         }).then(null, next);
     });
@@ -45,7 +45,7 @@ var RestRouter = function (dbCollection) {
             return;
         }
         dbCollection.save(req.body).then(function (doc) {
-            res.send(200, doc);
+            res.status(200).send(doc);
         }).then(null, next);
     });
     return router;

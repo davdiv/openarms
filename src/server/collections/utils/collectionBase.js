@@ -2,7 +2,7 @@ var ObjectID = require("mongodb").ObjectID;
 var NotFoundError = require("../../../common/notFoundError");
 
 module.exports = class {
-    $constructor(collection) {
+    constructor(collection) {
         this.collection = collection;
     }
 
@@ -23,8 +23,8 @@ module.exports = class {
         var self = this;
         var processedDoc = self.processToDB(doc);
         processedDoc.current.lastChangeTimestamp = new Date();
-        const array = await this.collection.insert(processedDoc);
-        return self.processFromDB(array[0]);
+        const result = await this.collection.insert(processedDoc);
+        return self.processFromDB(result.ops[0]);
     }
 
     save(doc) {
@@ -39,8 +39,8 @@ module.exports = class {
             'current.lastChangeTimestamp' : lastChangeTimestamp
         }, {
             '$set' : processedDoc
-        }).then(function (array) {
-            var numUpdates = array[0];
+        }).then(function (result) {
+            var numUpdates = result.result.nModified;
             if (numUpdates == 1) {
                 return self.processFromDB({
                     _id : id,
