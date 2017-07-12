@@ -1,0 +1,296 @@
+<script>
+var klass = require("hsp/klass");
+var vis = require("vis");
+var dateField = require("../display/dates/field.hsp.js");
+var viewDate = require("../display/dates/view.hsp.js");
+var formatCurrency = require("../utils/formatCurrency");
+var resolvePromise = require("../utils/resolvePromise");
+var isPromise = require("../utils/isPromise");
+var depositsMgr = require("../persistence/deposits");
+var serialization = require("../serialization");
+var notMetaData = serialization.isNotMetaData;
+var forEach = require("../utils/forEach");
+var showError = require("../display/errors/view.hsp.js");
+var createCashboxDetails = require("../validation/cashboxDetails/create");
+var recomputeCashboxDetails = require("../validation/cashboxDetails/recompute");
+var addCashboxDetails = require("../validation/cashboxDetails/add");
+var viewCashboxDetails = require("../display/cashboxDetails/view.hsp.js");
+var graph = require("../widgets/graph.hsp.js");
+var formatDate = require("../display/dates/utils/format");
+var formatNumber = function (value) {
+    return formatCurrency(value).replace(/\./,",").replace(/ €$/,"");
+};
+var exportFile = require("../exportFile");
+var tsvFile = require("../tsvFile");
+
+var depositsColumns = [ {
+    title : "Tags",
+    getValue : function (deposit) {
+        return deposit.tags ? deposit.tags.join(", ") : "";
+    }
+}, {
+    title : "Date",
+    getValue : function (deposit) {
+        return formatDate(deposit.date);
+    }
+}, {
+    title : "Date relevé",
+    getValue : function (deposit) {
+        return formatDate(deposit.bankDate);
+    }
+}, {
+    title : "Montant déclaré",
+    getValue : function (deposit) {
+        return formatNumber(deposit.declaredAmount);
+    }
+}, {
+    title : "Date correction",
+    getValue : function (deposit) {
+        return deposit.bankAdjustment ? formatDate(deposit.bankAdjustment.amount) : '';
+    }
+}, {
+    title : "Montant correction",
+    getValue : function (deposit) {
+        return formatNumber(deposit.bankAdjustment ? deposit.bankAdjustment.amount : 0);
+    }
+}, {
+    title : "Montant final",
+    getValue : function (deposit) {
+        return formatNumber(deposit.finalAmount);
+    }
+} ];
+
+var isTagSelected = function (selectedTags, tag) {
+    return selectedTags ? !! selectedTags[tag] : false;
+};
+
+var sortByDate = function (l1, l2) {
+    return l1.date < l2.date ? 1 : -1;
+};
+
+</script>
+
+<template id="showDepositDetails" args="controller">
+    {let results=controller.results}
+    <table class="table">
+    <tbody>
+        <tr>
+        <th>Tags</th>
+        <th>Date</th>
+        <th>Date relevé</th>
+        <th>Montant déclaré</th>
+        <th>Date correction</th>
+        <th>Montant correction</th>
+        <th>Montant final</th>
+        </tr>
+    {foreach deposit in results.deposits}
+        <tr>
+            <td>
+                <a href="/deposits/{deposit.id}"><span class="glyphicon glyphicon-list-alt"></span></a>
+                {foreach tag in deposit.tags} <span class="badge">{tag}</span>{/foreach}
+            </td>
+            <td><#viewDate data="{deposit.date}"/></td>
+            <td><#viewDate data="{deposit.bankDate}"/></td>
+            <td>{formatCurrency(deposit.declaredAmount)}</td>
+            <td>{if deposit.bankAdjustment}<#viewDate data="{deposit.bankAdjustment.date}"/>{/if}</td>
+            <td>{if deposit.bankAdjustment}{formatCurrency(deposit.bankAdjustment.amount)}{/if}</td>
+            <td>{formatCurrency(deposit.finalAmount)}</td>
+        </tr>
+    {/foreach}
+        <tr>
+            <th colspan="3">Total ({results.deposits.length} dépôts)</th>
+            <th>{formatCurrency(results.total.declaredAmount)}</th>
+            <th></th>
+            <th>{formatCurrency(results.total.bankAdjustment)}</th>
+            <th>{formatCurrency(results.total.total)}</th>
+        </tr>
+    </tbody>
+    </table>
+</template>
+
+<template id="displayResults" args="controller">
+    {let results = controller.results}
+    {if controller.filterTags || results.tags.length}
+    <h3><span class="glyphicon glyphicon-chevron-right"></span> Filtres</h3>
+    <div class="btn-group">
+        <button onclick="{controller.clearTags()}" class="btn btn-default {controller.filterTags ? '' : 'active'}">Aucun filtre</button>
+        {foreach tag in results.tags}
+            <button onclick="{controller.clickTag(tag)}" class="btn btn-default {isTagSelected(controller.filterTags, tag) ? 'active' : ''}">{tag}</button>
+        {/foreach}
+    </div>
+    {/if}
+    <h3><span class="glyphicon glyphicon-chevron-right"></span> Dépôts</h3>
+    <p><a href="#" onclick="{controller.toggleDepositDetails($event)}">{if controller.showDepositDetails}Masquer les détails{else}Afficher les détails{/if}</a> <button title="Exporter les détails au format TSV" class="btn btn-default btn-sm" onclick="{controller.saveDeposits()}"><span class="glyphicon glyphicon-save"></span></button></p>
+    {if controller.showDepositDetails}
+        <#showDepositDetails controller="{controller}"/>
+    {/if}
+    {if results.cashboxDetails}
+        <h3><span class="glyphicon glyphicon-chevron-right"></span> Contenu de la caisse</h3>
+        <p><a href="#" onclick="{controller.toggleCashboxDetails($event)}">{if controller.showCashboxDetails}Masquer les détails{else}Afficher les détails{/if}</a></p>
+        {if controller.showCashboxDetails}
+            <#viewCashboxDetails data="{results.cashboxDetails}"/>
+        {/if}
+    {/if}
+</template>
+
+<template id="displaySearch" args="controller">
+    {let query = controller.query}
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Date de début</label>
+            <div class="col-sm-3">
+                <#dateField value="{query.beginDate}"/>
+             </div>
+            <label class="col-sm-2 control-label">Date de fin</label>
+            <div class="col-sm-3">
+                <#dateField value="{query.endDate}"/>
+            </div>
+        </div>
+        <div class="block-container right">
+            <div class="block">
+                <button onclick="{controller.search()}" class="btn btn-primary">Rechercher</button>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template id="template" args="controller">
+    <div class="container-fluid">
+        <h3><span class="glyphicon glyphicon-chevron-right"></span> Recherche</h3>
+        {if controller.results}
+            <p><a href="#" onclick="{controller.toggleSearch($event)}">{if controller.showSearch}Masquer la zone de recherche{else}Afficher la zone de recherche{/if}</a></p>
+        {/if}
+        {if !controller.results || controller.showSearch}
+            <#displaySearch controller="{controller}" />
+        {/if}
+    </div>
+    <div class="container-fluid">
+    {if controller.results}
+        {if isPromise(controller.results)}
+            {if controller.resultsError}
+                <#showError error="{controller.resultsError}" />
+            {else}
+                <span class="spinner"></span> Veuillez patienter...
+            {/if}
+        {else}
+            <#displayResults controller="{controller}"/>
+        {/if}
+    {/if}
+    </div>
+</template>
+
+<script>
+module.exports = klass({
+    template : template,
+    init: function () {
+        this.query = {};
+        this.filterTags = null;
+        this.showSearch = false;
+        this.showDepositDetails = true;
+        this.showCashboxDetails = true;
+    },
+    toggleDepositDetails: function (event) {
+        event.preventDefault();
+        this.showDepositDetails = !this.showDepositDetails;
+    },
+    toggleCashboxDetails: function (event) {
+        event.preventDefault();
+        this.showCashboxDetails = !this.showCashboxDetails;
+    },
+    toggleSearch: function (event) {
+        event.preventDefault();
+        this.showSearch = !this.showSearch;
+    },
+    saveDeposits: function () {
+        exportFile([tsvFile(depositsColumns, this.results.deposits)], "Dépôts.tsv", {type: "text/tab-separated-values"});
+    },
+    clearTags: function () {
+        this.filterTags = null;
+        this.results = this.computeResults(this.results.query, this.results.allDeposits);
+    },
+    clickTag : function (tag) {
+        if (this.filterTags && this.filterTags[tag]) {
+            delete this.filterTags[tag];
+            if (Object.keys(this.filterTags).filter(notMetaData).length == 0) {
+                this.filterTags = null;
+            }
+        } else {
+            if (!this.filterTags) {
+                this.filterTags = {};
+            }
+            this.filterTags[tag] = true;
+        }
+        this.results = this.computeResults(this.results.query, this.results.allDeposits);
+    },
+    computeResults : function (query, allDeposits) {
+        var self = this;
+        var filterTags = this.filterTags ? Object.keys(this.filterTags).filter(notMetaData) : null;
+        var deposits = [];
+        var tags = {};
+        var cashboxDetails = createCashboxDetails();
+        var total = {
+            declaredAmount: 0,
+            bankAdjustment: 0,
+            total: 0
+        };
+        forEach(allDeposits, function(deposit) {
+            var depositTags = {};
+            forEach(deposit.tags, function (tag) {
+                tags[tag] = true;
+                depositTags[tag] = true;
+            });
+            var filterOut = !!filterTags;
+            forEach(filterTags, function (filterTag) {
+                if (depositTags[filterTag]) {
+                    filterOut = false;
+                }
+            });
+            if (filterOut) {
+                return;
+            }
+            if (cashboxDetails) {
+                if (deposit.declaredAmountDetails) {
+                    addCashboxDetails(cashboxDetails, deposit.declaredAmountDetails);
+                } else {
+                    cashboxDetails = null;
+                }
+            }
+            total.declaredAmount += deposit.declaredAmount;
+            if (deposit.bankAdjustment) {
+                total.bankAdjustment += deposit.bankAdjustment.amount;
+            }
+            total.total += deposit.finalAmount;
+            deposits.push(deposit);
+        });
+        if (cashboxDetails) {
+            recomputeCashboxDetails(cashboxDetails);
+        }
+        deposits.sort(sortByDate);
+        return {
+            query: query,
+            tags: Object.keys(tags),
+            allDeposits: allDeposits,
+            deposits: deposits,
+            cashboxDetails: cashboxDetails,
+            total: total
+        }
+    },
+    search : function() {
+        var query = serialization.clone(this.query);
+        var dbQuery = {};
+        if (query.beginDate || query.endDate) {
+            var dateCriteria = dbQuery["current.days.date"] = {};
+            if (query.beginDate) {
+                dateCriteria["$gte"] = query.beginDate;
+            }
+            if (query.endDate) {
+                var endDate = new Date(query.endDate.getTime());
+                endDate.setDate(endDate.getDate()+1);
+                dateCriteria["$lt"] = endDate;
+            }
+        }
+        this.results = depositsMgr.search(dbQuery).thenSync(this.computeResults.bind(this, query));
+        resolvePromise(this, "results","resultsError");
+    }
+});
+</script>

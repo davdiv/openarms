@@ -1,0 +1,152 @@
+<script>
+var klass = require("hsp/klass");
+var dateField = require("../dates/field.hsp.js");
+var viewDate = require("../dates/view.hsp.js");
+var multiAutoComplete = require("../../widgets/multiAutoComplete.hsp.js");
+var tagSuggestions = require("./utils/tagSuggestions");
+var amountField = require("../../widgets/amountField.hsp.js");
+var formatCurrency = require("../../utils/formatCurrency");
+var recompute = require("../../validation/deposits/recompute");
+var editCashboxDetails = require("../cashboxDetails/edit.hsp.js");
+var createCashboxDetails = require("../../validation/cashboxDetails/create");
+
+var Ctrl = klass({
+    $attributes : {
+        data : {
+            type : "object",
+            binding : "1-way"
+        }
+    },
+    addDeclaredAmountDetails : function() {
+        this.data.declaredAmountDetails = createCashboxDetails();
+        this.recompute();
+    },
+    removeDeclaredAmountDetails : function (event) {
+        event.preventDefault();
+        this.data.declaredAmountDetails = null;
+        this.recompute();
+    },
+    addBankAdjustment : function () {
+        this.data.bankAdjustment = {
+            date: null,
+            amount: 0
+        };
+    },
+    removeBankAdjustment : function () {
+        this.data.bankAdjustment.date = null;
+        this.data.bankAdjustment.amount = 0;
+        this.recompute();
+        delete this.data.bankAdjustment;
+    },
+    recompute: function () {
+        recompute(this.data);
+    }
+})
+</script>
+
+<template id="editDeposit" ctrl="Ctrl as c">
+    {let data = c.data}
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Informations</h3>
+      </div>
+      <div class="panel-body form-horizontal">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Numéro</label>
+            <div class="col-sm-5">
+                <input type="text" value="{data.depositNumber}" class="form-control input-sm"/>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Date</label>
+            <div class="col-sm-5">
+                <#dateField value="{data.date}"/>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Montant déclaré</label>
+            <div class="col-sm-3">
+                {if data.declaredAmountDetails}
+                    <p class="form-control-static">{formatCurrency(data.declaredAmount)}</p>
+                {else}
+                    <#amountField value="{data.declaredAmount}" onchange="{c.recompute()}"/>
+                {/if}
+            </div>
+            {if !data.declaredAmountDetails}
+            <div class="col-sm-2">
+                <button class="btn btn-default btn-sm" onclick="{c.addDeclaredAmountDetails()}"><span class="glyphicon glyphicon-list-alt"></span> Détailler le montant</button>
+            </div>
+            {/if}
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Date relevé</label>
+            <div class="col-sm-5">
+                <#dateField value="{data.bankDate}"/>
+            </div>
+        </div>
+
+        {if data.bankAdjustment}
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Correction par la banque</label>
+            <div class="col-sm-2">
+                <#dateField value="{data.bankAdjustment.date}"/>
+            </div>
+            <div class="col-sm-2">
+                <#amountField value="{data.bankAdjustment.amount}" onchange="{c.recompute()}"/>
+            </div>
+            <div class="col-sm-1">
+                <button class="btn btn-default btn-sm" onclick="{c.removeBankAdjustment()}"><span class="glyphicon glyphicon-remove"></span></button>
+            </div>
+        </div>
+        {else}
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Correction par la banque</label>
+            <div class="col-sm-1">
+                <button class="btn btn-default btn-sm" onclick="{c.addBankAdjustment()}"><span class="glyphicon glyphicon-plus"></span></button>
+            </div>
+        </div>
+        {/if}
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Montant final</label>
+            <div class="col-sm-5"><p class="form-control-static">{formatCurrency(data.finalAmount)}</p></div>
+        </div>
+
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Tags</label>
+            <div class="col-sm-5">
+                <#multiAutoComplete
+                    values="{data.tags}"
+                    onComputeSuggestions="{tagSuggestions.onComputeSuggestions($event)}"
+                    onEnter="{tagSuggestions.onEnter($event)}"
+                />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Remarques</label>
+            <div class="col-sm-5">
+                <textarea class="form-control" type="text" value="{data.notes}"></textarea>
+            </div>
+        </div>
+      </div>
+    </div>
+    {if data.declaredAmountDetails}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Montant déclaré: {formatCurrency(data.declaredAmount)} <a href="#" class="close" onclick="{c.removeDeclaredAmountDetails($event)}">&times;</a></h3>
+        </div>
+        <div class="panel-body">
+            <#editCashboxDetails data="{data.declaredAmountDetails}" onchange="{c.recompute()}"/>
+        </div>
+    </div>
+    {/if}
+</template>
+
+<script>
+module.exports = editDeposit;
+</script>

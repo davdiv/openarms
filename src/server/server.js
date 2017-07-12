@@ -9,6 +9,7 @@ var CollectionBase = require("./collections/utils/collectionBase");
 var PeopleCollection = require("./collections/people");
 var RegistrationsCollection = require("./collections/registrations");
 var AccountSheetsCollection = require("./collections/accountSheets");
+var DepositsCollection = require("./collections/deposits");
 var ticketsHandler = require("./tickets");
 
 var startServer = async function (options, db) {
@@ -37,6 +38,7 @@ var startServer = async function (options, db) {
     app.use("/api/registrations", new RestRouter(new RegistrationsCollection(db.collection("registrations"))));
     app.use("/api/visits", new RestRouter(new CollectionBase(db.collection("visits"))));
     app.use("/api/account/sheets", new RestRouter(new AccountSheetsCollection(db.collection("accountSheets"))));
+    app.use("/api/account/deposits", new RestRouter(new DepositsCollection(db.collection("deposits"))));
     app.get("/api/tickets/:printer/latest", tickets.latest);
     app.use("/api", apiErrorReporter);
 

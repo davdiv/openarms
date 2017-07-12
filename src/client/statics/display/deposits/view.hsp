@@ -1,0 +1,51 @@
+<script>
+var klass = require("hsp/klass");
+var formatCurrency = require("../../utils/formatCurrency");
+var viewDate = require("../dates/view.hsp.js");
+var personRef = require("../peopleId/viewAny.hsp.js");
+var viewCashboxDetails = require("../cashboxDetails/view.hsp.js");
+</script>
+
+<template id="viewDeposit" args="data">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Dépôt</h3>
+        </div>
+        <div class="panel-body">
+<table class="table">
+    <tbody>
+    <tr><td>Numéro</td><td>{data.depositNumber}</td><td></td></tr>
+    <tr><td>Date</td><td><#viewDate data="{data.date}"/></td><td></td></tr>
+    <tr><td>Montant déclaré</td><td><#viewDate data="{data.bankDate}"/></td><td>{formatCurrency(data.declaredAmount)}</td></tr>
+    {if data.bankAdjustment}
+        <tr><td>Correction par la banque</td><td><#viewDate data="{data.bankAdjustment.date}"/></td><td>{formatCurrency(data.bankAdjustment.amount)}</td></tr>
+    {/if}
+    <tr><td>Montant final</td><td></td><td>{formatCurrency(data.finalAmount)}</td></tr>
+    </tbody>
+</table>
+
+    {if data.tags && data.tags.length > 0}
+        <p><b>Tags:</b> {foreach tag in data.tags}{if !tag_isfirst}, {/if}{tag}{/foreach}</p>
+    {/if}
+
+    {if data.notes}
+        <p><b>Remarques:</b> {data.notes}</p>
+    {/if}
+        </div>
+    </div>
+    {if data.declaredAmountDetails}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Montant déclaré: {formatCurrency(data.declaredAmount)}</h3>
+            </div>
+            <div class="panel-body">
+                <#viewCashboxDetails data="{data.declaredAmountDetails}"/>
+            </div>
+        </div>
+    {/if}
+
+</template>
+
+<script>
+module.exports = viewDeposit;
+</script>

@@ -1,1 +1,1 @@
-module.exports = ['people', 'registrations', 'visits', 'accountSheets', 'tickets', 'general'];
+module.exports = ['people', 'registrations', 'visits', 'accountSheets', 'deposits', 'tickets', 'general'];

@@ -1,0 +1,24 @@
+<script>
+var klass = require("hsp/klass");
+var editable = require("../components/editable.hsp.js");
+var viewer = require("../display/deposits/view.hsp.js");
+var editor = require("../display/deposits/edit.hsp.js");
+var createData = require("../validation/deposits/create.js");
+</script>
+
+<template id="iconTemplate" args="page">
+<span class="glyphicon glyphicon-euro"></span> {page.title}
+</template>
+
+<script>
+var BaseClass = require("./utils/editable.hsp.js");
+
+module.exports = klass({
+    $extends: BaseClass,
+    viewerTemplate: viewer,
+    editorTemplate: editor,
+    iconTemplate : iconTemplate,
+    cache: require("../persistence/deposits"),
+    createData: createData
+});
+</script>

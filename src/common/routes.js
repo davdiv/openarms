@@ -31,6 +31,14 @@ module.exports = [ {
     "module" : "pages/accountSheets.hsp.js",
     "title" : "Feuille de comptes"
 }, {
+    "path" : "/deposits/sum",
+    "module" : "pages/depositsSum.hsp.js",
+    "title" : "Liste des dépôts"
+}, {
+    "path" : "/deposits/:id",
+    "module" : "pages/deposits.hsp.js",
+    "title" : "Dépôt"
+}, {
     "path" : "/import",
     "module" : "pages/import.hsp.js",
     "title" : "Importer des données"
