@@ -29,6 +29,11 @@ var depositsColumns = [ {
         return deposit.tags ? deposit.tags.join(", ") : "";
     }
 }, {
+    title : "Numéro",
+    getValue : function (deposit) {
+        return deposit.depositNumber;
+    }
+}, {
     title : "Date",
     getValue : function (deposit) {
         return formatDate(deposit.date);
@@ -76,6 +81,7 @@ var sortByDate = function (l1, l2) {
     <tbody>
         <tr>
         <th>Tags</th>
+        <th>Numéro</th>
         <th>Date</th>
         <th>Date relevé</th>
         <th>Montant déclaré</th>
@@ -89,6 +95,7 @@ var sortByDate = function (l1, l2) {
                 <a href="/deposits/{deposit.id}"><span class="glyphicon glyphicon-list-alt"></span></a>
                 {foreach tag in deposit.tags} <span class="badge">{tag}</span>{/foreach}
             </td>
+            <td>{deposit.depositNumber}</td>
             <td><#viewDate data="{deposit.date}"/></td>
             <td><#viewDate data="{deposit.bankDate}"/></td>
             <td>{formatCurrency(deposit.declaredAmount)}</td>
@@ -98,7 +105,7 @@ var sortByDate = function (l1, l2) {
         </tr>
     {/foreach}
         <tr>
-            <th colspan="3">Total ({results.deposits.length} dépôts)</th>
+            <th colspan="4">Total ({results.deposits.length} dépôts)</th>
             <th>{formatCurrency(results.total.declaredAmount)}</th>
             <th></th>
             <th>{formatCurrency(results.total.bankAdjustment)}</th>
