@@ -279,7 +279,7 @@ module.exports = klass({
         var query = serialization.clone(this.query);
         var dbQuery = {};
         if (query.beginDate || query.endDate) {
-            var dateCriteria = dbQuery["current.days.date"] = {};
+            var dateCriteria = dbQuery["current.date"] = {};
             if (query.beginDate) {
                 dateCriteria["$gte"] = query.beginDate;
             }
