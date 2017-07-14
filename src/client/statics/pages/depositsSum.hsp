@@ -51,7 +51,7 @@ var depositsColumns = [ {
 }, {
     title : "Date correction",
     getValue : function (deposit) {
-        return deposit.bankAdjustment ? formatDate(deposit.bankAdjustment.amount) : '';
+        return deposit.bankAdjustment ? formatDate(deposit.bankAdjustment.date) : '';
     }
 }, {
     title : "Montant correction",
