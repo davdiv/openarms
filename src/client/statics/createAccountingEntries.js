@@ -23,13 +23,6 @@ function formatDate(jsDate) {
     return [ f2(jsDate.getDate()), f2(1 + jsDate.getMonth()), f2(jsDate.getFullYear() % 100) ].join("/");
 }
 
-function getDepositKey(sheet, config) {
-    var tag = sheet.tags.filter(function (tag) {
-        return config.depositTagRegExp.test(tag);
-    });
-    return tag.length > 0 ? tag[0] : sheet.id;
-}
-
 function canChangeLine(config, line) {
     return (config.changeableCategories.indexOf(line.category) > -1);
 }
@@ -84,8 +77,6 @@ function processDifference(sheetLines, difference, config) {
 }
 
 module.exports = function (sheets, getCategory, config) {
-    var depositsMap = {};
-    var depositsArray = [];
     var allLines = [];
     var filterAccountingYear = function (obj) {
         return (obj.date.getFullYear() == config.accountingYear);
@@ -117,30 +108,8 @@ module.exports = function (sheets, getCategory, config) {
         if (sheetLines.length == 0) {
             return;
         }
-        var curDepositKey = getDepositKey(sheet, config);
-        var curDeposit = depositsMap[curDepositKey];
-        if (!curDeposit) {
-            curDeposit = depositsMap[curDepositKey] = {
-                key: curDepositKey,
-                cashbox: createCashboxDetails(),
-                amount: 0,
-                date: endDate
-            };
-            depositsArray.push(curDeposit);
-        }
         allLines.push.apply(allLines, sheetLines);
-        if (sheet.realAmountDetails && curDeposit.cashbox) {
-            addCashboxDetails(curDeposit.cashbox, sheet.realAmountDetails);
-        } else {
-            curDeposit.cashbox = null;
-        }
-        curDeposit.amount += sheet.realAmount;
-        if (!curDeposit.date || curDeposit.date < endDate) {
-            curDeposit.date = endDate;
-        }
     });
-    depositsArray = depositsArray.filter(filterAccountingYear);
-    depositsMap = null;
 
     var lineGroups = {};
     var summaryLines = [];
@@ -177,7 +146,6 @@ module.exports = function (sheets, getCategory, config) {
         }
     });
     summaryLines.sort(sortByDate);
-    depositsArray.sort(sortByDate);
 
     var operations = [];
     summaryLines.forEach(function (line) {
@@ -206,52 +174,6 @@ module.exports = function (sheets, getCategory, config) {
         });
     });
 
-    depositsArray.forEach(function (curDeposit) {
-        var cashbox = curDeposit.cashbox;
-        var key = " (" + curDeposit.key + ")";
-        if (cashbox) {
-            recomputeCashboxDetails(cashbox);
-            var total = cashbox.total;
-            var coins = total.coins.total;
-            if (coins > 0) {
-                operations.push({
-                    date: curDeposit.date,
-                    src: config.cashboxAccount,
-                    dst: config.bankAccount,
-                    item: config.coinsDepositLabel + key,
-                    amount: coins
-                });
-            }
-            var banknotes = total.banknotes.total;
-            if (banknotes > 0) {
-                operations.push({
-                    date: curDeposit.date,
-                    src: config.cashboxAccount,
-                    dst: config.bankAccount,
-                    item: config.banknotesDepositLabel + key,
-                    amount: banknotes
-                });
-            }
-            var checks = total.checks.total
-            if (checks > 0) {
-                operations.push({
-                    date: curDeposit.date,
-                    src: config.cashboxAccount,
-                    dst: config.bankAccount,
-                    item: config.checksDepositLabel + key,
-                    amount: checks
-                });
-            }
-        } else {
-            operations.push({
-                date: curDeposit.date,
-                src: config.cashboxAccount,
-                dst: config.bankAccount,
-                item: config.generalDepositLabel + key,
-                amount: curDeposit.amount
-            });
-        }
-    });
     var outputLines = [];
     operations.forEach(function (operation, index) {
         var operationNumber = index + 1;

@@ -177,7 +177,7 @@ var objectValues = function (object) {
                 <input type="text" value="{config.journal}" class="form-control input-sm"/>
             </div>
         </div>
-        {foreach category in Object.keys(config.categoriesAccounts)}
+        {foreach category in Object.keys(config.categoriesAccounts).filter(notMetaData)}
             <div class="row form-group">
                 <label class="col-sm-3 control-label">Numéro de compte général pour la catégorie <em>{category}</em></label>
                 <div class="col-sm-5">
@@ -197,44 +197,6 @@ var objectValues = function (object) {
             <label class="col-sm-3 control-label">Numéro de compte général pour la caisse</label>
             <div class="col-sm-5">
                 <input type="text" value="{config.cashboxAccount}" class="form-control input-sm"/>
-            </div>
-        </div>
-        <div class="row form-group">
-            <label class="col-sm-3 control-label">Numéro de compte général pour le compte bancaire</label>
-            <div class="col-sm-5">
-                <input type="text" value="{config.bankAccount}" class="form-control input-sm"/>
-            </div>
-        </div>
-        <div class="row form-group">
-            <label class="col-sm-3 control-label">Libellé pour les dépôts non détaillés</label>
-            <div class="col-sm-5">
-                <input type="text" value="{config.generalDepositLabel}" class="form-control input-sm"/>
-            </div>
-        </div>
-        <div class="row form-group">
-            <label class="col-sm-3 control-label">Libellé pour les dépôts de chèques</label>
-            <div class="col-sm-5">
-                <input type="text" value="{config.checksDepositLabel}" class="form-control input-sm"/>
-            </div>
-        </div>
-        <div class="row form-group">
-            <label class="col-sm-3 control-label">Libellé pour les dépôts de pièces</label>
-            <div class="col-sm-5">
-                <input type="text" value="{config.coinsDepositLabel}" class="form-control input-sm"/>
-            </div>
-        </div>
-        <div class="row form-group">
-            <label class="col-sm-3 control-label">Libellé pour les dépôts de billets</label>
-            <div class="col-sm-5">
-                <input type="text" value="{config.banknotesDepositLabel}" class="form-control input-sm"/>
-            </div>
-        </div>
-        <div class="row form-group">
-            <label class="col-sm-3 control-label">Expression régulière pour les tags de dépôt</label>
-            <div class="col-sm-5">
-                <#regExpField
-                    value="{config.depositTagRegExp}"
-                />
             </div>
         </div>
     </div>

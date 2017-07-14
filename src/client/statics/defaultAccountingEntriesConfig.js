@@ -1,16 +1,10 @@
 module.exports = function() {
     return {
-        changeableCategories:  ["Alimentaire", "Vêtements", "Meubles"],
-        groupableCategories:  ["Alimentaire", "Vêtements", "Meubles"],
-        depositTagRegExp: /^([0-9]{4}-[0-9]{2}-[0-9]{2}.*|[0-9]+)$/,
+        changeableCategories:  ["Alimentaire", "Vêtements", "Meubles", "Café"],
+        groupableCategories:  ["Alimentaire", "Vêtements", "Meubles", "Café"],
         relevantTags:  [ "Grasse", "Vallauris", "Vallauris Ameublement", "Vallauris café/librairie" ],
         groupLabel: "${category} ${tags} ${mm}/${yyyy}",
         cashboxAccount: "53000000",
-        bankAccount: "51210000",
-        generalDepositLabel: "Dépôt",
-        coinsDepositLabel: "Dépôt de pièces",
-        banknotesDepositLabel: "Dépôt de billets",
-        checksDepositLabel: "Dépôt de chèques",
         categoriesAccounts: {
             "Alimentaire": "75880100",
             "Vêtements": "75880200",
