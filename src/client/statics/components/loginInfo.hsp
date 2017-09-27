@@ -6,22 +6,22 @@ var logout = function (event) {
     event.preventDefault();
     login.logout();
 };
+
+var manageAccount = function (event) {
+    event.preventDefault();
+    login.manageAccount();
+};
 </script>
 
 <template id="loginInfo">
-    {let loginModule = login}
-    {let loginData = loginModule.data}
     <ul class="nav navbar-nav navbar-right">
-        {if loginData.connected}
-            <#menu>
-                <@title><span class="glyphicon glyphicon-user"></span> {loginData.userDisplayName}</@title>
-                <@content>
-                    <li><a href="#" onclick="{logout($event)}">Se déconnecter</a></li>
-                </@content>
-            </#menu>
-        {else}
-            <li><a href="/login"><span class="glyphicon glyphicon-user"></span> Se connecter</a></li>
-        {/if}
+        <#menu>
+            <@title><span class="glyphicon glyphicon-user"></span> {login.userDisplayName}</@title>
+            <@content>
+                <li><a href="#" onclick="{manageAccount($event)}">Paramètres utilisateur</a></li>
+                <li><a href="#" onclick="{logout($event)}">Déconnexion</a></li>
+            </@content>
+        </#menu>
     </ul>
 </template>
 

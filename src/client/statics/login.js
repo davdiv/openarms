@@ -1,56 +1,40 @@
-var promise = require("noder-js/promise");
-var json = require("hsp/json");
+var Promise = require("noder-js/promise");
+var Keycloak = require('keycloak');
+var keycloakInstance = exports.keycloak = Keycloak('/keycloak.json');
 
-var login = module.exports = {
-    data : {
-        sessionId : null,
-        userDisplayName : "",
-        userLogin : "",
-        userId : "",
-        connected : false
-    },
-    login : function (credentials) {
-        // TODO: replace this with a server call
-        setLoginData({
-            sessionId : null,
-            userDisplayName : credentials.login,
-            userLogin : credentials.login,
-            userId : "",
-            connected : true
-        });
-        return promise.done;
-    },
-    logout : function () {
-        // TODO: replace this with a server call
-        setLoginData({
-            sessionId : null,
-            userDisplayName : "",
-            userLogin : login.data.userLogin,
-            userId : "",
-            connected : false
-        });
-        return promise.done;
-    }
+var AuthenticationError = exports.AuthenticationError = function(message) {
+    this.message = message;
 };
 
-var setLoginData = function (loginData) {
-    login.data = loginData;
-    var strLoginData = JSON.stringify({
-        sessionId : loginData.sessionId,
-        userDisplayName : loginData.userDisplayName,
-        userLogin : loginData.userLogin,
-        userId : loginData.userId,
-        connected : loginData.connected
+exports.done = new Promise(function (resolve, reject) {
+    keycloakInstance.init({ onLoad: 'login-required' }).success(resolve).error(reject);
+}).then(function () {
+    exports.userDisplayName = keycloakInstance.tokenParsed.name;
+}, function () {
+    return Promise.reject(new AuthenticationError("L'authentification a échoué!"));
+});
+
+exports.logout = function() {
+    keycloakInstance.logout();
+};
+
+exports.manageAccount = function() {
+    var url = keycloakInstance.createAccountUrl();
+    var newWindow = window.open();
+    newWindow.opener = null;
+    newWindow.location = url;
+};
+
+exports.getToken = function () {
+    return new Promise(function (resolve, reject) {
+        keycloakInstance.updateToken(30).success(resolve).error(reject);
+    }).then(function () {
+        return keycloakInstance.token;
+    }, function () {
+        return Promise.reject(new AuthenticationError("Vous avez été déconnecté(e)!"));
     });
-    localStorage.setItem("login", strLoginData);
 };
 
-var onStorageEvent = function () {
-    var strLoginData = localStorage.getItem("login");
-    if (strLoginData) {
-        login.data = JSON.parse(strLoginData);
-    }
+exports.isAuthenticated = function () {
+    return keycloakInstance.authenticated;
 };
-
-window.addEventListener('storage', onStorageEvent, false);
-onStorageEvent();

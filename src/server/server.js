@@ -9,27 +9,36 @@ var PeopleCollection = require("./collections/people");
 var AccountSheetsCollection = require("./collections/accountSheets");
 var DepositsCollection = require("./collections/deposits");
 var ticketsHandler = require("./tickets");
+var Keycloak = require("keycloak-connect");
 
 var startServer = async function (options, db) {
     var staticsRoot = path.join(__dirname, "../../build/client");
     var devHtmlFile = path.join(staticsRoot, "statics-dev/index.html");
     var prodHtmlFile = path.join(staticsRoot, "statics/index.html");
+    var keycloakUIjson = path.resolve(options['keycloak-ui']);
+    var keycloakBackendjson = path.resolve(options['keycloak-backend']);
 
     var sendHtmlFile = function (req, res) {
         var dev = "dev" in req.query ? req.query.dev != "false" : options.dev;
         res.sendFile(dev ? devHtmlFile : prodHtmlFile);
     };
 
+    var keycloak = new Keycloak({}, keycloakBackendjson);
     var app = express();
 
     app.set("json replacer", serialization.replacer);
 
+    app.use(keycloak.middleware());
     routes.forEach(function (curRoute) {
         app.get(curRoute.path, sendHtmlFile);
+    });
+    app.get("/keycloak.json", function (req, res) {
+        res.sendFile(keycloakUIjson);
     });
 
     app.use(express.static(staticsRoot));
 
+    app.use(keycloak.protect());
     var tickets = ticketsHandler(db.collection("tickets"));
 
     app.use("/api/people", new RestRouter(new PeopleCollection(db.collection("people"))));

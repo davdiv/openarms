@@ -1,0 +1,13 @@
+<script>
+var showError = require("./display/errors/view.hsp.js");
+</script>
+
+<template id="errorPage" args="error">
+    <div class="container">
+    <#showError error="{error}" />
+    </div>
+</template>
+
+<script>
+module.exports = errorPage;
+</script>

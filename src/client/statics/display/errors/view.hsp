@@ -1,5 +1,6 @@
 <script>
 var klass = require("hsp/klass");
+var AuthenticationError = require("../../login").AuthenticationError;
 var NotFoundError = require("../../notFoundError");
 var ValidationError = require("../../validation/utils/validationError");
 var validationErrorsList = require("./utils/validationErrorsList");
@@ -21,7 +22,9 @@ var Ctrl = klass({
     },
     $onErrorChange : function () {
         var error = this.error;
-        if (error instanceof server.ConnectionError) {
+        if (error instanceof AuthenticationError) {
+            this.template = showAuthenticationError;
+        } else if (error instanceof server.ConnectionError) {
             this.template = showServerConnectionError;
         } else if (error instanceof server.UnknownError){
             this.template = showServerUnknownError;
@@ -63,6 +66,11 @@ var Ctrl = klass({
 
 <template id="showServerConnectionError" args="c">
 La connexion au serveur a échoué.
+</template>
+
+<template id="showAuthenticationError" args="c">
+Erreur d'authentification:<br>
+{c.error.message}
 </template>
 
 <template id="showServerUnknownError" args="c">
