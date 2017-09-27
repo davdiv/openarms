@@ -54,20 +54,6 @@ gulp.task("dev-dep-noder-js", function () {
         gulp.dest(staticsDevDir + "/noder-js"));
 });
 
-gulp
-    .task(
-        "dev-dep-sqlite",
-        function () {
-            return gulp
-                .src("node_modules/node-sqlite-purejs/js/sql.js")
-                .pipe(newer(staticsDevDir + "/sqlite.js"))
-                .pipe(rename("sqlite.js"))
-                .pipe(replace(/\brequire\(/g, 'myRequire('))
-                .pipe(
-                    wrap("(function() {function myRequire() {throw new Error('Not implemented');}; <%= contents %> }).apply(exports); module.exports = exports.SQL;"))
-                .pipe(gulp.dest(staticsDevDir));
-        });
-
 gulp.task("dev-hsp-compile", function () {
     return gulp.src("src/client/statics/**/*.hsp").pipe(newer({
         dest : staticsDevDir,
@@ -101,7 +87,7 @@ gulp.task("dev-statics-root", function () {
 });
 
 gulp.task("dev-dep", [ "dev-dep-bootstrap", "dev-dep-page", "dev-dep-diacritics", "dev-dep-qs", "dev-dep-hsp",
-    "dev-dep-noder-js", "dev-dep-sqlite", "dev-dep-vis", "dev-dep-vis-css" ]);
+    "dev-dep-noder-js", "dev-dep-vis", "dev-dep-vis-css" ]);
 
 gulp.task("dev-main",
     [ "dev-hsp-compile", "dev-js-transpile", "dev-js-notranspile", "dev-statics", "dev-statics-root" ]);

@@ -5,7 +5,6 @@ var peopleSuggestions = require("../display/peopleId/utils/peopleSuggestions");
 var personRef = require("../display/peopleId/viewAny.hsp.js");
 var personName = require("../display/people/viewName.hsp.js");
 var page = require("page");
-var searchUrl = "/search?q=";
 
 var computeSuggestions = function (event) {
     var text = event.text;
@@ -17,11 +16,6 @@ var computeSuggestions = function (event) {
             icon: "glyphicon glyphicon-plus",
             label: "Nouvelle fiche pour " + text,
             url: "/people/new?lastName=" + encodeURIComponent(text)
-        });
-        res.push({
-            icon: "glyphicon glyphicon-search",
-            label: "Tous les résultats pour " + text,
-            url: searchUrl + encodeURIComponent(text)
         });
         return res;
     });
