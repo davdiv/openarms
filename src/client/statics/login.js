@@ -38,3 +38,7 @@ exports.getToken = function () {
 exports.isAuthenticated = function () {
     return keycloakInstance.authenticated;
 };
+
+exports.hasRole = function (role) {
+    return keycloakInstance.hasResourceRole(role, "openarms");
+};

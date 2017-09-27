@@ -6,6 +6,7 @@ var cashCountField = require("./utils/cashCountField.hsp.js");
 var dateField = require("../dates/field.hsp.js");
 var amountField = require("../../widgets/amountField.hsp.js");
 var server = require("../../persistence/utils/server");
+var login = require("../../login");
 
 var ticketParseRegExp = /\r?\n-+\r?\n([\s\S]*)\r?\n-+\r?\n/;
 var splitLineRegExp = /\r?\n/;
@@ -86,7 +87,9 @@ var Ctrl = klass({
 <template id="itemsTable" args="title, image, total, itemsArray, controller">
     <#itemsHeader title="{title}" image="{image}" total="{total}" />
     <div>
-        <button class="btn btn-link" onclick="{controller.retrieveTicket(image, itemsArray)}">Ticket</button>
+        {if login.hasRole("readTickets")}
+            <button class="btn btn-link" onclick="{controller.retrieveTicket(image, itemsArray)}">Ticket</button>
+        {/if}
         <button class="btn btn-link" onclick="{controller.clear(itemsArray)}">Effacer</button>
     </div>
     {foreach item in itemsArray}
