@@ -1,5 +1,5 @@
 <template id="viewSex" args="data">
-<div class="img-lg-portrait{data=='male'||data=='female'?'-'+data:''} img-responsive block" style="margin-right:16px;"></div>
+<div class="{data=='male'||data=='female'?'img-lg-portrait-'+data:'img-lg-portrait'} img-responsive block" style="margin-right:16px;"></div>
 </template>
 
 <script>

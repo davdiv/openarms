@@ -1,6 +1,8 @@
 <template id="viewSex" args="data">
-{if data=="male"||data=="female"}
-<span class="img-sm-symbol-{data}"></span>
+{if data=="male"}
+<span class="img-sm-symbol-male"></span>
+{else if data=="female"}
+<span class="img-sm-symbol-female"></span>
 {else}
 <span class="glyphicon glyphicon-user"></span>
 {/if}
