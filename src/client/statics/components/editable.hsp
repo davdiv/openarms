@@ -32,6 +32,10 @@ var EditableCtrl = klass({
             type: "string",
             binding: "2-way"
         },
+        canSave: {
+            type: "boolean",
+            binding: "1-way"
+        },
         onEdit: {
             type: "callback"
         },
@@ -132,7 +136,7 @@ var EditableCtrl = klass({
         }
         this.currentView = currentView;
         this.displayRefresh = (currentView == "saved");
-        this.displayEdit = this.displayRefresh && !isPromise(this.savedData);
+        this.displayEdit = this.displayRefresh && !isPromise(this.savedData) && this.canSave;
         this.displayCancel = currentView != "saved" && editedData && (this.savingDataError || !savingData);
         this.displaySave = this.displayCancel && !isPromise(editedData);
     }

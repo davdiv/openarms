@@ -7,7 +7,8 @@ var DepositsCache = klass({
     $constructor : function () {
         RestCache.$constructor.call(this, "account/deposits");
     },
-
+    readRole : "readDeposits",
+    writeRole : "writeDeposits",
     saveItemContent : function (object) {
         validateDeposit(object);
         return RestCache.saveItemContent.call(this, object);

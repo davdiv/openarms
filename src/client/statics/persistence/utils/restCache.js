@@ -1,6 +1,8 @@
+var Promise = require("noder-js/promise");
 var klass = require("hsp/klass");
 var Cache = require("./cache");
 var server = require("./server");
+var login = require("../../login");
 
 var RestCache = klass({
     $constructor : function (basePath) {
@@ -8,10 +10,24 @@ var RestCache = klass({
         Cache.$constructor.call(this);
     },
     $extends : Cache,
+    readRole : undefined,
+    writeRole : undefined,
     refreshContent : function (id) {
+        if (!this.canRead()) {
+            return Promise.reject(new login.AuthenticationError("Vous ne pouvez pas accéder à ce document."));
+        }
         return server("GET", this.basePath + "/" + id);
     },
+    canSave : function () {
+        return login.hasRole(this.writeRole);
+    },
+    canRead : function () {
+        return login.hasRole(this.readRole);
+    },
     saveItemContent : function (object) {
+        if (!this.canSave()) {
+            return Promise.reject(new login.AuthenticationError("Vous ne pouvez pas enregistrer ce document."));
+        }
         var response;
         var id = object.id;
         if (!id) {

@@ -7,7 +7,8 @@ var AccountSheetsCache = klass({
     $constructor : function () {
         RestCache.$constructor.call(this, "account/sheets");
     },
-
+    readRole : "readAccountSheets",
+    writeRole : "writeAccountSheets",
     saveItemContent : function (object) {
         validateAccountSheet(object);
         return RestCache.saveItemContent.call(this, object);

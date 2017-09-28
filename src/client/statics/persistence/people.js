@@ -7,7 +7,8 @@ var PeopleCache = klass({
     $constructor : function () {
         RestCache.$constructor.call(this, "people");
     },
-
+    readRole : "readPeople",
+    writeRole : "writePeople",
     saveItemContent : function (object) {
         validatePerson(object);
         return RestCache.saveItemContent.call(this, object);

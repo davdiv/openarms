@@ -17,6 +17,7 @@ var isPromise = require("../../utils/isPromise");
             currentView="{controller.currentView}"
             viewer="{controller.viewerTemplate}"
             editor="{controller.editorTemplate}"
+            canSave="{controller.cache.canSave()}"
             />
     </div>
     {if controller.actionTemplate && controller.savedData && !isPromise(controller.savedData)}

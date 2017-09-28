@@ -5,7 +5,7 @@ var peopleSuggestions = require("../display/peopleId/utils/peopleSuggestions");
 var personRef = require("../display/peopleId/viewAny.hsp.js");
 var personName = require("../display/people/viewName.hsp.js");
 var page = require("page");
-var login = require("../login");
+var PeopleCache = require("../persistence/people");
 
 var computeSuggestions = function (event) {
     var text = event.text;
@@ -44,7 +44,7 @@ var enter = function (event) {
 </template>
 
 <template id="search">
-    {if login.hasRole("readPeople")}
+    {if PeopleCache.canRead()}
     <div class="navbar-form navbar-left">
         <div class="form-group">
             <#autoComplete class="form-control" onComputeSuggestions="{computeSuggestions($event)}" onChooseSuggestion="{chooseSuggestion($event)}" onEnter="{enter($event)}" displaySuggestion="{displayLine}"/>
