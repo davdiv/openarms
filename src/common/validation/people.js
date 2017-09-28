@@ -21,5 +21,6 @@ module.exports = v.validator([ v.mandatory, v.object({
         value : [ v.mandatory, v.string ]
     }) ]),
     lastChangeTimestamp : v.date,
+    lastChangeBy : v.string,
     id : v.id
 }), atLeastOneName ]);

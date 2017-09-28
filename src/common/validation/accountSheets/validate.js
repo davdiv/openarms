@@ -25,5 +25,6 @@ module.exports = v.validator([ v.mandatory, v.object({
     tags : [ v.removeStringDuplicates, v.array([ v.mandatory, v.string, v.minLength(1) ]) ],
     notes : v.string,
     lastChangeTimestamp : v.date,
+    lastChangeBy : v.string,
     id : v.id
 }) ]);

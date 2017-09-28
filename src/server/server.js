@@ -41,9 +41,9 @@ var startServer = async function (options, db) {
     app.use(keycloak.protect());
     var tickets = ticketsHandler(db.collection("tickets"));
 
-    app.use("/api/people", new RestRouter(new PeopleCollection(db.collection("people")), keycloak, 'openarms:readPeople', 'openarms:writePeople'));
-    app.use("/api/account/sheets", new RestRouter(new AccountSheetsCollection(db.collection("accountSheets")), keycloak, 'openarms:readAccountSheets', 'openarms:writeAccountSheets'));
-    app.use("/api/account/deposits", new RestRouter(new DepositsCollection(db.collection("deposits")), keycloak, 'openarms:readDeposits', 'openarms:writeDeposits'));
+    app.use("/api/people", new RestRouter(new PeopleCollection(db.collection("people"), db.collection("peopleHistory")), keycloak, 'openarms:readPeople', 'openarms:writePeople'));
+    app.use("/api/account/sheets", new RestRouter(new AccountSheetsCollection(db.collection("accountSheets"), db.collection("accountSheetsHistory")), keycloak, 'openarms:readAccountSheets', 'openarms:writeAccountSheets'));
+    app.use("/api/account/deposits", new RestRouter(new DepositsCollection(db.collection("deposits"), db.collection("depositsHistory")), keycloak, 'openarms:readDeposits', 'openarms:writeDeposits'));
     app.get("/api/tickets/:printer/latest", keycloak.protect('openarms:readTickets'), tickets.latest);
     app.use("/api", apiErrorReporter);
 

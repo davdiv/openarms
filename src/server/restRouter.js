@@ -8,7 +8,7 @@ var RestRouter = function (dbCollection, keycloak, readRole, writeRole) {
     router.param("id", idValidator)
 
     router.post("/", keycloak.protect(writeRole), bodyParser, function (req, res, next) {
-        dbCollection.insert(req.body).then(function (doc) {
+        dbCollection.insert(req.body, req).then(function (doc) {
             res.status(200).send(doc);
         }).then(null, next);
     });
@@ -44,7 +44,7 @@ var RestRouter = function (dbCollection, keycloak, readRole, writeRole) {
             next(new ValidationError("id.different", req.body.id, [ req.body.id, req.params.id ]));
             return;
         }
-        dbCollection.save(req.body).then(function (doc) {
+        dbCollection.save(req.body, req).then(function (doc) {
             res.status(200).send(doc);
         }).then(null, next);
     });

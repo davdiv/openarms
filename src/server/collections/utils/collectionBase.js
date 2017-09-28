@@ -2,8 +2,9 @@ var ObjectID = require("mongodb").ObjectID;
 var NotFoundError = require("../../../common/notFoundError");
 
 module.exports = class {
-    constructor(collection) {
+    constructor(collection, historyCollection) {
         this.collection = collection;
+        this.historyCollection = historyCollection;
     }
 
     processFromDB(doc) {
@@ -19,37 +20,56 @@ module.exports = class {
         };
     }
 
-    async insert(doc) {
+    async insert(doc, req) {
         var self = this;
         var processedDoc = self.processToDB(doc);
+        processedDoc.current.lastChangeBy = req.kauth.grant.access_token.content.sub;
         processedDoc.current.lastChangeTimestamp = new Date();
         const result = await this.collection.insert(processedDoc);
         return self.processFromDB(result.ops[0]);
     }
 
-    save(doc) {
-        var self = this;
-        var id = new ObjectID(doc.id);
-        var processedDoc = self.processToDB(doc);
-        var current = processedDoc.current;
-        var lastChangeTimestamp = current.lastChangeTimestamp;
-        current.lastChangeTimestamp = new Date();
-        return this.collection.update({
-            _id : id,
-            'current.lastChangeTimestamp' : lastChangeTimestamp
+    async save(doc, req) {
+        const id = new ObjectID(doc.id);
+        const previousDoc = await this.collection.findOne({
+            _id: id
         }, {
-            '$set' : processedDoc
-        }).then(function (result) {
-            var numUpdates = result.result.nModified;
+            fields : {
+                "current" : 1
+            }
+        });
+        if (!previousDoc) {
+            return await Promise.reject("Le document à mettre à jour n'existe pas (ou plus).");
+        }
+        const oldCurrent = previousDoc.current;
+        const processedDoc = this.processToDB(doc);
+        const newCurrent = processedDoc.current;
+        const lastChangeTimestamp = newCurrent.lastChangeTimestamp;
+        const concurrentModification = oldCurrent.lastChangeTimestamp.getTime() !== lastChangeTimestamp.getTime();
+        if (!concurrentModification) {
+            newCurrent.lastChangeTimestamp = new Date();
+            newCurrent.lastChangeBy = req.kauth.grant.access_token.content.sub;
+            const result = await this.collection.update({
+                _id : id,
+                'current.lastChangeTimestamp' : lastChangeTimestamp
+            }, {
+                '$set' : processedDoc
+            });
+            const numUpdates = result.result.nModified;
             if (numUpdates == 1) {
-                return self.processFromDB({
+                if (this.historyCollection) {
+                    await this.historyCollection.insert({
+                        id: id,
+                        version: previousDoc.current
+                    });
+                }
+                return this.processFromDB({
                     _id : id,
                     current : doc
                 });
-            } else {
-                return Promise.reject("Modification concurrente.");
             }
-        });
+        }
+        return await Promise.reject("Modification concurrente.");
     }
 
     get(id) {
