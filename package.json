@@ -13,7 +13,7 @@
   },
   "bin": "openarms",
   "scripts": {
-    "preinstall": "bash preinstall.sh",
+    "preinstall": "sh preinstall.sh",
     "prepare": "gulp prepublish",
     "start": "node openarms"
   },
@@ -22,10 +22,9 @@
     "url": "https://github.com/davdiv/openarms/issues"
   },
   "homepage": "https://github.com/davdiv/openarms",
-  "dependencies": {
+  "devDependencies": {
     "atpackager": "0.2.6",
     "diacritics": "1.1.0",
-    "express": "4.15.3",
     "grunt": "0.4.5",
     "grunt-cli": "0.1.13",
     "gulp": "3.5.6",
@@ -37,17 +36,19 @@
     "gulp-replace": "0.3.0",
     "gulp-util": "2.2.14",
     "gulp-wrap": "0.3.0",
-    "hashspace": "",
-    "keycloak-connect": "^3.3.0-cr.2",
+    "hashspace": "file:./hashspace",
     "keycloak-js": "^3.3.0-cr.2",
-    "minimist": "1.2.0",
-    "mongodb": "2.2.29",
     "noder-js": "1.6.1",
     "page": "1.3.7",
-    "q": "1.0.1",
     "qs": "0.6.6",
-    "raw-body": "2.2.0",
     "run-sequence": "0.3.6",
     "vis": "4.8.2"
+  },
+  "dependencies": {
+    "express": "4.15.3",
+    "keycloak-connect": "^3.3.0-cr.2",
+    "minimist": "1.2.0",
+    "mongodb": "2.2.29",
+    "raw-body": "2.2.0"
   }
 }

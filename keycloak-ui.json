@@ -1,0 +1,7 @@
+{
+    "realm": "openarms",
+    "auth-server-url": "http://localhost:8080/auth",
+    "ssl-required": "external",
+    "resource": "openarms",
+    "public-client": true
+}
