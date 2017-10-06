@@ -14,7 +14,7 @@ var clientDir = "build/client";
 var staticsDevDir = clientDir + "/statics-dev"
 
 gulp.task("dev-dep-bootstrap", function () {
-    return gulp.src([ "lib/bootstrap/**", "!lib/bootstrap/**/*.js" ]).pipe(newer(staticsDevDir + "/bootstrap")).pipe(
+    return gulp.src([ "node_modules/bootstrap/dist/**", "!node_modules/bootstrap/dist/**/*.js" ]).pipe(newer(staticsDevDir + "/bootstrap")).pipe(
         gulp.dest(staticsDevDir + "/bootstrap"));
 });
 
