@@ -593,7 +593,7 @@ module.exports = klass({
             }
         ];
         if (this.results.simplifiedItems.length > 1) {
-            this.results.simplifiedItems.forEach(function (item) {
+            forEach(this.results.simplifiedItems, function (item) {
                 weeksColumns.push({
                    title : item.item,
                    getValue : function (week) {
@@ -620,7 +620,7 @@ module.exports = klass({
             }
         ];
         if (this.results.simplifiedItems.length > 1) {
-            this.results.simplifiedItems.forEach(function (item) {
+            forEach(this.results.simplifiedItems,function (item) {
                 monthsColumns.push({
                    title : item.item,
                    getValue : function (month) {
@@ -766,14 +766,14 @@ module.exports = klass({
     buildWeekGraph : function (weeks, simplifiedItems) {
         var groups = new vis.DataSet();
         var items = new vis.DataSet();
-        simplifiedItems.forEach(function (item) {
+        forEach(simplifiedItems, function (item) {
             groups.add({
                 id: item.item,
                 content: item.item
             });
         });
-        weeks.forEach(function (week) {
-            simplifiedItems.forEach(function (item) {
+        forEach(weeks, function (week) {
+            forEach(simplifiedItems, function (item) {
                 items.add({
                     x: week.date,
                     y: week.groups[item.item] || 0,
@@ -821,7 +821,7 @@ module.exports = klass({
             return lastWeek;
         };
 
-        lines.forEach(function(line) {
+        forEach(lines, function(line) {
             var week = getWeek(line.date);
             week.amount += line.amount;
             var groupName = readFromGroupsConfig(groupsConfig, line.item);
@@ -849,7 +849,7 @@ module.exports = klass({
             return lastMonth;
         };
 
-        lines.forEach(function(line) {
+        forEach(lines, function(line) {
             var month = getMonth(line.date);
             month.amount += line.amount;
             var groupName = readFromGroupsConfig(groupsConfig, line.item);
@@ -870,8 +870,8 @@ module.exports = klass({
             return monthKey;
         };
 
-        lines.forEach(function(line) {
-            var curLineRelevantTags = line.tags.filter(function (tag) {
+        forEach(lines, function(line) {
+            var curLineRelevantTags = (line.tags || []).filter(function (tag) {
                 return relevantTags.indexOf(tag) > -1;
             });
             var relevantTag = curLineRelevantTags.length === 1 ? " " + curLineRelevantTags[0] : "";
@@ -912,7 +912,7 @@ module.exports = klass({
     },
     computeSimplifiedItems : function(groupsConfig, items) {
         var simplifiedItems = {};
-        items.forEach(function (curItem) {
+        forEach(items, function (curItem) {
             var groupName = readFromGroupsConfig(groupsConfig, curItem.item);
             var group = simplifiedItems[groupName];
             if (!group) {
