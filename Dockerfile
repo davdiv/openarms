@@ -5,6 +5,6 @@ RUN chown -R node.node .
 USER node
 RUN ./dockerinstall.sh
 USER root
-RUN chown -R node.node .
+RUN chown -R root.root .
 EXPOSE 8080
 USER node
