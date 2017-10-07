@@ -86,12 +86,16 @@ var Ctrl = klass({
             this.chooseSuggestion(forwardedEvent);
         }
         event.text = forwardedEvent.text;
+    },
+    onMouseDown: function (event) {
+        event.preventDefault();
+        this.$getElement(0).getElementsByTagName('input')[0].focus();
     }
 });
 </script>
 
 <template id="multiAutoComplete" ctrl="Ctrl as c">
-    <span class="multi-auto-complete form-control input-sm {c.class}">
+    <span class="multi-auto-complete form-control input-sm {c.class}" onmousedown="{c.onMouseDown($event)}">
         {if c.values}
             {foreach index,value in c.values}
                 <span>
