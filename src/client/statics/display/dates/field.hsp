@@ -28,6 +28,10 @@ var DateFieldController = klass({
 	updateError : function () {
 		this.error = this.internalValue && !this.value;
 	},
+    focus: function ($event) {
+        var field = $event.target;
+        field.select();
+    },
 	blur: function () {
 		if (!this.error) {
 			this.internalValue = formatDate(this.value);
@@ -37,7 +41,7 @@ var DateFieldController = klass({
 </script>
 
 <template id="dateField" ctrl="DateFieldController as c">
-<input type="text" value="{c.internalValue}" onblur="{c.blur()}" class="form-control input-sm"/>
+<input type="text" value="{c.internalValue}" onfocus="{c.focus($event)}" onblur="{c.blur()}" class="form-control input-sm"/>
 </template>
 
 <script>
