@@ -24,12 +24,16 @@ var AmountFieldController = klass({
     },
     blur: function () {
         this.stringValue = formatCurrency(this.value);
+    },
+    focus: function ($event) {
+        var field = $event.target;
+        field.select();
     }
 });
 </script>
 
 <template id="amountField" ctrl="AmountFieldController as c">
-<input type="text" value="{c.stringValue}" onblur="{c.blur()}" class="form-control input-sm"/>
+<input type="text" value="{c.stringValue}" onfocus="{c.focus($event)}" onblur="{c.blur()}" class="form-control input-sm"/>
 </template>
 
 <script>

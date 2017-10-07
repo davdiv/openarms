@@ -123,6 +123,7 @@ var AutoCompleteController = klass({
     onFocus : function (event) {
         this.focused = true;
         this.onfocus(event);
+        event.target.select();
     },
     onBlur : function (event) {
         this.focused = false;
