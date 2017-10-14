@@ -37,6 +37,10 @@ var Ctrl = klass({
         this.data.checks.splice(index,1);
         this.onchange();
     },
+    clearChecks: function() {
+        this.data.checks.splice(0, this.data.checks.length);
+        this.onchange();
+    },
     clear: function (array) {
         array.forEach(function (item) {
             item.number = 0;
@@ -99,6 +103,9 @@ var Ctrl = klass({
 
 <template id="checksTable" args="title, image, total, itemsArray, controller">
     <#itemsHeader title="{title}" image="{image}" total="{total}" />
+    <div>
+        <button class="btn btn-link" onclick="{controller.clearChecks()}">Effacer</button>
+    </div>
     <table class="table table-striped table-hover">
     <thead>
         <tr><th>Banque</th><th>Numéro</th><th>Date</th><th>Montant</th><th></th></tr>
