@@ -28,6 +28,10 @@ var EditableCtrl = klass({
             type: "object",
             binding: "2-way"
         },
+        removingData: {
+            type: "object",
+            binding: "2-way"
+        },
         currentView: {
             type: "string",
             binding: "2-way"
@@ -48,6 +52,9 @@ var EditableCtrl = klass({
         onCancel: {
             type: "callback"
         },
+        onRemove: {
+            type: "callback"
+        },
         viewer: {
             type: "object", // in fact, this is a template
             binding: "1-way"
@@ -60,6 +67,7 @@ var EditableCtrl = klass({
     refresh: function() {
         this.callEvent("onRefresh", this.savedData, function(res) {
             this.savedData = res;
+            this.removingData = null;
         });
     },
     edit: function () {
@@ -71,17 +79,27 @@ var EditableCtrl = klass({
         this.callEvent("onEdit", null, function(res) {
             this.editedData = res || copy(this.savedData);
             this.currentView = "edit";
+            this.removingData = null;
         });
     },
     save: function () {
         this.callEvent("onSave", this.editedData, function (res) {
             this.savingData = res || this.editedData;
+            this.removingData = null;
         });
+    },
+    remove: function () {
+        if (confirm("Êtes-vous sûr(e) de vouloir supprimer ce document?")) {
+            this.callEvent("onRemove", this.savedData, function (res) {
+                this.removingData = res || null;
+            });
+        }
     },
     cancel: function () {
         this.callEvent("onCancel", null, function () {
             this.editedData = null;
             this.savingData = null;
+            this.removingData = null;
         });
     },
     callEvent : function (eventName, returnValue, defaultAction) {
@@ -102,6 +120,7 @@ var EditableCtrl = klass({
         resolvePromise(this, "savedData", "savedDataError");
         resolvePromise(this, "editedData", "editedDataError");
         resolvePromise(this, "savingData", "savingDataError");
+        resolvePromise(this, "removingData", "removingDataError");
         this.updateState();
     },
     $onSavedDataChange: function () {
@@ -117,6 +136,13 @@ var EditableCtrl = klass({
         this.updateState();
     },
     $onSavingDataErrorChange: function () {
+        this.updateState();
+    },
+    $onRemovingDataChange: function () {
+        resolvePromise(this, "removingData", "removingDataError");
+        this.updateState();
+    },
+    $onRemovingDataErrorChange: function () {
         this.updateState();
     },
     $onCurrentViewChange: function () {
@@ -139,6 +165,7 @@ var EditableCtrl = klass({
         this.displayEdit = this.displayRefresh && !isPromise(this.savedData) && this.canSave;
         this.displayCancel = currentView != "saved" && editedData && (this.savingDataError || !savingData);
         this.displaySave = this.displayCancel && !isPromise(editedData);
+        this.displayRemove = this.displayEdit;
     }
 });
 
@@ -164,6 +191,9 @@ var isValidData = function (data) {
 
 <template id="showIcons" args="c">
     <div class="btn-group pull-right">
+        {if c.displayRemove}
+            <button type="button" class="btn btn-default" title="Supprimer" onclick="{c.remove()}"><span class="glyphicon glyphicon-trash"></span></button>
+        {/if}
         {if c.displayEdit}
             <button type="button" class="btn btn-default" title="Modifier" onclick="{c.edit()}"><span class="glyphicon glyphicon-edit"></span></button>
         {/if}
@@ -189,6 +219,16 @@ var isValidData = function (data) {
     {/if}
 </template>
 
+<template id="showRemovingStatus" args="c">
+    {if isPromise(c.removingData)}
+        {if c.removingDataError}
+            <#showError error="{c.removingDataError}" />
+        {else}
+            <div><span class="spinner"></span> Suppression...<br><br></div>
+        {/if}
+    {/if}
+</template>
+
 <template id="showPromise" args="c, error">
     {if error}
         <#showError error="{error}" class="{c.editedData?'':'space-right'}" />
@@ -199,6 +239,7 @@ var isValidData = function (data) {
 
 <template id="showContent" args="c">
     {if c.currentView == "saved"}
+        <#showRemovingStatus c="{c}"/>
         {if isValidData(c.savedData)}
             <#c.viewer data="{c.savedData}" />
         {else if c.savedData}

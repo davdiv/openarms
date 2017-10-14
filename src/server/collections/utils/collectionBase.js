@@ -29,6 +29,44 @@ module.exports = class {
         return self.processFromDB(result.ops[0]);
     }
 
+    async remove(docId, lastChangeTimestamp, req) {
+        const id = new ObjectID(docId);
+        const previousDoc = await this.collection.findOne({
+            _id: id
+        }, {
+            fields : {
+                "current" : 1
+            }
+        });
+        if (!previousDoc) {
+            return await Promise.reject("Le document à supprimer n'existe pas (ou plus).");
+        }
+        const oldCurrent = previousDoc.current;
+        const concurrentModification = oldCurrent.lastChangeTimestamp.getTime() !== lastChangeTimestamp;
+        if (!concurrentModification) {
+            var removeInfo = {
+                lastChangeTimestamp: new Date(),
+                lastChangeBy: req.kauth.grant.access_token.content.sub
+            };
+            const result = await this.collection.remove({
+                _id : id,
+                'current.lastChangeTimestamp' : oldCurrent.lastChangeTimestamp
+            });
+            const numUpdates = result.result.n;
+            if (numUpdates == 1) {
+                if (this.historyCollection) {
+                    await this.historyCollection.insert({
+                        id: id,
+                        version: oldCurrent,
+                        deleted: removeInfo
+                    });
+                }
+                return {};
+            }
+        }
+        return await Promise.reject("Modification concurrente.");
+    }
+
     async save(doc, req) {
         const id = new ObjectID(doc.id);
         const previousDoc = await this.collection.findOne({

@@ -9,11 +9,13 @@ var isPromise = require("../../utils/isPromise");
     <div class="container-fluid">
         <#editable
             onSave="{controller.onUserSave($event)}"
+            onRemove="{controller.onUserRemove($event)}"
             onRefresh="{controller.onUserRefresh($event)}"
             onCancel="{controller.onUserCancel($event)}"
             savedData="{controller.savedData}"
             editedData="{controller.editedData}"
             savingData="{controller.savingData}"
+            removingData="{controller.removingData}"
             currentView="{controller.currentView}"
             viewer="{controller.viewerTemplate}"
             editor="{controller.editorTemplate}"
@@ -68,6 +70,13 @@ module.exports = klass({
             return data;
         }
     },
+    removeData : function(data) {
+        if (this.cache) {
+            return this.cache.removeItem(data);
+        } else {
+            return {};
+        }
+    },
     refreshData : function(id) {
         if (this.cache) {
             return this.cache.refreshItemContent(id);
@@ -85,6 +94,13 @@ module.exports = klass({
             page.params.id = res.id;
             page.query = {};
             page.updateUrl();
+        });
+    },
+    onUserRemove : function(event) {
+        var page = this.page;
+        var res = event.returnValue = promise.done.thenSync(this.removeData.bind(this, this.savedData));
+        res.thenSync(function(res) {
+            page.$dispose();
         });
     },
     onUserCancel : function(event) {

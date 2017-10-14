@@ -24,6 +24,13 @@ var RestCache = klass({
     canRead : function () {
         return login.hasRole(this.readRole);
     },
+    removeItem : function (object) {
+        if (!this.canSave()) {
+            return Promise.reject(new login.AuthenticationError("Vous ne pouvez pas supprimer ce document."));
+        }
+        var response = server("DELETE", this.basePath + "/" + object.id + "?lastChangeTimestamp=" + encodeURIComponent(object.lastChangeTimestamp.getTime()));
+        return response;
+    },
     saveItemContent : function (object) {
         if (!this.canSave()) {
             return Promise.reject(new login.AuthenticationError("Vous ne pouvez pas enregistrer ce document."));

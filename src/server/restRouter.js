@@ -48,6 +48,18 @@ var RestRouter = function (dbCollection, keycloak, readRole, writeRole) {
             res.status(200).send(doc);
         }).then(null, next);
     });
+
+    router.delete("/:id", keycloak.protect(writeRole), function (req, res, next) {
+        var lastChangeTimestamp = +req.query.lastChangeTimestamp;
+        if (isNaN(lastChangeTimestamp)) {
+            next(new ValidationError("lastChangeTimestamp", lastChangeTimestamp));
+            return;
+        }
+        dbCollection.remove(req.params.id, lastChangeTimestamp, req).then(function (doc) {
+            res.status(200).send(doc);
+        }).then(null, next);
+    });
+
     return router;
 };
 
