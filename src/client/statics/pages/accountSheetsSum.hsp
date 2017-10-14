@@ -29,6 +29,11 @@ var multiAutoComplete = require("../widgets/multiAutoComplete.hsp.js");
 var regExpField = require("../widgets/regExpField.hsp.js");
 var tagSuggestions = require("../display/accountSheets/utils/tagSuggestions");
 
+var DepositsCache = require("../persistence/deposits");
+var recomputeDeposit = require("../validation/deposits/recompute");
+var objectExchange = require("../objectExchange");
+var page = require("page");
+
 var detailsRegExp = /^(.+)\s+\(.+\)\s*$/
 var readFromGroupsConfig = function (groupsConfig, item) {
     var res = groupsConfig[item];
@@ -470,6 +475,9 @@ var objectValues = function (object) {
         <h3><span class="glyphicon glyphicon-chevron-right"></span> Contenu de la caisse</h3>
         <p><a href="#" onclick="{controller.toggleCashboxDetails($event)}">{if controller.showCashboxDetails}Masquer les détails{else}Afficher les détails{/if}</a></p>
         {if controller.showCashboxDetails}
+            {if DepositsCache.canSave()}
+                <button class="btn btn-default" onclick="{controller.newDeposit()}"><span class="glyphicon glyphicon-euro"></span> Nouveau dépôt</button>
+            {/if}
             <#viewCashboxDetails data="{results.cashboxDetails}"/>
         {/if}
     {/if}
@@ -947,6 +955,15 @@ module.exports = klass({
         }
         this.results = accountSheetsMgr.search(dbQuery).thenSync(this.computeResults.bind(this, query));
         resolvePromise(this, "results","resultsError");
+    },
+    newDeposit : function () {
+        var deposit = {
+            date: new Date(),
+            declaredAmountDetails: serialization.clone(this.results.cashboxDetails)
+        };
+        recomputeDeposit(deposit);
+        var ref = objectExchange.shareObject("deposit", deposit);
+        page("/deposits/new?object=" + encodeURIComponent(ref));
     },
     exportAccountingEntries : function () {
         exportFile([createAccountingEntries(this.results.allSheets, readFromGroupsConfig.bind(null, this.simplifiedSummaryConfig), this.accountingEntriesConfig)], "Ecritures comptables.txt", {type: "text/plain"});

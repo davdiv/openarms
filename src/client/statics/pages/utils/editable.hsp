@@ -3,6 +3,7 @@ var klass = require("hsp/klass");
 var promise = require("noder-js/promise");
 var editable = require("../../components/editable.hsp.js");
 var isPromise = require("../../utils/isPromise");
+var objectExchange = require("../../objectExchange");
 </script>
 
 <template id="template" args="controller">
@@ -39,7 +40,13 @@ module.exports = klass({
         var id = page.params.id;
         if (id === "new") {
             this.savedData = null;
-            this.editedData = this.createData(page.query);
+            this.editedData = null;
+            if (this.objectExchangeType && page.query.object) {
+                this.editedData = objectExchange.retrieveObject(this.objectExchangeType, page.query.object);
+            }
+            if (!this.editedData) {
+                this.editedData = this.createData(page.query);
+            }
             this.currentView = "edit";
 
             page.query = {

@@ -14,6 +14,7 @@ var createData = require("../validation/deposits/create.js");
 var BaseClass = require("./utils/editable.hsp.js");
 
 module.exports = klass({
+    objectExchangeType: 'deposit',
     $extends: BaseClass,
     viewerTemplate: viewer,
     editorTemplate: editor,
