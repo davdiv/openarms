@@ -1,16 +1,6 @@
 # Description
 
-openarms is a program to manage distribution of food for people with low income.
-
-<em> This program is still at an early stage of development. More information
-	about how to install and use it will be added here in the future. </em>
-
-# Demo
-
-A demo of this application is available [here](https://openarms.herokuapp.com/).
-Note that this demo should only be used to try the application and not to store real data.
-All data stored with this demo can be reset at any time (especially: after an hour of inactivity,
-and at least once a day).
+openarms is a program to manage account sheets and deposits.
 
 # License
 
