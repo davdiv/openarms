@@ -19,7 +19,7 @@ module.exports = function (grunt) {
                             files : "index.html",
                             replacements : [ {
                                 find : /\/statics-dev\/noder-js\/noder.js/g,
-                                replace : "/statics/openarms-<%= pkg.version %>.js"
+                                replace : "/statics/assocomptes-<%= pkg.version %>.js"
                             }, {
                                 find : /\/statics-dev\//g,
                                 replace : "/statics/"
@@ -46,7 +46,7 @@ module.exports = function (grunt) {
                         type : "Hash",
                         cfg : {
                             hash : "murmur3",
-                            files : [ "**/*.js", "!openarms-<%= pkg.version %>.js" ]
+                            files : [ "**/*.js", "!assocomptes-<%= pkg.version %>.js" ]
                         }
                     }, {
                         type : "NoderDependencies",
@@ -66,7 +66,7 @@ module.exports = function (grunt) {
                         }
                     } ],
                     packages : [ {
-                        name : "openarms-<%= pkg.version %>.js",
+                        name : "assocomptes-<%= pkg.version %>.js",
                         builder : "NoderBootstrapPackage",
                         files : [ "**/*.js", "!noder-js/**", "!noderError/**", "!sqlite.js" ]
                     }, {

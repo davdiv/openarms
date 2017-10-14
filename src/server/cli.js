@@ -10,7 +10,7 @@ var parse = function(argv) {
         "default" : {
             "port" : parseInt(process.env.PORT, 10) || 8080,
             "db-url" : process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost:27017/test',
-            "db-empty" : process.env.OPENARMS_DB_EMPTY == "empty"
+            "db-empty" : process.env.ASSOCOMPTES_DB_EMPTY == "empty"
         }
     });
 };

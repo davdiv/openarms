@@ -1,27 +1,27 @@
 {
-  "name": "openarms",
+  "name": "assocomptes",
   "preferGlobal": true,
   "version": "0.0.0",
   "description": "A web-based program to manage distribution of food for people with low income.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/davdiv/openarms.git"
+    "url": "https://github.com/davdiv/assocomptes.git"
   },
   "author": {
     "name": "DivDE",
     "email": "divde@free.fr"
   },
-  "bin": "openarms",
+  "bin": "assocomptes",
   "scripts": {
     "preinstall": "sh preinstall.sh",
     "prepare": "gulp prepublish",
-    "start": "node openarms"
+    "start": "node assocomptes"
   },
   "license": "AGPL-3.0",
   "bugs": {
-    "url": "https://github.com/davdiv/openarms/issues"
+    "url": "https://github.com/davdiv/assocomptes/issues"
   },
-  "homepage": "https://github.com/davdiv/openarms",
+  "homepage": "https://github.com/davdiv/assocomptes",
   "devDependencies": {
     "atpackager": "0.2.6",
     "bootstrap": "^3.3.7",

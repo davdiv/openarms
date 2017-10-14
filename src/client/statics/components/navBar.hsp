@@ -28,7 +28,7 @@ var NavBarCtrl = klass({
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a href="/" class="navbar-brand">Openarms</a>
+            <a href="/" class="navbar-brand">Assocomptes</a>
         </div>
         <div class="{c.expanded ? '' : 'collapse'} navbar-collapse">
             <#search />

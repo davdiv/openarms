@@ -40,5 +40,5 @@ exports.isAuthenticated = function () {
 };
 
 exports.hasRole = function (role) {
-    return keycloakInstance.hasResourceRole(role, "openarms");
+    return keycloakInstance.hasResourceRole(role, "assocomptes");
 };

@@ -1,5 +1,5 @@
 FROM node:8.6.0
-WORKDIR /usr/openarms
+WORKDIR /usr/app
 COPY . .
 RUN chown -R node.node .
 USER node

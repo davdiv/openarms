@@ -2,7 +2,7 @@ var login = require("./login");
 
 window.onbeforeunload = function (event) {
     if (login.isAuthenticated()) {
-        var res = event.returnValue = "Cette opération va fermer Openarms et les éventuelles données non enregistrées seront perdues.";
+        var res = event.returnValue = "Cette opération va fermer Assocomptes et les éventuelles données non enregistrées seront perdues.";
         return res;
     }
 };

@@ -2,7 +2,7 @@ var connectDatabase = require("./connectDatabase");
 var emptyDatabase = require("./emptyDatabase");
 
 var versionCheck = {
-    application : 'openarms',
+    application : 'assocomptes',
     dbVersion : 'DB-0'
 };
 

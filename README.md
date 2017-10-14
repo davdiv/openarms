@@ -1,10 +1,10 @@
 # Description
 
-openarms is a program to manage account sheets and deposits.
+assocomptes is a program to manage account sheets and bank deposits for an association.
 
 # License
 
-	openarms : Program to manage distribution of food for people with low income.
+	assocomptes : Program to manage account sheets and bank deposits for an association.
 	Copyright (C) 2014 DivDE <divde@free.fr>
 
 	This program is free software: you can redistribute it and/or modify

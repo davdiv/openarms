@@ -8,7 +8,7 @@ var AccountSheetsCache = require("../persistence/accountSheets");
 
 <template id="template">
     <div class="container-fluid">
-        <h4>Bienvenue dans Openarms!</h4>
+        <h4>Bienvenue dans Assocomptes!</h4>
         <p>
             {if PeopleCache.canSave()}
                 {" "}<a class="btn btn-default" href="/people/new"><span class="glyphicon glyphicon-user"></span> Nouvelle personne</a>
