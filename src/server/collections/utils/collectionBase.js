@@ -1,5 +1,6 @@
 var ObjectID = require("mongodb").ObjectID;
 var NotFoundError = require("../../../common/notFoundError");
+var SimpleError = require("../../../common/simpleError");
 
 module.exports = class {
     constructor(collection, historyCollection) {
@@ -39,7 +40,7 @@ module.exports = class {
             }
         });
         if (!previousDoc) {
-            return await Promise.reject("Le document à supprimer n'existe pas (ou plus).");
+            return await Promise.reject(new SimpleError("Le document à supprimer n'existe pas (ou plus)."));
         }
         const oldCurrent = previousDoc.current;
         const concurrentModification = oldCurrent.lastChangeTimestamp.getTime() !== lastChangeTimestamp;
@@ -64,7 +65,7 @@ module.exports = class {
                 return {};
             }
         }
-        return await Promise.reject("Modification concurrente.");
+        return await Promise.reject(new SimpleError("Modification concurrente."));
     }
 
     async save(doc, req) {
@@ -77,7 +78,7 @@ module.exports = class {
             }
         });
         if (!previousDoc) {
-            return await Promise.reject("Le document à mettre à jour n'existe pas (ou plus).");
+            return await Promise.reject(new SimpleError("Le document à mettre à jour n'existe pas (ou plus)."));
         }
         const oldCurrent = previousDoc.current;
         const processedDoc = this.processToDB(doc);
@@ -107,7 +108,7 @@ module.exports = class {
                 });
             }
         }
-        return await Promise.reject("Modification concurrente.");
+        return await Promise.reject(new SimpleError("Modification concurrente."));
     }
 
     get(id) {
@@ -140,7 +141,6 @@ module.exports = class {
 
     suggestions(query) {
         throw new Error("Not implemented.");
-
     }
 
 };

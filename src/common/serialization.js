@@ -2,6 +2,7 @@ var jsonStringify = JSON.stringify;
 var jsonParse = JSON.parse;
 var ValidationError = require("./validation/utils/validationError");
 var NotFoundError = require("./notFoundError");
+var SimpleError = require("./simpleError");
 
 // so that the value is the object in the replacer:
 Date.prototype.toJSON = null;
@@ -78,6 +79,11 @@ var replacer = function (key, value) {
             $notFoundError : true
         };
     }
+    if (value instanceof SimpleError) {
+        return {
+            $simpleError: value.message
+        };
+    }
     return value;
 };
 
@@ -92,6 +98,9 @@ var reviver = function (key, value) {
     }
     if (value && value.$notFoundError) {
         return new NotFoundError();
+    }
+    if (value && value.$simpleError) {
+        return new SimpleError(value.$simpleError);
     }
     return value;
 };

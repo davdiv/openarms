@@ -2,6 +2,7 @@
 var klass = require("hsp/klass");
 var AuthenticationError = require("../../login").AuthenticationError;
 var NotFoundError = require("../../notFoundError");
+var SimpleError = require("../../simpleError");
 var ValidationError = require("../../validation/utils/validationError");
 var validationErrorsList = require("./utils/validationErrorsList");
 var server = require("../../persistence/utils/server");
@@ -32,6 +33,8 @@ var Ctrl = klass({
             this.template = showValidationError;
         } else if (error instanceof NotFoundError) {
             this.template = showNotFoundError;
+        } else if (error instanceof SimpleError) {
+            this.template = showSimpleError;
         } else {
             this.template = showDefaultError;
         }
@@ -81,6 +84,10 @@ Le serveur a renvoyé une erreur non reconnue ({c.error.status}).
 
 <template id="showNotFoundError" args="c">
 Le document demandé n'a pas pu être trouvé.
+</template>
+
+<template id="showSimpleError" args="c">
+{c.error.message}
 </template>
 
 <template id="showDefaultError" args="c">
