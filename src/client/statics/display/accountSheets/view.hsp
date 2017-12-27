@@ -10,7 +10,7 @@ var viewCashboxDetails = require("../cashboxDetails/view.hsp.js");
     <tbody>
     <tr>
         <th>
-            <span class="glyphicon glyphicon-chevron-right"></span> <#viewDate data="{day.date}"/>
+            <span class="glyphicon glyphicon-chevron-right"></span> <#viewDate dayOfWeek="{true}" data="{day.date}"/>
                 {if day.personInCharge || (day.team && day.team.length > 0)}
                     {" "}avec {if day.personInCharge}<#personRef data="{day.personInCharge}"/>{/if}
                     {if day.team.length > 0}

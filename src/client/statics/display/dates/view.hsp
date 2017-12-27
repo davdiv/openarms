@@ -1,9 +1,10 @@
 <script>
 var formatDate = require("./utils/format");
+var formatDayOfWeek = require("./utils/dayOfWeek");
 </script>
 
-<template id="viewDate" args="data">
-{formatDate(data)}
+<template id="viewDate" args="data,dayOfWeek">
+{if dayOfWeek}{formatDayOfWeek(data)} {/if}{formatDate(data)}
 </template>
 
 <script>
