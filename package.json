@@ -38,7 +38,7 @@
     "gulp-util": "2.2.14",
     "gulp-wrap": "0.3.0",
     "hashspace": "file:./hashspace",
-    "keycloak-js": "^3.3.0-cr.2",
+    "keycloak-js": "^3.4.2",
     "noder-js": "1.6.1",
     "page": "1.3.7",
     "qs": "0.6.6",
@@ -47,7 +47,7 @@
   },
   "dependencies": {
     "express": "4.15.3",
-    "keycloak-connect": "^3.3.0-cr.2",
+    "keycloak-connect": "^3.4.2",
     "minimist": "1.2.0",
     "mongodb": "2.2.29",
     "raw-body": "2.2.0"
