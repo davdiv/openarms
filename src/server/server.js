@@ -9,6 +9,7 @@ var PeopleCollection = require("./collections/people");
 var AccountSheetsCollection = require("./collections/accountSheets");
 var DepositsCollection = require("./collections/deposits");
 var ticketsHandler = require("./tickets");
+var keycloakPeople = require("./keycloakPeople");
 var Keycloak = require("keycloak-connect");
 
 var startServer = async function (options, db) {
@@ -41,6 +42,7 @@ var startServer = async function (options, db) {
     app.use(keycloak.protect());
     var tickets = ticketsHandler(db.collection("tickets"));
 
+    app.get("/api/keycloak/:id", keycloak.protect('assocomptes:readPeople'), keycloakPeople(db.collection("keycloakPeople")));
     app.use("/api/people", new RestRouter(new PeopleCollection(db.collection("people"), db.collection("peopleHistory")), keycloak, 'assocomptes:readPeople', 'assocomptes:writePeople'));
     app.use("/api/account/sheets", new RestRouter(new AccountSheetsCollection(db.collection("accountSheets"), db.collection("accountSheetsHistory")), keycloak, 'assocomptes:readAccountSheets', 'assocomptes:writeAccountSheets'));
     app.use("/api/account/deposits", new RestRouter(new DepositsCollection(db.collection("deposits"), db.collection("depositsHistory")), keycloak, 'assocomptes:readDeposits', 'assocomptes:writeDeposits'));

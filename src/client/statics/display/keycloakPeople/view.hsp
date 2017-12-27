@@ -1,0 +1,40 @@
+<script>
+var klass = require("hsp/klass");
+var personRef = require("../peopleId/viewAny.hsp.js");
+var keycloakPeople = require("../../persistence/keycloakPeople");
+var resolvePromise = require("../../utils/resolvePromise");
+var isPromise = require("../../utils/isPromise");
+
+var Ctrl = klass({
+    $attributes: {
+        data: {
+            type: "string",
+            binding: "1-way"
+        },
+        template: {
+            type: "object"
+        }
+    },
+    $init: function () {
+       this.$onDataChange();
+    },
+    $onDataChange: function () {
+        if (this.data) {
+            this.identity = keycloakPeople.getItemContent(this.data);
+            resolvePromise(this,"identity","error");
+        }
+    }
+});
+</script>
+
+<template id="personInfo" ctrl="Ctrl as c">
+    {if !c.identity || isPromise(c.identity)}
+        { c.data }
+    {else}
+        <#personRef data="{c.identity.id}" template="{c.template}" />
+    {/if}
+</template>
+
+<script>
+module.exports = personInfo;
+</script>

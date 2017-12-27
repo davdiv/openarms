@@ -4,6 +4,8 @@ var clone = require("../serialization").clone;
 var resolvePromise = require("../utils/resolvePromise");
 var isPromise = require("../utils/isPromise");
 var showError = require("../display/errors/view.hsp.js");
+var showDate = require("../display/dates/view.hsp.js");
+var showKeycloakPeople = require("../display/keycloakPeople/view.hsp.js");
 
 var copy = function (original) {
     if (isPromise(original)) {
@@ -237,11 +239,28 @@ var isValidData = function (data) {
     {/if}
 </template>
 
+<template id="showLastChangeInfo" args="data">
+    {if data.lastChangeTimestamp || data.lastChangeBy}
+        <p>
+        <br>
+            Dernière modification:
+        {if data.lastChangeTimestamp}
+            {' '}le <#showDate data="{data.lastChangeTimestamp}" />
+        {/if}
+        {if data.lastChangeBy}
+            {' '}par <#showKeycloakPeople data="{data.lastChangeBy}" />
+        {/if}
+        <br>
+        </p>
+    {/if}
+</template>
+
 <template id="showContent" args="c">
     {if c.currentView == "saved"}
         <#showRemovingStatus c="{c}"/>
         {if isValidData(c.savedData)}
             <#c.viewer data="{c.savedData}" />
+            <#showLastChangeInfo data="{c.savedData}" />
         {else if c.savedData}
             <#showPromise c="{c}" error="{c.savedDataError}"/>
         {/if}
