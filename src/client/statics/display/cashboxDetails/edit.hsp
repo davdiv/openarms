@@ -92,7 +92,9 @@ var Ctrl = klass({
     <#itemsHeader title="{title}" image="{image}" total="{total}" />
     <div>
         {if login.hasRole("readTickets")}
-            <button class="btn btn-link" onclick="{controller.retrieveTicket(image, itemsArray)}">Ticket</button>
+            {foreach printer in login[image + "Printers"]}
+                <button class="btn btn-link" onclick="{controller.retrieveTicket(printer, itemsArray)}">Ticket {printer}</button>
+            {/foreach}
         {/if}
         <button class="btn btn-link" onclick="{controller.clear(itemsArray)}">Effacer</button>
     </div>

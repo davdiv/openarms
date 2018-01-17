@@ -1,7 +1,20 @@
 var rawBody = require("raw-body");
+var split = require("../common/utils/splitField");
+
+var checkAllowedPrinter = function (req, res, next) {
+    const token = req.kauth.grant.access_token.content;
+    const printers = split(token.banknotesPrinters).concat(split(token.coinsPrinters));
+    const printer = req.params.printer;
+    if (printers.indexOf(printer) === -1) {
+        res.status(403).send({});
+        return;
+    }
+    return next();
+};
 
 module.exports = function (dbCollection) {
     return {
+        checkAllowedPrinter: checkAllowedPrinter,
         print: function (req, res, next) {
             var printer = req.params.printer;
             rawBody(req, {
