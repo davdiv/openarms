@@ -475,6 +475,11 @@ var objectValues = function (object) {
         <h3><span class="glyphicon glyphicon-chevron-right"></span> Contenu de la caisse</h3>
         <p><a href="#" onclick="{controller.toggleCashboxDetails($event)}">{if controller.showCashboxDetails}Masquer les détails{else}Afficher les détails{/if}</a></p>
         {if controller.showCashboxDetails}
+            {if results.cashboxDetailsMissing > 0}
+                <div class="alert alert-warning">
+                    <strong>Attention:</strong> {results.cashboxDetailsMissing} feuille(s) de compte n'ont pas de détails concernant le contenu de la caisse. Le détail ci-dessous inclut seulement la somme de {results.cashboxDetailsIncluded} feuille(s) de compte.
+                </div>
+            {/if}
             {if DepositsCache.canSave()}
                 <button class="btn btn-default" onclick="{controller.newDeposit()}"><span class="glyphicon glyphicon-euro"></span> Nouveau dépôt</button>
             {/if}
@@ -674,6 +679,8 @@ module.exports = klass({
         var tags = {};
         var items = {};
         var cashboxDetails = createCashboxDetails();
+        var includedCashboxDetails = 0;
+        var missingCashboxDetails = 0;
         var total = {
             income: 0,
             outcome: 0,
@@ -695,12 +702,11 @@ module.exports = klass({
             if (filterOut) {
                 return;
             }
-            if (cashboxDetails) {
-                if (sheet.realAmountDetails) {
-                    addCashboxDetails(cashboxDetails, sheet.realAmountDetails);
-                } else {
-                    cashboxDetails = null;
-                }
+            if (sheet.realAmountDetails) {
+                addCashboxDetails(cashboxDetails, sheet.realAmountDetails);
+                includedCashboxDetails++;
+            } else {
+                missingCashboxDetails++;
             }
             var beginDate = null;
             var endDate = null;
@@ -747,7 +753,9 @@ module.exports = klass({
                 tags: sheet.tags
             });
         });
-        if (cashboxDetails) {
+        if (includedCashboxDetails === 0) {
+            cashboxDetails = null;
+        } else {
             recomputeCashboxDetails(cashboxDetails);
         }
         lines.sort(sortByDate);
@@ -762,6 +770,8 @@ module.exports = klass({
             sheets: sheets,
             lines: lines,
             cashboxDetails: cashboxDetails,
+            cashboxDetailsMissing: missingCashboxDetails,
+            cashboxDetailsIncluded: includedCashboxDetails,
             items: itemsArray,
             simplifiedItems : simplifiedItems,
             weeks: weeks,
