@@ -1,5 +1,6 @@
 var CollectionBase = require("./utils/collectionBase");
 var validate = require("../../common/validation/people");
+var diacriticsRegExp = require("../../common/utils/diacriticsRegExp");
 
 module.exports = class extends CollectionBase {
 
@@ -9,7 +10,8 @@ module.exports = class extends CollectionBase {
     }
 
     suggestions(query) {
-        var regExp = new RegExp(query, "i");
+        var regExpSrc = diacriticsRegExp(query);
+        var regExp = new RegExp(regExpSrc, "i");
         return this.search({
             $or : [ {
                 "current.firstName" : regExp
