@@ -1,4 +1,4 @@
-FROM node:8.9.3
+FROM node:8.9.4
 WORKDIR /usr/app
 COPY . .
 RUN chown -R node.node .
