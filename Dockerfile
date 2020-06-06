@@ -8,3 +8,4 @@ USER root
 RUN chown -R root.root .
 EXPOSE 8080
 USER node
+ENTRYPOINT ["./assocomptes"]
