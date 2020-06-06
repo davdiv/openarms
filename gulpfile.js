@@ -6,8 +6,6 @@ var rename = require("gulp-rename");
 var hspCompiler = require("gulp-hsp-compiler");
 var hspTranspiler = require("gulp-hsp-transpiler");
 var runSequence = require("run-sequence");
-var wrap = require("gulp-wrap");
-var replace = require('gulp-replace');
 var exec = require('child_process').exec;
 
 var clientDir = "build/client";
@@ -21,6 +19,16 @@ gulp.task("dev-dep-bootstrap", function () {
 gulp.task("dev-dep-keycloak", function () {
     return gulp.src([ "node_modules/keycloak-js/dist/keycloak.js" ]).pipe(newer(staticsDevDir + "/keycloak.js")).pipe(
         gulp.dest(staticsDevDir));
+});
+
+gulp.task("dev-dep-js-sha256", function () {
+    return gulp.src([ "node_modules/js-sha256/src/sha256.js" ]).pipe(newer(staticsDevDir + "/js-sha256.js")).pipe(
+        rename("js-sha256.js")).pipe(gulp.dest(staticsDevDir));
+});
+
+gulp.task("dev-dep-base64-js", function () {
+    return gulp.src([ "node_modules/base64-js/index.js" ]).pipe(newer(staticsDevDir + "/base64-js.js")).pipe(
+        rename("base64-js.js")).pipe(gulp.dest(staticsDevDir));
 });
 
 gulp.task("dev-dep-page", function () {
@@ -92,7 +100,7 @@ gulp.task("dev-statics-root", function () {
 });
 
 gulp.task("dev-dep", [ "dev-dep-bootstrap", "dev-dep-page", "dev-dep-diacritics", "dev-dep-qs", "dev-dep-hsp",
-    "dev-dep-noder-js", "dev-dep-vis", "dev-dep-vis-css", "dev-dep-keycloak" ]);
+    "dev-dep-noder-js", "dev-dep-vis", "dev-dep-vis-css", "dev-dep-keycloak", "dev-dep-js-sha256", "dev-dep-base64-js" ]);
 
 gulp.task("dev-main",
     [ "dev-hsp-compile", "dev-js-transpile", "dev-js-notranspile", "dev-statics", "dev-statics-root" ]);
