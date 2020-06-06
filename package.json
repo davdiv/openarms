@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/davdiv/assocomptes",
   "devDependencies": {
-    "atpackager": "0.2.6",
+    "atpackager": "0.3.0",
     "bootstrap": "3.3.7",
     "grunt": "0.4.5",
     "grunt-cli": "0.1.13",
@@ -36,7 +36,7 @@
     "gulp-util": "2.2.14",
     "hashspace": "file:./hashspace",
     "keycloak-js": "10.0.2",
-    "noder-js": "1.6.1",
+    "noder-js": "1.6.2",
     "page": "1.3.7",
     "qs": "0.6.6",
     "run-sequence": "0.3.6",
@@ -44,10 +44,10 @@
   },
   "dependencies": {
     "diacritics": "1.3.0",
-    "express": "4.16.2",
+    "express": "4.17.1",
     "keycloak-connect": "10.0.2",
-    "minimist": "1.2.0",
-    "mongodb": "2.2.29",
-    "raw-body": "2.2.0"
+    "minimist": "1.2.5",
+    "mongodb": "2.2.36",
+    "raw-body": "2.4.1"
   }
 }
