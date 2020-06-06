@@ -24,7 +24,7 @@
   "homepage": "https://github.com/davdiv/assocomptes",
   "devDependencies": {
     "atpackager": "0.3.0",
-    "bootstrap": "3.3.7",
+    "bootstrap": "3.4.1",
     "grunt": "0.4.5",
     "grunt-cli": "0.1.13",
     "gulp": "3.5.6",
